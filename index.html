@@ -1,1 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HVAC Pro Dashboard</title>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#020617">
+
+<style>
+body{margin:0;font-family:Arial;background:#020617;color:#e5e7eb}
+header{padding:15px 20px;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+h1{margin:0;color:#38bdf8}
+.container{display:grid;grid-template-columns:300px 1fr;gap:20px;padding:20px}
+.card{background:#020617;border-radius:12px;padding:15px;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+input,select,button{width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:none;background:#020617;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+button{background:#2563eb;font-weight:bold}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px}
+.kpi h4{margin:0;font-size:13px;opacity:.7}
+.kpi div{font-size:24px;color:#38bdf8;font-weight:bold}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center}
+th{color:#38bdf8}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>HVAC Pro Dashboard</h1>
+</header>
+
+<div class="container">
+  <div class="card">
+    <input type="date" id="date">
+    <select id="type">
+      <option>Cooling Coil</option>
+      <option>Heat Pipe</option>
+      <option>Combi Coil</option>
+      <option>FAHU</option>
+      <option>AHU</option>
+    </select>
+    <input id="project" placeholder="Project Name">
+    <input id="customer" placeholder="Customer Name">
+    <select id="status">
+      <option>Received</option>
+      <option>Completed</option>
+      <option>Revision</option>
+      <option>Selection Sent</option>
+      <option>Quotation Sent</option>
+    </select>
+    <input id="revision" placeholder="Revision No (if Revision)">
+    <button onclick="addEntry()">SAVE</button>
+  </div>
+
+  <div>
+    <div class="kpis" id="kpis"></div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Type</th><th>Project</th><th>Customer</th><th>Status</th><th>Rev</th></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let data=[];
+function addEntry(){
+  const d=date.value,p=project.value,c=customer.value,s=status.value;
+  if(!d||!p||!c){alert('Fill Date, Project, Customer');return}
+  data.push({d,t:type.value,p,c,s,r:s==='Revision'?revision.value:''});
+  render();
+}
+function render(){
+  const k={Received:0,Completed:0,Revision:0,'Selection Sent':0,'Quotation Sent':0};
+  data.forEach(x=>k[x.s]++);
+  kpis.innerHTML=Object.keys(k).map(i=>`<div class=kpi><h4>${i}</h4><div>${k[i]}</div></div>`).join('');
+  tbody.innerHTML=data.map(x=>`<tr><td>${x.d}</td><td>${x.t}</td><td>${x.p}</td><td>${x.c}</td><td>${x.s}</td><td>${x.r}</td></tr>`).join('');
+}
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js');
+}
+</script>
+
+</body>
+</html>
