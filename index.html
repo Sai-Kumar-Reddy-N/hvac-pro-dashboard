@@ -149,9 +149,18 @@ function render(){
   const s=search.value.toLowerCase(),fd=filterDate.value,fs=filterStatus.value,fr=filterRevision.value;
   const f=projects.filter(x=>(!s||x.project.toLowerCase().includes(s)||x.customer.toLowerCase().includes(s))&&(!fd||x.received===fd)&&(!fs||x.status===fs)&&(!fr||(fr==='revised'&&Number(x.revision)>0)));
 
-  const k={RECEIVED:0,'IN PROGRESS':0,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0};
-  f.forEach(x=>k[x.status]++);
-  kpis.innerHTML=Object.keys(k).map(i=>`<div class="kpi"><h4>${i}</h4><div>${k[i]}</div></div>`).join('');
+  // KPI LOGIC
+  // RECEIVED = total projects in current filter (projects added)
+  const totalCount = f.length;
+  const k={RECEIVED:totalCount,'IN PROGRESS':0,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0};
+  f.forEach(x=>{
+    if(k[x.status] !== undefined && x.status !== 'RECEIVED'){
+      k[x.status]++;
+    }
+  });
+  kpis.innerHTML = Object.keys(k)
+    .map(i=>`<div class="kpi"><h4>${i}</h4><div>${k[i]}</div></div>`)
+    .join('');
 
   tbody.innerHTML=f.map((x,i)=>`
     <tr id="row-${i}">
