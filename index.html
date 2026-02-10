@@ -7,201 +7,117 @@
 <style>
 :root{--bg:#0b1220;--panel:#111827;--card:#0f172a;--accent:#22d3ee;--text:#e5e7eb;--muted:#9ca3af;--danger:#ef4444}
 *{box-sizing:border-box}
-body{margin:0;font-family:'Inter',sans-serif;background:linear-gradient(180deg,#0b1220,#020617);color:var(--text)}
-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:#020617;box-shadow:0 6px 20px rgba(0,0,0,.6)}
-nav h1{margin:0;font-size:18px;color:var(--accent)}
-nav .tabs{display:flex;gap:18px}
-nav .tab{cursor:pointer;color:var(--muted);font-size:14px}
-nav .tab.active{color:var(--accent)}.container{max-width:1500px;margin:auto;padding:18px} .card{background:var(--panel);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 14px 36px rgba(0,0,0,.6)} h3{margin:0 0 10px 0;color:var(--accent);font-size:14px;font-weight:600}
+body{margin:0;font-family:'Inter',sans-serif;background:linear-gradient(180deg,#0b1220,#020617);color:var(--text)}nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#020617;box-shadow:0 6px 20px rgba(0,0,0,.6)} nav h1{margin:0;font-size:18px;color:var(--accent)}
+
+/* KPI BAR IN NAV */ .nav-kpis{display:flex;gap:14px} .nav-kpi{background:var(--panel);padding:6px 10px;border-radius:10px;text-align:center;min-width:80px} .nav-kpi span{display:block;font-size:10px;color:var(--muted)} .nav-kpi b{font-size:16px;color:var(--accent)}
+
+.container{max-width:1500px;margin:auto;padding:18px} .card{background:var(--panel);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 14px 36px rgba(0,0,0,.6)} h3{margin:0 0 10px 0;color:var(--accent);font-size:14px;font-weight:600}
 
 input,select,textarea,button{font-family:inherit;padding:6px 7px;border-radius:8px;border:none;background:var(--card);color:var(--text);font-size:11px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)} textarea{resize:vertical;min-height:28px} button{background:var(--accent);color:#022;font-weight:600;cursor:pointer} button.danger{background:var(--danger);color:#fff}
 
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px} .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px} .kpi{background:var(--card);padding:12px;border-radius:10px;text-align:center} .kpi h4{margin:0;font-size:11px;color:var(--muted)} .kpi div{font-size:18px;font-weight:600;color:var(--accent)}
-
-.table-wrap{overflow-x:hidden} table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed} th,td{padding:6px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} th{color:var(--accent)} .col-small{width:55px} .col-remarks{width:160px} .hidden{display:none} </style>
+.table-wrap{overflow-x:hidden} table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed} th,td{padding:6px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} th{color:var(--accent)} .col-small{width:55px} .col-remarks{width:160px} </style>
 
 </head>
 <body><nav>
   <h1>My Work Flow</h1>
-  <div class="tabs">
-    <div class="tab active" onclick="showPage('work')">Work</div>
-    <div class="tab" onclick="showPage('dashboard')">Dashboard</div>
+  <div class="nav-kpis" id="navKpis"></div>
+</nav><div class="container"><!-- ADD PROJECT --><div class="card">
+  <h3>Add Project</h3>
+  <div class="form-grid">
+    <input id="project" placeholder="Project Name">
+    <input id="customer" placeholder="Customer Name">
+    <select id="type"><option>Cooling Coil</option><option>Heat Pipe</option><option>Combi Coil</option><option>FAHU</option><option>AHU</option></select>
+    <input type="date" id="received">
+    <button onclick="addProject()">Add</button>
   </div>
-</nav><div class="container"><!-- WORK PAGE --><div id="work">
-  <div class="card">
-    <h3>Add Project</h3>
-    <div class="form-grid">
-      <input id="project" placeholder="Project Name">
-      <input id="customer" placeholder="Customer Name">
-      <select id="type"><option>Cooling Coil</option><option>Heat Pipe</option><option>Combi Coil</option><option>FAHU</option><option>AHU</option></select>
-      <input type="date" id="received">
-      <button onclick="addProject()">Add</button>
-    </div>
-  </div>  <div class="card">
-    <h3>Projects List</h3>
-    <div class="filters">
-      <input id="search" placeholder="Search project / customer" oninput="render()">
-      <input type="date" id="filterDate" onchange="render()">
-      <select id="filterStatus" onchange="render()"><option value="">All Status</option><option>RECEIVED</option><option>IN PROGRESS</option><option>SELECTION SENT</option><option>QUOTATION SENT</option><option>COMPLETED</option></select>
-      <select id="filterRevision" onchange="render()"><option value="">All</option><option value="revised">Only Revised</option></select>
-      <button onclick="exportExcel()">Export</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Project</th><th>Customer</th><th>Type</th>
-            <th>Recv</th><th>Sent</th><th>Status</th>
-            <th class="col-small">Rev</th>
-            <th>QID-CC</th><th>QID-HP</th>
-            <th class="col-remarks">Remarks</th>
-            <th class="col-small">Save</th><th class="col-small">Del</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
+</div><!-- PROJECT LIST --><div class="card">
+  <h3>Projects List</h3>
+  <div class="filters">
+    <input id="search" placeholder="Search project / customer" oninput="render()">
+    <input type="date" id="filterDate" onchange="render()">
+    <select id="filterStatus" onchange="render()">
+      <option value="">All Status</option>
+      <option>RECEIVED</option>
+      <option>SELECTION SENT</option>
+      <option>QUOTATION SENT</option>
+      <option>COMPLETED</option>
+    </select>
+    <select id="filterRevision" onchange="render()">
+      <option value="">All</option>
+      <option value="revised">Only Revised</option>
+    </select>
+    <button onclick="exportExcel()">Export</button>
+  </div>  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Project</th><th>Customer</th><th>Type</th>
+          <th>Recv</th><th>Sent</th><th>Status</th>
+          <th class="col-small">Rev</th>
+          <th>QID-CC</th><th>QID-HP</th>
+          <th class="col-remarks">Remarks</th>
+          <th class="col-small">Save</th><th class="col-small">Del</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
   </div>
-</div><!-- DASHBOARD PAGE --><div id="dashboard" class="hidden">
-  <div class="card">
-    <h3>Dashboard</h3>
-    <div class="kpis" id="kpis"></div>
-  </div>
-</div></div>
-  <script>
+</div></div><script>
 let projects = JSON.parse(localStorage.getItem('hvacProjects')) || [];
+function saveAll(){ localStorage.setItem('hvacProjects',JSON.stringify(projects)); }
 
-function saveAll() {
-  localStorage.setItem('hvacProjects', JSON.stringify(projects));
+function addProject(){
+  const p=project.value.trim(),c=customer.value.trim(),t=type.value,r=received.value;
+  if(!p||!c||!r){alert('Fill all fields');return;}
+  if(projects.find(x=>x.project.toLowerCase()===p.toLowerCase())){alert('Project exists');return;}
+  projects.push({project:p,customer:c,type:t,received:r,sent:'',status:'RECEIVED',revision:0,quoteCC:'',quoteHP:'',remarks:'',updated:Date.now()});
+  saveAll();project.value=customer.value=received.value='';render();
 }
 
-function addProject() {
-  const p = document.getElementById('project').value.trim();
-  const c = document.getElementById('customer').value.trim();
-  const t = document.getElementById('type').value;
-  const r = document.getElementById('received').value;
-
-  if (!p || !c || !r) {
-    alert('Please fill all fields');
-    return;
-  }
-
-  if (projects.find(x => x.project.toLowerCase() === p.toLowerCase())) {
-    alert('Project already exists');
-    return;
-  }
-
-  projects.push({
-    project: p,
-    customer: c,
-    type: t,
-    received: r,
-    sent: '',
-    status: 'RECEIVED',
-    revision: 0,
-    quoteCC: '',
-    quoteHP: '',
-    remarks: '',
-    updated: Date.now()
-  });
-
-  saveAll();
-
-  document.getElementById('project').value = '';
-  document.getElementById('customer').value = '';
-  document.getElementById('received').value = '';
-
-  render();
+function saveRow(i){
+  const row=document.getElementById('row-'+i);
+  const x=projects[i];
+  x.sent=row.querySelector('.sent').value;
+  x.status=row.querySelector('.status').value;
+  x.revision=row.querySelector('.rev').value;
+  x.quoteCC=row.querySelector('.qcc').value;
+  x.quoteHP=row.querySelector('.qhp').value;
+  x.remarks=row.querySelector('.remarks').value;
+  if((x.status==='SELECTION SENT'||x.status==='QUOTATION SENT')&&!x.sent){x.sent=new Date().toISOString().split('T')[0];}
+  x.updated=Date.now();saveAll();render();
 }
 
-function saveRow(i) {
-  const row = document.getElementById('row-' + i);
-  const x = projects[i];
+function deleteRow(i){if(confirm('Delete this project?')){projects.splice(i,1);saveAll();render();}}
 
-  x.sent = row.querySelector('.sent').value;
-  x.status = row.querySelector('.status').value;
-  x.revision = row.querySelector('.rev').value;
-  x.quoteCC = row.querySelector('.qcc').value;
-  x.quoteHP = row.querySelector('.qhp').value;
-  x.remarks = row.querySelector('.remarks').value;
-  x.updated = Date.now();
+function render(){
+  const s=search.value.toLowerCase(),fd=filterDate.value,fs=filterStatus.value,fr=filterRevision.value;
+  const f=projects.filter(x=>(!s||x.project.toLowerCase().includes(s)||x.customer.toLowerCase().includes(s))&&(!fd||x.received===fd)&&(!fs||x.status===fs)&&(!fr||(fr==='revised'&&Number(x.revision)>0))).sort((a,b)=>new Date(b.received)-new Date(a.received)||(b.updated||0)-(a.updated||0));
 
-  if ((x.status === 'SELECTION SENT' || x.status === 'QUOTATION SENT') && !x.sent) {
-    x.sent = new Date().toISOString().split('T')[0];
-  }
+  // NAV KPI (NO IN-PROGRESS)
+  const k={RECEIVED:f.length,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0};
+  f.forEach(x=>{if(k[x.status]!==undefined && x.status!=='RECEIVED')k[x.status]++;});
+  navKpis.innerHTML=Object.keys(k).map(i=>`<div class=nav-kpi><span>${i}</span><b>${k[i]}</b></div>`).join('');
 
-  saveAll();
-  render();
-}
-
-function deleteRow(i) {
-  if (confirm('Delete this project?')) {
-    projects.splice(i, 1);
-    saveAll();
-    render();
-  }
-}
-
-function render() {
-  const s = document.getElementById('search').value.toLowerCase();
-  const fd = document.getElementById('filterDate').value;
-  const fs = document.getElementById('filterStatus').value;
-  const fr = document.getElementById('filterRevision').value;
-
-  const filtered = projects
-    .filter(x =>
-      (!s || x.project.toLowerCase().includes(s) || x.customer.toLowerCase().includes(s)) &&
-      (!fd || x.received === fd) &&
-      (!fs || x.status === fs) &&
-      (!fr || (fr === 'revised' && Number(x.revision) > 0))
-    )
-    .sort((a, b) =>
-      new Date(b.received) - new Date(a.received) || (b.updated || 0) - (a.updated || 0)
-    );
-
-  const k = { RECEIVED: filtered.length, 'IN PROGRESS': 0, 'SELECTION SENT': 0, 'QUOTATION SENT': 0, COMPLETED: 0 };
-  filtered.forEach(x => { if (x.status !== 'RECEIVED') k[x.status]++; });
-
-  document.getElementById('kpis').innerHTML =
-    Object.keys(k).map(i => `<div class="kpi"><h4>${i}</h4><div>${k[i]}</div></div>`).join('');
-
-  document.getElementById('tbody').innerHTML = filtered.map((x, i) => `
-    <tr id="row-${i}">
-      <td>${x.project}</td>
-      <td>${x.customer}</td>
-      <td>${x.type}</td>
+  tbody.innerHTML=f.map((x,i)=>`
+    <tr id=row-${i}>
+      <td>${x.project}</td><td>${x.customer}</td><td>${x.type}</td>
       <td>${x.received}</td>
-      <td><input type="date" class="sent" value="${x.sent}"></td>
-      <td>
-        <select class="status">
-          ${['RECEIVED','IN PROGRESS','SELECTION SENT','QUOTATION SENT','COMPLETED']
-            .map(s => `<option ${s === x.status ? 'selected' : ''}>${s}</option>`).join('')}
-        </select>
-      </td>
-      <td><input type="number" class="rev" value="${x.revision}"></td>
-      <td><input class="qcc" value="${x.quoteCC}"></td>
-      <td><input class="qhp" value="${x.quoteHP}"></td>
-      <td><textarea class="remarks">${x.remarks}</textarea></td>
-      <td><button onclick="saveRow(${i})">Save</button></td>
-      <td><button class="danger" onclick="deleteRow(${i})">Del</button></td>
-    </tr>
-  `).join('');
+      <td><input type=date class=sent value="${x.sent}"></td>
+      <td><select class=status>${['RECEIVED','SELECTION SENT','QUOTATION SENT','COMPLETED'].map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`)}</select></td>
+      <td><input class=rev type=number min=0 value="${x.revision}"></td>
+      <td><input class=qcc value="${x.quoteCC}"></td>
+      <td><input class=qhp value="${x.quoteHP}"></td>
+      <td><textarea class=remarks>${x.remarks}</textarea></td><td><button onclick=saveRow(${i})>Save</button></td>
+  <td><button class=danger onclick=deleteRow(${i})>Del</button></td>
+</tr>`).join('');
+
 }
 
-function exportExcel() {
-  let csv = 'Project,Customer,Type,Received,Sent,Status,Revision,QuoteID_CC,QuoteID_HP,Remarks\n';
-  projects.forEach(x => {
-    csv += `${x.project},${x.customer},${x.type},${x.received},${x.sent},${x.status},${x.revision},${x.quoteCC},${x.quoteHP},${x.remarks}\n`;
-  });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-  a.download = 'My_Work_Flow.csv';
-  a.click();
-}
+function exportExcel(){ let csv='Project,Customer,Type,Received,Sent,Status,Revision,QuoteID_CC,QuoteID_HP,Remarks\n'; projects.forEach(x=>csv+=${x.project},${x.customer},${x.type},${x.received},${x.sent},${x.status},${x.revision},${x.quoteCC},${x.quoteHP},"${(x.remarks||'').replace(/"/g,'""')}"\n); const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='My_Work_Flow.csv';a.click(); }
 
-render();
-  </script>
+render(); </script>
+
 </body>
 </html>
