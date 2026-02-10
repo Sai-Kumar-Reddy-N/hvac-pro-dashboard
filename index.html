@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Work Flow</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -24,6 +24,8 @@ body{
   background:linear-gradient(180deg,#0b1220,#020617);
   color:var(--text);
 }
+
+/* NAVBAR */
 nav{
   display:flex;
   align-items:center;
@@ -33,17 +35,38 @@ nav{
   box-shadow:0 6px 20px rgba(0,0,0,.6);
 }
 nav h1{margin:0;font-size:18px;color:var(--accent)}
-.nav-kpis{display:flex;gap:12px}
-.nav-kpi{
-  background:var(--panel);
-  padding:6px 10px;
-  border-radius:10px;
-  text-align:center;
-  min-width:90px;
-}
-.nav-kpi span{font-size:10px;color:var(--muted)}
-.nav-kpi b{font-size:16px;color:var(--accent)}
 
+/* DASHBOARD KPI */
+.nav-kpis{display:flex;gap:14px}
+.nav-kpi{
+  background:linear-gradient(145deg,#0f172a,#020617);
+  padding:8px 14px;
+  border-radius:14px;
+  min-width:95px;
+  text-align:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.6);
+  transition:.25s ease;
+}
+.nav-kpi:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 10px 28px rgba(34,211,238,.35);
+}
+.nav-kpi span{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+}
+.nav-kpi b{
+  display:block;
+  font-size:20px;
+  font-weight:600;
+}
+.nav-kpi.received b{color:#38bdf8}
+.nav-kpi.selection b{color:#facc15}
+.nav-kpi.quotation b{color:#fb7185}
+.nav-kpi.completed b{color:#4ade80}
+
+/* LAYOUT */
 .container{max-width:1500px;margin:auto;padding:16px}
 .card{
   background:var(--panel);
@@ -181,60 +204,61 @@ function saveAll(){
   localStorage.setItem('hvacProjects', JSON.stringify(projects));
 }
 
-$('addBtn').addEventListener('click', () => {
-  const p = $('project').value.trim();
-  const c = $('customer').value.trim();
-  const t = $('type').value;
-  const r = $('received').value;
+/* ADD PROJECT */
+$('addBtn').onclick = () => {
+  const p=$('project').value.trim();
+  const c=$('customer').value.trim();
+  const t=$('type').value;
+  const r=$('received').value;
 
-  if(!p || !c || !r){
-    alert('Fill all fields');
-    return;
-  }
+  if(!p||!c||!r){alert('Fill all fields');return;}
 
   projects.push({
-    project:p, customer:c, type:t,
-    received:r, sent:'',
-    status:'RECEIVED', revision:0,
-    quoteCC:'', quoteHP:'',
-    remarks:'', updated:Date.now()
+    id:Date.now(),
+    project:p,customer:c,type:t,
+    received:r,sent:'',
+    status:'RECEIVED',
+    revision:0,
+    quoteCC:'',quoteHP:'',
+    remarks:'',updated:Date.now()
   });
 
   saveAll();
-  $('project').value = $('customer').value = $('received').value = '';
+  $('project').value=$('customer').value=$('received').value='';
   render();
-});
+};
 
+/* RENDER */
 function render(){
-  const s = $('search').value.toLowerCase();
-  const fd = $('filterDate').value;
-  const fs = $('filterStatus').value;
-  const fr = $('filterRevision').value;
+  const s=$('search').value.toLowerCase();
+  const fd=$('filterDate').value;
+  const fs=$('filterStatus').value;
+  const fr=$('filterRevision').value;
 
-  const list = projects
-    .filter(x =>
-      (!s || x.project.toLowerCase().includes(s) || x.customer.toLowerCase().includes(s)) &&
-      (!fd || x.received === fd) &&
-      (!fs || x.status === fs) &&
-      (!fr || (fr === 'revised' && x.revision > 0))
+  const list=projects
+    .filter(x=>
+      (!s||x.project.toLowerCase().includes(s)||x.customer.toLowerCase().includes(s)) &&
+      (!fd||x.received===fd) &&
+      (!fs||x.status===fs) &&
+      (!fr||(fr==='revised'&&x.revision>0))
     )
     .sort((a,b)=>new Date(b.received)-new Date(a.received)||(b.updated||0)-(a.updated||0));
 
-  // NAV DASHBOARD
-  const k = { RECEIVED:list.length,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0 };
-  list.forEach(x=>{ if(k[x.status]!==undefined && x.status!=='RECEIVED') k[x.status]++; });
+  const k={RECEIVED:list.length,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0};
+  list.forEach(x=>{if(k[x.status]!==undefined&&x.status!=='RECEIVED')k[x.status]++;});
 
-  $('navKpis').innerHTML = Object.entries(k)
-    .map(([k,v])=>`<div class="nav-kpi"><span>${k}</span><b>${v}</b></div>`)
-    .join('');
+  $('navKpis').innerHTML=`
+    <div class="nav-kpi received"><span>RECEIVED</span><b>${k.RECEIVED}</b></div>
+    <div class="nav-kpi selection"><span>SELECTION SENT</span><b>${k['SELECTION SENT']}</b></div>
+    <div class="nav-kpi quotation"><span>QUOTATION SENT</span><b>${k['QUOTATION SENT']}</b></div>
+    <div class="nav-kpi completed"><span>COMPLETED</span><b>${k.COMPLETED}</b></div>
+  `;
 
-  $('tbody').innerHTML = '';
-  list.forEach((x,i)=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${x.project}</td>
-      <td>${x.customer}</td>
-      <td>${x.type}</td>
+  $('tbody').innerHTML='';
+  list.forEach(x=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${x.project}</td><td>${x.customer}</td><td>${x.type}</td>
       <td>${x.received}</td>
       <td><input type="date" value="${x.sent}"></td>
       <td>
@@ -251,18 +275,22 @@ function render(){
       <td><button class="danger">Del</button></td>
     `;
 
-    tr.children[10].onclick = () => {
-      const f = tr.querySelectorAll('input,select,textarea');
-      x.sent=f[0].value; x.status=f[1].value;
-      x.revision=f[2].value; x.quoteCC=f[3].value;
-      x.quoteHP=f[4].value; x.remarks=f[5].value;
-      x.updated=Date.now(); saveAll(); render();
+    tr.children[10].onclick=()=>{
+      const f=tr.querySelectorAll('input,select,textarea');
+      x.sent=f[0].value;
+      x.status=f[1].value;
+      x.revision=f[2].value;
+      x.quoteCC=f[3].value;
+      x.quoteHP=f[4].value;
+      x.remarks=f[5].value;
+      x.updated=Date.now();
+      saveAll();render();
     };
 
-    tr.children[11].onclick = () => {
+    tr.children[11].onclick=()=>{
       if(confirm('Delete project?')){
-        projects.splice(i,1);
-        saveAll(); render();
+        projects=projects.filter(p=>p.id!==x.id);
+        saveAll();render();
       }
     };
 
