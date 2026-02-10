@@ -5,89 +5,71 @@
 <title>My Work Flow</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b1220;--panel:#111827;--card:#0f172a;--accent:#22d3ee;--text:#e5e7eb;--muted:#9ca3af;--today:#064e3b;--danger:#ef4444}
+:root{--bg:#0b1220;--panel:#111827;--card:#0f172a;--accent:#22d3ee;--text:#e5e7eb;--muted:#9ca3af;--danger:#ef4444}
 *{box-sizing:border-box}
 body{margin:0;font-family:'Inter',sans-serif;background:linear-gradient(180deg,#0b1220,#020617);color:var(--text)}
-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:#020617;box-shadow:0 6px 20px rgba(0,0,0,.6)}
+nav{padding:14px 24px;background:#020617;box-shadow:0 6px 20px rgba(0,0,0,.6)}
 nav h1{margin:0;font-size:18px;color:var(--accent)}
-nav .tabs{display:flex;gap:18px}
-nav .tab{cursor:pointer;color:var(--muted);font-size:14px}
-nav .tab.active{color:var(--accent)}
-.container{max-width:1400px;margin:auto;padding:20px}
-.card{background:var(--panel);border-radius:14px;padding:16px;margin-bottom:20px;box-shadow:0 16px 40px rgba(0,0,0,.6)}
-h3{margin:0 0 12px 0;color:var(--accent);font-size:15px;font-weight:600}
-input,select,button{font-family:inherit;padding:6px 7px;border-radius:8px;border:none;background:var(--card);color:var(--text);font-size:11px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
-button{background:var(--accent);color:#022;font-weight:600;cursor:pointer}
-button.danger{background:var(--danger);color:#fff}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
-.kpi{background:var(--card);padding:12px;border-radius:10px;text-align:center}
-.kpi h4{margin:0;font-size:11px;color:var(--muted)}
-.kpi div{font-size:18px;font-weight:600;color:var(--accent)}
-.filters{display:flex;flex-wrap:wrap;gap:10px}
-.table-wrap{overflow-x:hidden}
-table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
-thead th{position:sticky;top:0;background:var(--panel);z-index:2}
-th,td{padding:6px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-th{color:var(--accent)}
-.col-small{width:55px}
-tr.today{background:rgba(6,78,59,.45)}
-.hidden{display:none}
-@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
-</style>
+.container{max-width:1500px;margin:auto;padding:18px}.layout{display:grid;grid-template-columns:1fr 260px;gap:14px}
+
+.card{background:var(--panel);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 14px 36px rgba(0,0,0,.6)} h3{margin:0 0 10px 0;color:var(--accent);font-size:14px;font-weight:600}
+
+input,select,button{font-family:inherit;padding:6px 7px;border-radius:8px;border:none;background:var(--card);color:var(--text);font-size:11px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)} button{background:var(--accent);color:#022;font-weight:600;cursor:pointer} button.danger{background:var(--danger);color:#fff}
+
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+
+.kpis{display:grid;grid-template-columns:1fr;gap:10px} .kpi{background:var(--card);padding:10px;border-radius:10px;text-align:center} .kpi h4{margin:0;font-size:11px;color:var(--muted)} .kpi div{font-size:18px;font-weight:600;color:var(--accent)}
+
+.table-wrap{overflow-x:hidden} table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed} th,td{padding:6px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} th{color:var(--accent)} .col-small{width:55px}
+
+@media(max-width:1100px){.layout{grid-template-columns:1fr}} </style>
+
 </head>
-<body>
-<nav>
+<body><nav>
   <h1>My Work Flow</h1>
-  <div class="tabs">
-    <div class="tab active" onclick="showPage('add')">Add Project</div>
-    <div class="tab" onclick="showPage('projects')">Projects</div>
+</nav><div class="container"><!-- ADD PROJECT (TOP) --><div class="card">
+  <h3>Add Project</h3>
+  <div class="form-grid">
+    <input id="project" placeholder="Project Name">
+    <input id="customer" placeholder="Customer Name">
+    <select id="type"><option>Cooling Coil</option><option>Heat Pipe</option><option>Combi Coil</option><option>FAHU</option><option>AHU</option></select>
+    <input type="date" id="received">
+    <button onclick="addProject()">Add</button>
   </div>
-</nav>
-<div class="container"><!-- ADD PROJECT --><div id="add">
+</div><div class="layout"><!-- PROJECT LIST + FILTERS --><div>
   <div class="card">
-    <h3>Add New Project</h3>
-    <div class="form-grid">
-      <input id="project" placeholder="Project Name">
-      <input id="customer" placeholder="Customer Name">
-      <select id="type"><option>Cooling Coil</option><option>Heat Pipe</option><option>Combi Coil</option><option>FAHU</option><option>AHU</option></select>
-      <input type="date" id="received">
-      <button onclick="addProject()">Add</button>
-    </div>
-  </div>
-</div><!-- PROJECTS --><div id="projects" class="hidden">
-  <div class="card"><h3>Dashboard</h3><div class="kpis" id="kpis"></div></div>
-  <div class="card">
-    <h3>Search & Filters</h3>
+    <h3>Projects List</h3>
     <div class="filters">
       <input id="search" placeholder="Search project / customer" oninput="render()">
       <input type="date" id="filterDate" onchange="render()">
       <select id="filterStatus" onchange="render()"><option value="">All Status</option><option>RECEIVED</option><option>IN PROGRESS</option><option>SELECTION SENT</option><option>QUOTATION SENT</option><option>COMPLETED</option></select>
-      <select id="filterRevision" onchange="render()"><option value="">All Projects</option><option value="revised">Only Revised</option></select>
+      <select id="filterRevision" onchange="render()"><option value="">All</option><option value="revised">Only Revised</option></select>
       <button onclick="exportExcel()">Export</button>
     </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Project</th><th>Customer</th><th>Type</th>
+            <th>Recv</th><th>Sent</th><th>Status</th>
+            <th class="col-small">Rev</th>
+            <th>QID-CC</th><th>QID-HP</th>
+            <th class="col-small">Save</th><th class="col-small">Del</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
   </div>
-  <div class="card table-wrap">
-    <h3>Projects List</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Project</th><th>Customer</th><th>Type</th>
-          <th>Recv</th><th>Sent</th><th>Status</th>
-          <th class="col-small">Rev</th>
-          <th>QID-CC</th><th>Qty-CC</th>
-          <th>QID-HP</th><th>Qty-HP</th>
-          <th>Quote Amt</th><th>TAT(d)</th>
-          <th class="col-small">Save</th><th class="col-small">Del</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
+</div><!-- DASHBOARD (RIGHT) --><div>
+  <div class="card">
+    <h3>Dashboard</h3>
+    <div class="kpis" id="kpis"></div>
   </div>
-</div>
+</div></div>
 </div><script>
-function showPage(p){['add','projects'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(p).classList.remove('hidden');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelector(`.tab[onclick*=\"${p}\"]`).classList.add('active');}
-
 let projects = JSON.parse(localStorage.getItem('hvacProjects')) || [];
 function saveAll(){ localStorage.setItem('hvacProjects',JSON.stringify(projects)); }
 
@@ -95,12 +77,7 @@ function addProject(){
   const p=project.value.trim(),c=customer.value.trim(),t=type.value,r=received.value;
   if(!p||!c||!r){alert('Fill all fields');return;}
   if(projects.find(x=>x.project.toLowerCase()===p.toLowerCase())){alert('Project exists');return;}
-  projects.push({
-    project:p,customer:c,type:t,received:r,sent:'',status:'RECEIVED',revision:0,
-    quoteCC:'',qtyCC:(t==='Cooling Coil'?1:'NA'),
-    quoteHP:'',qtyHP:(t==='Heat Pipe'?1:'NA'),
-    amount:'',updated:Date.now()
-  });
+  projects.push({project:p,customer:c,type:t,received:r,sent:'',status:'RECEIVED',revision:0,quoteCC:'',quoteHP:'',updated:Date.now()});
   saveAll();project.value=customer.value=received.value='';render();
 }
 
@@ -111,26 +88,23 @@ function saveRow(i){
   x.status=row.querySelector('.status').value;
   x.revision=row.querySelector('.rev').value;
   x.quoteCC=row.querySelector('.qcc').value;
-  x.qtyCC=row.querySelector('.qtycc').value;
   x.quoteHP=row.querySelector('.qhp').value;
-  x.qtyHP=row.querySelector('.qtyhp').value;
-  x.amount=row.querySelector('.amt').value;
   if((x.status==='SELECTION SENT'||x.status==='QUOTATION SENT')&&!x.sent){x.sent=new Date().toISOString().split('T')[0];}
   x.updated=Date.now();saveAll();render();
 }
 
 function deleteRow(i){if(confirm('Delete this project?')){projects.splice(i,1);saveAll();render();}}
-function daysBetween(a,b){if(!a||!b) return '';return Math.round((new Date(b)-new Date(a))/(1000*60*60*24));}
 
 function render(){
   const s=search.value.toLowerCase(),fd=filterDate.value,fs=filterStatus.value,fr=filterRevision.value;
-  const today=new Date().toISOString().split('T')[0];
   const f=projects.filter(x=>(!s||x.project.toLowerCase().includes(s)||x.customer.toLowerCase().includes(s))&&(!fd||x.received===fd)&&(!fs||x.status===fs)&&(!fr||(fr==='revised'&&Number(x.revision)>0))).sort((a,b)=>new Date(b.received)-new Date(a.received)||(b.updated||0)-(a.updated||0));
+
   const k={RECEIVED:f.length,'IN PROGRESS':0,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0};
   f.forEach(x=>{if(x.status!=='RECEIVED')k[x.status]++;});
   kpis.innerHTML=Object.keys(k).map(i=>`<div class=kpi><h4>${i}</h4><div>${k[i]}</div></div>`).join('');
+
   tbody.innerHTML=f.map((x,i)=>`
-    <tr id=row-${i} class=${x.received===today?'today':''}>
+    <tr id=row-${i}>
       <td title="${x.project}">${x.project}</td>
       <td title="${x.customer}">${x.customer}</td>
       <td>${x.type}</td>
@@ -139,19 +113,15 @@ function render(){
       <td><select class=status>${['RECEIVED','IN PROGRESS','SELECTION SENT','QUOTATION SENT','COMPLETED'].map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`)}</select></td>
       <td><input class=rev type=number min=0 value="${x.revision}"></td>
       <td><input class=qcc value="${x.quoteCC}"></td>
-      <td><input class=qtycc value="${x.qtyCC}" ${x.type!=='Cooling Coil'?'readonly':''}></td>
       <td><input class=qhp value="${x.quoteHP}"></td>
-      <td><input class=qtyhp value="${x.qtyHP}" ${x.type!=='Heat Pipe'?'readonly':''}></td>
-      <td><input class=amt value="${x.amount}"></td>
-      <td>${daysBetween(x.received,x.sent)}</td>
       <td><button onclick=saveRow(${i})>Save</button></td>
       <td><button class=danger onclick=deleteRow(${i})>Del</button></td>
     </tr>`).join('');
 }
 
 function exportExcel(){
-  let csv='Project,Customer,Type,Received,Sent,Status,Revision,QuoteID_CC,Qty_CC,QuoteID_HP,Qty_HP,Quote_Amount,TAT_days\n';
-  projects.forEach(x=>csv+=`${x.project},${x.customer},${x.type},${x.received},${x.sent},${x.status},${x.revision},${x.quoteCC},${x.qtyCC},${x.quoteHP},${x.qtyHP},${x.amount},${daysBetween(x.received,x.sent)}\n`);
+  let csv='Project,Customer,Type,Received,Sent,Status,Revision,QuoteID_CC,QuoteID_HP\n';
+  projects.forEach(x=>csv+=`${x.project},${x.customer},${x.type},${x.received},${x.sent},${x.status},${x.revision},${x.quoteCC},${x.quoteHP}\n`);
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='My_Work_Flow.csv';a.click();
 }
 render();
