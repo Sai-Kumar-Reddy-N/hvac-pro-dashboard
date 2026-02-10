@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>HVAC Project Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
+<title>HVAC Project Management System</title><link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#020617"><style>
 body{margin:0;font-family:Arial;background:#020617;color:#e5e7eb}
 header{padding:15px 20px;box-shadow:0 4px 20px rgba(0,0,0,.6)}
 h1{margin:0;color:#38bdf8}
@@ -13,22 +11,20 @@ h1{margin:0;color:#38bdf8}
 .card{background:#020617;border-radius:12px;padding:15px;box-shadow:0 10px 30px rgba(0,0,0,.6);margin-bottom:20px}
 input,select,button{padding:8px;margin:4px;border-radius:6px;border:none;background:#020617;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
 button{background:#2563eb;font-weight:bold;cursor:pointer}
+button:hover{opacity:.9}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:15px}
+.kpi{background:#020617;padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.6)}
+.kpi h4{margin:0;font-size:12px;opacity:.7}
+.kpi div{font-size:22px;color:#38bdf8;font-weight:bold}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{border-bottom:1px solid rgba(255,255,255,.15);padding:6px;text-align:center}
 th{color:#38bdf8}
-</style>
-</head>
-
-<body>
-
-<header>
-  <h1>HVAC Project Tracker</h1>
-</header>
-
-<div class="container">
-
-<!-- ADD PROJECT -->
-<div class="card">
+@media(max-width:768px){.filters{flex-direction:column}}
+</style></head>
+<body><header>
+  <h1>HVAC Project Management System</h1>
+</header><div class="container"><!-- ADD PROJECT --><div class="card">
 <h3>Add New Project</h3>
 <input id="project" placeholder="Project Name">
 <input id="customer" placeholder="Customer Name">
@@ -41,11 +37,23 @@ th{color:#38bdf8}
 </select>
 <input type="date" id="received">
 <button onclick="addProject()">ADD PROJECT</button>
+</div><!-- KPIs --><div class="kpis" id="kpis"></div><!-- FILTERS --><div class="card">
+<h3>Search & Filters</h3>
+<div class="filters">
+<input id="search" placeholder="Search Project / Customer" oninput="render()">
+<input type="date" id="filterDate" onchange="render()">
+<select id="filterStatus" onchange="render()">
+  <option value="">All Status</option>
+  <option>RECEIVED</option>
+  <option>IN PROGRESS</option>
+  <option>SELECTION SENT</option>
+  <option>QUOTATION SENT</option>
+  <option>COMPLETED</option>
+</select>
+<button onclick="exportExcel()">EXPORT EXCEL</button>
 </div>
-
-<!-- PROJECT LIST -->
-<div class="card">
-<h3>Projects</h3>
+</div><!-- PROJECT LIST --><div class="card">
+<h3>Projects List</h3>
 <table>
 <thead>
 <tr>
@@ -55,13 +63,9 @@ th{color:#38bdf8}
 </thead>
 <tbody id="tbody"></tbody>
 </table>
-</div>
-
-</div>
-
-<script>
+</div></div><script>
 let projects = JSON.parse(localStorage.getItem("hvacProjects")) || [];
-let id = projects.length + 1;
+let pid = projects.length ? projects.length + 1 : 1;
 
 function save(){ localStorage.setItem("hvacProjects", JSON.stringify(projects)); }
 
@@ -73,13 +77,12 @@ function addProject(){
 
   if(!p || !c || !r){ alert("Fill all fields"); return; }
 
-  if(projects.find(x => x.project === p)){
-    alert("Project already exists");
-    return;
+  if(projects.find(x => x.project.toLowerCase() === p.toLowerCase())){
+    alert("Project already exists"); return;
   }
 
   projects.push({
-    id:"P-"+id++,
+    id:`P-${pid++}`,
     project:p,
     customer:c,
     type:t,
@@ -90,33 +93,59 @@ function addProject(){
   });
 
   save();
-  render();
   project.value=customer.value=received.value="";
+  render();
 }
 
 function render(){
-  tbody.innerHTML = projects.map((x,i)=>`
+  const s = search.value.toLowerCase();
+  const fd = filterDate.value;
+  const fs = filterStatus.value;
+
+  let filtered = projects.filter(x =>
+    (!s || x.project.toLowerCase().includes(s) || x.customer.toLowerCase().includes(s)) &&
+    (!fd || x.received === fd) &&
+    (!fs || x.status === fs)
+  );
+
+  // KPIs
+  const k={RECEIVED:0,"IN PROGRESS":0,"SELECTION SENT":0,"QUOTATION SENT":0,COMPLETED:0};
+  filtered.forEach(x=>k[x.status]++);
+  kpis.innerHTML = Object.keys(k).map(i=>`<div class="kpi"><h4>${i}</h4><div>${k[i]}</div></div>`).join('');
+
+  tbody.innerHTML = filtered.map((x,i)=>`
   <tr>
     <td>${x.id}</td>
     <td>${x.project}</td>
     <td>${x.customer}</td>
     <td>${x.type}</td>
     <td>${x.received}</td>
-    <td><input type="date" value="${x.sent}" 
-        onchange="projects[${i}].sent=this.value;save()"></td>
+    <td><input type="date" value="${x.sent}" onchange="x.sent=this.value;save()"></td>
     <td>
-      <select onchange="projects[${i}].status=this.value;save()">
-        ${["RECEIVED","IN PROGRESS","SELECTION SENT","QUOTATION SENT","COMPLETED"]
-        .map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`)}
+      <select onchange="x.status=this.value;save();render()">
+        ${["RECEIVED","IN PROGRESS","SELECTION SENT","QUOTATION SENT","COMPLETED"].map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`)}
       </select>
     </td>
-    <td><input type="number" value="${x.revision}" 
-        onchange="projects[${i}].revision=this.value;save()"></td>
-  </tr>`).join("");
+    <td><input type="number" value="${x.revision}" min="0" onchange="x.revision=this.value;save()"></td>
+  </tr>`).join('');
+}
+
+function exportExcel(){
+  let csv = "ID,Project,Customer,Type,Received,Sent,Status,Revision\n";
+  projects.forEach(x=>{
+    csv += `${x.id},${x.project},${x.customer},${x.type},${x.received},${x.sent},${x.status},${x.revision}\n`;
+  });
+
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'HVAC_Projects.csv';
+  a.click();
 }
 
 render();
-</script>
-
-</body>
+</script><script>
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js'); }
+</script></body>
 </html>
