@@ -2,7 +2,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HVAC Project Manager</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
+<title>My Work Flow</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
 :root{
   --bg:#0b1220;
   --panel:#111827;
@@ -13,78 +13,49 @@
   --muted:#9ca3af;
 }
 *{box-sizing:border-box}
-body{
-  margin:0;font-family:'Inter',sans-serif;background:linear-gradient(180deg,#0b1220,#020617);
-  color:var(--text);
-}
+body{margin:0;font-family:'Inter',sans-serif;background:linear-gradient(180deg,#0b1220,#020617);color:var(--text)}
 
-/* NAV */
-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 24px;background:rgba(2,6,23,.9);
-  backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,.6);
-}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:rgba(2,6,23,.9);backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,.6)}
 nav h1{margin:0;font-size:20px;color:var(--accent)}
-nav .tabs{display:flex;gap:16px}
+nav .tabs{display:flex;gap:18px}
 nav .tab{cursor:pointer;color:var(--muted);font-weight:500}
 nav .tab.active{color:var(--accent)}
 
 .container{max-width:1400px;margin:auto;padding:24px}
-
-.card{
-  background:var(--panel);
-  border-radius:16px;
-  padding:20px;
-  margin-bottom:24px;
-  box-shadow:0 20px 50px rgba(0,0,0,.6);
-}
+.card{background:var(--panel);border-radius:16px;padding:20px;margin-bottom:24px;box-shadow:0 20px 50px rgba(0,0,0,.6)}
 
 h3{margin-top:0;color:var(--accent);font-weight:600}
 
-input,select,button{
-  font-family:inherit;padding:10px 12px;border-radius:10px;border:none;
-  background:var(--card);color:var(--text);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
-}
-button{
-  background:linear-gradient(135deg,var(--accent),var(--accent-dark));
-  font-weight:600;cursor:pointer
-}
+input,select,button{font-family:inherit;padding:10px 12px;border-radius:10px;border:none;background:var(--card);color:var(--text);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent-dark));font-weight:600;cursor:pointer}
 button.secondary{background:#1f2937}
 button:hover{opacity:.9}
 
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
 .kpi{background:var(--card);padding:16px;border-radius:14px}
 .kpi h4{margin:0;font-size:13px;color:var(--muted)}
 .kpi div{font-size:26px;font-weight:700;color:var(--accent)}
 
 .filters{display:flex;flex-wrap:wrap;gap:12px}
-
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center}
 th{color:var(--accent)}
-
 .hidden{display:none}
-
 .save-btn{padding:6px 10px;font-size:12px}
 
 @media(max-width:768px){nav .tabs{gap:10px}}
 </style></head>
 <body><nav>
-  <h1>HVAC Manager</h1>
+  <h1>My Work Flow</h1>
   <div class="tabs">
-    <div class="tab active" onclick="showPage('dashboard')">Dashboard</div>
-    <div class="tab" onclick="showPage('projects')">Projects</div>
+    <div class="tab active" onclick="showPage('add')">Add Project</div>
+    <div class="tab" onclick="showPage('projects')">Projects List</div>
+    <div class="tab" onclick="showPage('dashboard')">Dashboard</div>
   </div>
-</nav><div class="container"><!-- DASHBOARD --><div id="dashboard">
+</nav><div class="container"><!-- ADD PROJECT --><div id="add">
   <div class="card">
-    <h3>Dashboard</h3>
-    <div class="kpis" id="kpis"></div>
-  </div>
-</div><!-- PROJECTS --><div id="projects" class="hidden">  <div class="card">
     <h3>Add New Project</h3>
     <div class="form-grid">
       <input id="project" placeholder="Project Name">
@@ -99,7 +70,9 @@ th{color:var(--accent)}
       <input type="date" id="received">
       <button onclick="addProject()">Add Project</button>
     </div>
-  </div>  <div class="card">
+  </div>
+</div><!-- PROJECTS LIST --><div id="projects" class="hidden">
+  <div class="card">
     <h3>Search & Filters</h3>
     <div class="filters">
       <input id="search" placeholder="Search project or customer" oninput="render()">
@@ -112,6 +85,11 @@ th{color:var(--accent)}
         <option>QUOTATION SENT</option>
         <option>COMPLETED</option>
       </select>
+      <select id="filterRevision" onchange="render()">
+        <option value="">All Projects</option>
+        <option value="revised">Only Revised</option>
+      </select>
+      <button onclick="exportExcel()">Export Excel</button>
     </div>
   </div>  <div class="card table-wrap">
     <h3>Projects List</h3>
@@ -119,48 +97,56 @@ th{color:var(--accent)}
       <thead>
         <tr>
           <th>ID</th><th>Project</th><th>Customer</th><th>Type</th>
-          <th>Received</th><th>Sent</th><th>Status</th><th>Rev</th><th>Save</th>
+          <th>Received</th><th>Sent</th><th>Status</th><th>Rev</th>
+          <th>Quote ID (Cooling)</th><th>Quote ID (Heat Pipe)</th><th>Save</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
-  </div></div>
-</div><script>
-/* NAVIGATION */
+  </div>
+</div><!-- DASHBOARD --><div id="dashboard" class="hidden">
+  <div class="card">
+    <h3>Dashboard</h3>
+    <div class="kpis" id="kpis"></div>
+  </div>
+</div></div><script>
 function showPage(p){
-  document.getElementById('dashboard').classList.toggle('hidden',p!=='dashboard');
-  document.getElementById('projects').classList.toggle('hidden',p!=='projects');
+  ['add','projects','dashboard'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  document.getElementById(p).classList.remove('hidden');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelector(`.tab[onclick*=\"${p}\"]`).classList.add('active');
 }
 
-/* DATA */
 let projects = JSON.parse(localStorage.getItem('hvacProjects')) || [];
 let pid = projects.length ? projects.length+1 : 1;
-
 function saveAll(){ localStorage.setItem('hvacProjects',JSON.stringify(projects)); }
 
 function addProject(){
   const p=project.value.trim(),c=customer.value.trim(),t=type.value,r=received.value;
   if(!p||!c||!r){alert('Fill all fields');return;}
   if(projects.find(x=>x.project.toLowerCase()===p.toLowerCase())){alert('Project exists');return;}
-  projects.push({id:`P-${pid++}`,project:p,customer:c,type:t,received:r,sent:'',status:'RECEIVED',revision:0});
+  projects.push({id:`P-${pid++}`,project:p,customer:c,type:t,received:r,sent:'',status:'RECEIVED',revision:0,quoteCC:'',quoteHP:''});
   saveAll();project.value=customer.value=received.value='';render();
 }
 
 function saveRow(i){
-  const row = document.getElementById('row-'+i);
-  projects[i].sent = row.querySelector('.sent').value;
-  projects[i].status = row.querySelector('.status').value;
-  projects[i].revision = row.querySelector('.rev').value;
-  saveAll();
-  render();
-  alert('Project updated');
+  const row=document.getElementById('row-'+i);
+  projects[i].sent=row.querySelector('.sent').value;
+  projects[i].status=row.querySelector('.status').value;
+  projects[i].revision=row.querySelector('.rev').value;
+  projects[i].quoteCC=row.querySelector('.qcc').value;
+  projects[i].quoteHP=row.querySelector('.qhp').value;
+  saveAll();render();alert('Project updated');
 }
 
 function render(){
-  const s=search.value.toLowerCase(),fd=filterDate.value,fs=filterStatus.value;
-  const f=projects.filter(x=>(!s||x.project.toLowerCase().includes(s)||x.customer.toLowerCase().includes(s))&&(!fd||x.received===fd)&&(!fs||x.status===fs));
+  const s=search.value.toLowerCase(),fd=filterDate.value,fs=filterStatus.value,fr=filterRevision.value;
+  const f=projects.filter(x=>
+    (!s||x.project.toLowerCase().includes(s)||x.customer.toLowerCase().includes(s))&&
+    (!fd||x.received===fd)&&
+    (!fs||x.status===fs)&&
+    (!fr||(fr==='revised'&&Number(x.revision)>0))
+  );
 
   const k={RECEIVED:0,'IN PROGRESS':0,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0};
   f.forEach(x=>k[x.status]++);
@@ -168,21 +154,22 @@ function render(){
 
   tbody.innerHTML=f.map((x,i)=>`
     <tr id="row-${i}">
-      <td>${x.id}</td>
-      <td>${x.project}</td>
-      <td>${x.customer}</td>
-      <td>${x.type}</td>
+      <td>${x.id}</td><td>${x.project}</td><td>${x.customer}</td><td>${x.type}</td>
       <td>${x.received}</td>
       <td><input type="date" class="sent" value="${x.sent}"></td>
-      <td>
-        <select class="status">
-          ${['RECEIVED','IN PROGRESS','SELECTION SENT','QUOTATION SENT','COMPLETED']
-            .map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`)}
-        </select>
-      </td>
+      <td><select class="status">${['RECEIVED','IN PROGRESS','SELECTION SENT','QUOTATION SENT','COMPLETED'].map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`)}</select></td>
       <td><input type="number" class="rev" min="0" value="${x.revision}"></td>
+      <td><input class="qcc" value="${x.quoteCC}"></td>
+      <td><input class="qhp" value="${x.quoteHP}"></td>
       <td><button class="save-btn" onclick="saveRow(${i})">Save</button></td>
     </tr>`).join('');
+}
+
+function exportExcel(){
+  let csv='ID,Project,Customer,Type,Received,Sent,Status,Revision,QuoteID_Cooling,QuoteID_HeatPipe\n';
+  projects.forEach(x=>csv+=`${x.id},${x.project},${x.customer},${x.type},${x.received},${x.sent},${x.status},${x.revision},${x.quoteCC},${x.quoteHP}\n`);
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='My_Work_Flow.csv';a.click();
 }
 
 render();
