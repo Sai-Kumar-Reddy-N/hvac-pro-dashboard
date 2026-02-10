@@ -69,68 +69,139 @@ input,select,textarea,button{font-family:inherit;padding:6px 7px;border-radius:8
     <h3>Dashboard</h3>
     <div class="kpis" id="kpis"></div>
   </div>
-</div></div><script>
-function showPage(p){
-  ['work','dashboard'].forEach(id=>document.getElementById(id).classList.add('hidden'));
-  document.getElementById(p).classList.remove('hidden');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelector(`.tab[onclick*=\"${p}\"]`).classList.add('active');
-}
-
+</div></div>
+  <script>
 let projects = JSON.parse(localStorage.getItem('hvacProjects')) || [];
-function saveAll(){ localStorage.setItem('hvacProjects',JSON.stringify(projects)); }
 
-function addProject(){
-  const p=project.value.trim(),c=customer.value.trim(),t=type.value,r=received.value;
-  if(!p||!c||!r){alert('Fill all fields');return;}
-  if(projects.find(x=>x.project.toLowerCase()===p.toLowerCase())){alert('Project exists');return;}
-  projects.push({project:p,customer:c,type:t,received:r,sent:'',status:'RECEIVED',revision:0,quoteCC:'',quoteHP:'',remarks:'',updated:Date.now()});
-  saveAll();project.value=customer.value=received.value='';render();
+function saveAll() {
+  localStorage.setItem('hvacProjects', JSON.stringify(projects));
 }
 
-function saveRow(i){
-  const row=document.getElementById('row-'+i);
-  const x=projects[i];
-  x.sent=row.querySelector('.sent').value;
-  x.status=row.querySelector('.status').value;
-  x.revision=row.querySelector('.rev').value;
-  x.quoteCC=row.querySelector('.qcc').value;
-  x.quoteHP=row.querySelector('.qhp').value;
-  x.remarks=row.querySelector('.remarks').value;
-  if((x.status==='SELECTION SENT'||x.status==='QUOTATION SENT')&&!x.sent){x.sent=new Date().toISOString().split('T')[0];}
-  x.updated=Date.now();saveAll();render();
+function addProject() {
+  const p = document.getElementById('project').value.trim();
+  const c = document.getElementById('customer').value.trim();
+  const t = document.getElementById('type').value;
+  const r = document.getElementById('received').value;
+
+  if (!p || !c || !r) {
+    alert('Please fill all fields');
+    return;
+  }
+
+  if (projects.find(x => x.project.toLowerCase() === p.toLowerCase())) {
+    alert('Project already exists');
+    return;
+  }
+
+  projects.push({
+    project: p,
+    customer: c,
+    type: t,
+    received: r,
+    sent: '',
+    status: 'RECEIVED',
+    revision: 0,
+    quoteCC: '',
+    quoteHP: '',
+    remarks: '',
+    updated: Date.now()
+  });
+
+  saveAll();
+
+  document.getElementById('project').value = '';
+  document.getElementById('customer').value = '';
+  document.getElementById('received').value = '';
+
+  render();
 }
 
-function deleteRow(i){if(confirm('Delete this project?')){projects.splice(i,1);saveAll();render();}}
+function saveRow(i) {
+  const row = document.getElementById('row-' + i);
+  const x = projects[i];
 
-function render(){
-  const s=search.value.toLowerCase(),fd=filterDate.value,fs=filterStatus.value,fr=filterRevision.value;
-  const f=projects.filter(x=>(!s||x.project.toLowerCase().includes(s)||x.customer.toLowerCase().includes(s))&&(!fd||x.received===fd)&&(!fs||x.status===fs)&&(!fr||(fr==='revised'&&Number(x.revision)>0))).sort((a,b)=>new Date(b.received)-new Date(a.received)||(b.updated||0)-(a.updated||0));
+  x.sent = row.querySelector('.sent').value;
+  x.status = row.querySelector('.status').value;
+  x.revision = row.querySelector('.rev').value;
+  x.quoteCC = row.querySelector('.qcc').value;
+  x.quoteHP = row.querySelector('.qhp').value;
+  x.remarks = row.querySelector('.remarks').value;
+  x.updated = Date.now();
 
-  const k={RECEIVED:f.length,'IN PROGRESS':0,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0};
-  f.forEach(x=>{if(x.status!=='RECEIVED')k[x.status]++;});
-  kpis.innerHTML=Object.keys(k).map(i=>`<div class=kpi><h4>${i}</h4><div>${k[i]}</div></div>`).join('');
+  if ((x.status === 'SELECTION SENT' || x.status === 'QUOTATION SENT') && !x.sent) {
+    x.sent = new Date().toISOString().split('T')[0];
+  }
 
-  tbody.innerHTML=f.map((x,i)=>`
-    <tr id=row-${i}>
-      <td title="${x.project}">${x.project}</td>
-      <td title="${x.customer}">${x.customer}</td>
+  saveAll();
+  render();
+}
+
+function deleteRow(i) {
+  if (confirm('Delete this project?')) {
+    projects.splice(i, 1);
+    saveAll();
+    render();
+  }
+}
+
+function render() {
+  const s = document.getElementById('search').value.toLowerCase();
+  const fd = document.getElementById('filterDate').value;
+  const fs = document.getElementById('filterStatus').value;
+  const fr = document.getElementById('filterRevision').value;
+
+  const filtered = projects
+    .filter(x =>
+      (!s || x.project.toLowerCase().includes(s) || x.customer.toLowerCase().includes(s)) &&
+      (!fd || x.received === fd) &&
+      (!fs || x.status === fs) &&
+      (!fr || (fr === 'revised' && Number(x.revision) > 0))
+    )
+    .sort((a, b) =>
+      new Date(b.received) - new Date(a.received) || (b.updated || 0) - (a.updated || 0)
+    );
+
+  const k = { RECEIVED: filtered.length, 'IN PROGRESS': 0, 'SELECTION SENT': 0, 'QUOTATION SENT': 0, COMPLETED: 0 };
+  filtered.forEach(x => { if (x.status !== 'RECEIVED') k[x.status]++; });
+
+  document.getElementById('kpis').innerHTML =
+    Object.keys(k).map(i => `<div class="kpi"><h4>${i}</h4><div>${k[i]}</div></div>`).join('');
+
+  document.getElementById('tbody').innerHTML = filtered.map((x, i) => `
+    <tr id="row-${i}">
+      <td>${x.project}</td>
+      <td>${x.customer}</td>
       <td>${x.type}</td>
       <td>${x.received}</td>
-      <td><input type=date class=sent value="${x.sent}"></td>
-      <td><select class=status>${['RECEIVED','IN PROGRESS','SELECTION SENT','QUOTATION SENT','COMPLETED'].map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`)}</select></td>
-      <td><input class=rev type=number min=0 value="${x.revision}"></td>
-      <td><input class=qcc value="${x.quoteCC}"></td>
-      <td><input class=qhp value="${x.quoteHP}"></td>
-      <td><textarea class=remarks>${x.remarks}</textarea></td><td><button onclick=saveRow(${i})>Save</button></td>
-  <td><button class=danger onclick=deleteRow(${i})>Del</button></td>
-</tr>`).join('');
-
+      <td><input type="date" class="sent" value="${x.sent}"></td>
+      <td>
+        <select class="status">
+          ${['RECEIVED','IN PROGRESS','SELECTION SENT','QUOTATION SENT','COMPLETED']
+            .map(s => `<option ${s === x.status ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td><input type="number" class="rev" value="${x.revision}"></td>
+      <td><input class="qcc" value="${x.quoteCC}"></td>
+      <td><input class="qhp" value="${x.quoteHP}"></td>
+      <td><textarea class="remarks">${x.remarks}</textarea></td>
+      <td><button onclick="saveRow(${i})">Save</button></td>
+      <td><button class="danger" onclick="deleteRow(${i})">Del</button></td>
+    </tr>
+  `).join('');
 }
 
-function exportExcel(){ let csv='Project,Customer,Type,Received,Sent,Status,Revision,QuoteID_CC,QuoteID_HP,Remarks\n'; projects.forEach(x=>csv+=${x.project},${x.customer},${x.type},${x.received},${x.sent},${x.status},${x.revision},${x.quoteCC},${x.quoteHP},"${(x.remarks||'').replace(/"/g,'""')}"\n); const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='My_Work_Flow.csv';a.click(); }
+function exportExcel() {
+  let csv = 'Project,Customer,Type,Received,Sent,Status,Revision,QuoteID_CC,QuoteID_HP,Remarks\n';
+  projects.forEach(x => {
+    csv += `${x.project},${x.customer},${x.type},${x.received},${x.sent},${x.status},${x.revision},${x.quoteCC},${x.quoteHP},${x.remarks}\n`;
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'My_Work_Flow.csv';
+  a.click();
+}
 
-render(); </script>
-
+render();
+  </script>
 </body>
 </html>
