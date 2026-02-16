@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Work Flow</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -16,169 +15,98 @@
   --muted:#9ca3af;
   --danger:#ef4444;
 }
-*{box-sizing:border-box}
 body{
   margin:0;
   font-family:Inter,sans-serif;
   background:radial-gradient(circle at top,#0f172a,#020617);
   color:var(--text);
 }
-
-/* NAVBAR */
 nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:16px 28px;
   background:#020617;
-  box-shadow:0 10px 40px rgba(0,0,0,.7);
 }
 nav h1{
   margin:0;
-  font-size:20px;
   font-weight:700;
   background:linear-gradient(90deg,#22d3ee,#38bdf8);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-
 .nav-kpis{display:flex;gap:16px}
 .nav-kpi{
   background:var(--glass);
-  backdrop-filter:blur(12px);
   padding:8px 16px;
   border-radius:16px;
   text-align:center;
-  min-width:90px;
 }
-.nav-kpi span{font-size:10px;color:var(--muted)}
-.nav-kpi b{display:block;font-size:18px;margin-top:3px}
-
-/* LAYOUT */
 .container{max-width:1700px;margin:auto;padding:24px}
 
-/* ADD SECTION */
 .card{
   background:var(--glass);
-  backdrop-filter:blur(14px);
   border-radius:20px;
   padding:20px;
   margin-bottom:28px;
-  box-shadow:0 25px 60px rgba(0,0,0,.7);
 }
+
 .form-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:16px;
 }
+
 input,select,textarea{
   width:100%;
-  padding:10px;
-  border-radius:14px;
+  padding:8px;
+  border-radius:12px;
   border:1px solid rgba(255,255,255,.12);
   background:rgba(255,255,255,.05);
   color:var(--text);
 }
 button{
-  padding:8px 16px;
-  border-radius:12px;
+  padding:6px 14px;
+  border-radius:10px;
   border:none;
-  font-weight:600;
   cursor:pointer;
+  font-weight:600;
 }
-button.primary{
-  background:linear-gradient(135deg,#22d3ee,#0ea5e9);
-  color:#002;
-}
-button.danger{
-  background:linear-gradient(135deg,#ef4444,#dc2626);
-  color:#fff;
-}
+button.primary{background:#22d3ee;color:#002}
+button.danger{background:#ef4444;color:#fff}
 
-/* TILE GRID */
 .tile-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
   gap:22px;
 }
 
-/* TILE */
 .tile{
   background:var(--glass);
-  backdrop-filter:blur(16px);
   border-radius:22px;
   padding:18px;
   position:relative;
-  box-shadow:0 20px 60px rgba(0,0,0,.7);
-  transition:.35s ease;
-}
-.tile:hover{
-  transform:translateY(-6px);
-  box-shadow:0 30px 70px rgba(34,211,238,.4);
 }
 
-/* HEADER */
-.tile-header{
-  margin-bottom:12px;
-}
-.tile-title{
-  font-weight:700;
-  font-size:15px;
-}
-.tile-customer{
-  font-size:12px;
-  color:var(--muted);
-}
-.type-badge{
+.badge{
   display:inline-block;
   padding:4px 8px;
   border-radius:12px;
   font-size:10px;
-  background:#1e293b;
   margin-top:6px;
 }
 
-/* AGING BADGE */
-.aging{
-  position:absolute;
-  top:16px;
-  right:16px;
-  font-size:10px;
-  padding:4px 8px;
-  border-radius:12px;
-}
-.aging.normal{background:#1e293b}
-.aging.warning{background:#facc15;color:#000}
-.aging.danger{background:#ef4444}
+.type-CHW{background:#2563eb}
+.type-DX{background:#f97316}
+.type-CHWCOMBI{background:#7c3aed}
+.type-DXCOMBI{background:#ec4899}
+.type-CHWPLUS{background:#10b981}
+.type-DXPLUS{background:#facc15;color:#000}
 
-/* SECTION */
-.section{
-  margin-top:12px;
-  font-size:12px;
-}
-.section label{
-  font-size:10px;
-  color:var(--muted);
-  display:block;
-}
-
-/* CHECKBOX AREA */
-.status-row{
-  display:flex;
-  gap:14px;
-  margin-top:10px;
-  font-size:12px;
-}
-
-textarea{
-  resize:vertical;
-  min-height:50px;
-}
-.actions{
-  display:flex;
-  justify-content:space-between;
-  margin-top:12px;
-}
+.section{margin-top:10px;font-size:12px}
+.status-row{display:flex;gap:14px;margin-top:10px}
+.actions{display:flex;justify-content:space-between;margin-top:12px}
+textarea{min-height:50px}
 </style>
 </head>
 
@@ -191,7 +119,6 @@ textarea{
 
 <div class="container">
 
-<!-- ADD PROJECT -->
 <div class="card">
   <div class="form-grid">
     <input id="project" placeholder="Project Name">
@@ -212,7 +139,6 @@ textarea{
   </div>
 </div>
 
-<!-- TILE GRID -->
 <div class="tile-grid" id="tileGrid"></div>
 
 </div>
@@ -244,11 +170,18 @@ $('addBtn').onclick=()=>{
 
   projects.push({
     id:Date.now(),
-    project:p,customer:c,type:t,
-    received:r,sent:'',
+    project:p,
+    customer:c,
+    type:t,
+    received:r,
+    selectionDate:'',
+    quotationDate:'',
     status:'RECEIVED',
-    revision:0,quoteCC:'',quoteHP:'',
-    remarks:'',updated:Date.now()
+    revision:'R0',
+    quoteCC:'',
+    quoteHP:'',
+    remarks:'',
+    updated:Date.now()
   });
 
   saveAll();
@@ -257,11 +190,14 @@ $('addBtn').onclick=()=>{
   render();
 };
 
-function getAging(received){
-  const days=Math.floor((Date.now()-new Date(received))/(1000*60*60*24));
-  if(days<=3)return{cls:'normal',text:`${days}d`};
-  if(days<=7)return{cls:'warning',text:`${days}d`};
-  return{cls:'danger',text:`${days}d`};
+function getTypeClass(type){
+  if(type==="CHW")return "type-CHW";
+  if(type==="DX")return "type-DX";
+  if(type==="CHW COMBI")return "type-CHWCOMBI";
+  if(type==="DX COMBI")return "type-DXCOMBI";
+  if(type==="CHW + CHW COMBI")return "type-CHWPLUS";
+  if(type==="DX + DX COMBI")return "type-DXPLUS";
+  return "";
 }
 
 function render(){
@@ -281,30 +217,22 @@ function render(){
   $('tileGrid').innerHTML='';
 
   list.forEach(x=>{
-    const aging=getAging(x.received);
 
     const selectionChecked=x.status==="SELECTION SENT"||x.status==="COMPLETED";
     const quotationChecked=x.status==="QUOTATION SENT"||x.status==="COMPLETED";
 
+    const needsBoth = x.type.includes("COMBI") || x.type.includes("+");
+
     const tile=document.createElement('div');
     tile.className='tile';
     tile.innerHTML=`
-      <div class="aging ${aging.cls}">${aging.text}</div>
-
-      <div class="tile-header">
-        <div class="tile-title">${x.project}</div>
-        <div class="tile-customer">${x.customer}</div>
-        <div class="type-badge">${x.type}</div>
-      </div>
+      <div><strong>${x.project}</strong></div>
+      <div style="color:#9ca3af;font-size:12px">${x.customer}</div>
+      <div class="badge ${getTypeClass(x.type)}">${x.type}</div>
 
       <div class="section">
         <label>Received</label>
         ${x.received}
-      </div>
-
-      <div class="section">
-        <label>Sent Date</label>
-        <input type="date" value="${x.sent||''}">
       </div>
 
       <div class="status-row">
@@ -313,8 +241,20 @@ function render(){
       </div>
 
       <div class="section">
+        <label>Selection Date</label>
+        <input type="date" value="${x.selectionDate||''}">
+      </div>
+
+      <div class="section">
+        <label>Quotation Date</label>
+        <input type="date" value="${x.quotationDate||''}">
+      </div>
+
+      <div class="section">
         <label>Revision</label>
-        <input type="number" value="${x.revision||0}">
+        <select>
+          ${Array.from({length:11},(_,i)=>`<option ${x.revision==="R"+i?'selected':''}>R${i}</option>`).join('')}
+        </select>
       </div>
 
       <div class="section">
@@ -322,10 +262,11 @@ function render(){
         <input value="${x.quoteCC||''}">
       </div>
 
+      ${needsBoth?`
       <div class="section">
         <label>Quote ID HP</label>
         <input value="${x.quoteHP||''}">
-      </div>
+      </div>`:''}
 
       <div class="section">
         <label>Remarks</label>
@@ -338,21 +279,24 @@ function render(){
       </div>
     `;
 
-    const inputs=tile.querySelectorAll('input,textarea');
+    const inputs=tile.querySelectorAll('input,select,textarea');
+
     tile.querySelector('.primary').onclick=()=>{
-      x.sent=inputs[0].value;
-      const selection=inputs[1].checked;
-      const quotation=inputs[2].checked;
+      const selection=inputs[0].checked;
+      const quotation=inputs[1].checked;
 
       if(selection&&quotation)x.status="COMPLETED";
       else if(selection)x.status="SELECTION SENT";
       else if(quotation)x.status="QUOTATION SENT";
       else x.status="RECEIVED";
 
-      x.revision=inputs[3].value;
-      x.quoteCC=inputs[4].value;
-      x.quoteHP=inputs[5].value;
-      x.remarks=inputs[6].value;
+      x.selectionDate=inputs[2].value;
+      x.quotationDate=inputs[3].value;
+      x.revision=inputs[4].value;
+      x.quoteCC=inputs[5].value;
+      if(needsBoth)x.quoteHP=inputs[6].value;
+      x.remarks=inputs[needsBoth?7:6].value;
+
       x.updated=Date.now();
       saveAll();render();
     };
