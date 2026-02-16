@@ -10,8 +10,8 @@
 <style>
 :root{
   --bg:#0b1220;
+  --glass:rgba(255,255,255,0.05);
   --panel:#111827;
-  --card:#0f172a;
   --accent:#22d3ee;
   --text:#e5e7eb;
   --muted:#9ca3af;
@@ -21,110 +21,114 @@
 body{
   margin:0;
   font-family:Inter,sans-serif;
-  background:linear-gradient(180deg,#0b1220,#020617);
+  background:linear-gradient(160deg,#0b1220,#020617);
   color:var(--text);
 }
 
 /* NAVBAR */
 nav{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  padding:12px 20px;
+  align-items:center;
+  padding:14px 24px;
   background:#020617;
-  box-shadow:0 6px 20px rgba(0,0,0,.6);
+  box-shadow:0 8px 30px rgba(0,0,0,.6);
 }
-nav h1{margin:0;font-size:18px;color:var(--accent)}
+nav h1{margin:0;color:var(--accent);font-size:20px}
 
 /* DASHBOARD KPI */
 .nav-kpis{display:flex;gap:14px}
 .nav-kpi{
-  background:linear-gradient(145deg,#0f172a,#020617);
+  background:var(--glass);
+  backdrop-filter:blur(10px);
   padding:8px 14px;
   border-radius:14px;
-  min-width:95px;
   text-align:center;
-  box-shadow:0 6px 20px rgba(0,0,0,.6);
-  transition:.25s ease;
+  min-width:95px;
+  transition:.3s ease;
 }
 .nav-kpi:hover{
-  transform:translateY(-2px) scale(1.03);
-  box-shadow:0 10px 28px rgba(34,211,238,.35);
+  transform:translateY(-2px);
+  box-shadow:0 10px 28px rgba(34,211,238,.4);
 }
-.nav-kpi span{
-  display:block;
-  font-size:10px;
-  color:var(--muted);
-}
-.nav-kpi b{
-  display:block;
-  font-size:20px;
-  font-weight:600;
-}
+.nav-kpi span{font-size:10px;color:var(--muted)}
+.nav-kpi b{display:block;font-size:18px;margin-top:2px}
+
 .nav-kpi.received b{color:#38bdf8}
 .nav-kpi.selection b{color:#facc15}
 .nav-kpi.quotation b{color:#fb7185}
 .nav-kpi.completed b{color:#4ade80}
 
 /* LAYOUT */
-.container{max-width:1500px;margin:auto;padding:16px}
+.container{max-width:1600px;margin:auto;padding:20px}
 .card{
-  background:var(--panel);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:14px;
-  box-shadow:0 14px 36px rgba(0,0,0,.6);
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.6);
 }
-h3{margin:0 0 10px 0;color:var(--accent);font-size:14px}
-
-input,select,textarea,button{
-  font-family:inherit;
-  padding:6px 7px;
-  border-radius:8px;
-  border:none;
-  background:var(--card);
-  color:var(--text);
-  font-size:11px;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
-}
-textarea{resize:vertical;min-height:28px}
-button{
-  background:var(--accent);
-  color:#022;
-  font-weight:600;
-  cursor:pointer;
-}
-button.danger{background:var(--danger);color:#fff}
+h3{margin:0 0 16px 0;color:var(--accent)}
 
 .form-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:8px;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:14px;
 }
-.filters{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:10px;
+
+/* FORM */
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  transition:.3s ease;
 }
-.table-wrap{overflow-x:hidden}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border:1px solid var(--accent);
+  box-shadow:0 0 12px rgba(34,211,238,.5);
+}
+
+button{
+  padding:8px 14px;
+  border-radius:10px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+button.primary{
+  background:linear-gradient(135deg,#22d3ee,#0ea5e9);
+  color:#002;
+}
+button.primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(34,211,238,.5);
+}
+button.danger{
+  background:linear-gradient(135deg,#ef4444,#dc2626);
+  color:#fff;
+}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
 table{
   width:100%;
   border-collapse:collapse;
-  font-size:11px;
-  table-layout:fixed;
+  font-size:12px;
+  min-width:1200px;
 }
 th,td{
-  padding:6px;
+  padding:8px;
   border-bottom:1px solid rgba(255,255,255,.1);
   text-align:center;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
 th{color:var(--accent)}
-.col-small{width:55px}
-.col-remarks{width:160px}
+
+textarea{resize:vertical;min-height:40px}
 </style>
 </head>
 
@@ -142,50 +146,46 @@ th{color:var(--accent)}
   <h3>Add Project</h3>
   <div class="form-grid">
     <input id="project" placeholder="Project Name">
-    <input id="customer" placeholder="Customer Name">
+
+    <!-- SMART CUSTOMER -->
+    <input id="customer" list="customerList" placeholder="Customer Name">
+    <datalist id="customerList"></datalist>
+
+    <!-- UPDATED COIL TYPES -->
     <select id="type">
-      <option>Cooling Coil</option>
-      <option>Heat Pipe</option>
-      <option>Combi Coil</option>
-      <option>FAHU</option>
-      <option>AHU</option>
+      <option>CHW</option>
+      <option>DX</option>
+      <option>CHW COMBI</option>
+      <option>DX COMBI</option>
+      <option>CHW + CHW COMBI</option>
+      <option>DX + DX COMBI</option>
     </select>
+
     <input type="date" id="received">
-    <button id="addBtn">Add</button>
+    <button id="addBtn" class="primary">Add</button>
   </div>
 </div>
 
 <!-- PROJECT LIST -->
 <div class="card">
-  <h3>Projects List</h3>
-
-  <div class="filters">
-    <input id="search" placeholder="Search project / customer">
-    <input type="date" id="filterDate">
-    <select id="filterStatus">
-      <option value="">All Status</option>
-      <option>RECEIVED</option>
-      <option>SELECTION SENT</option>
-      <option>QUOTATION SENT</option>
-      <option>COMPLETED</option>
-    </select>
-    <select id="filterRevision">
-      <option value="">All</option>
-      <option value="revised">Only Revised</option>
-    </select>
-  </div>
+  <h3>Projects</h3>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>Project</th><th>Customer</th><th>Type</th>
-          <th>Recv</th><th>Sent</th><th>Status</th>
-          <th class="col-small">Rev</th>
-          <th>QID-CC</th><th>QID-HP</th>
-          <th class="col-remarks">Remarks</th>
-          <th class="col-small">Save</th>
-          <th class="col-small">Del</th>
+          <th>Project</th>
+          <th>Customer</th>
+          <th>Type</th>
+          <th>Recv</th>
+          <th>Sent</th>
+          <th>Status</th>
+          <th>Rev</th>
+          <th>QID-CC</th>
+          <th>QID-HP</th>
+          <th>Remarks</th>
+          <th>Save</th>
+          <th>Del</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -199,12 +199,18 @@ th{color:var(--accent)}
 const $ = id => document.getElementById(id);
 
 let projects = JSON.parse(localStorage.getItem('hvacProjects')) || [];
+let customers = JSON.parse(localStorage.getItem('customerMaster')) || [];
 
 function saveAll(){
   localStorage.setItem('hvacProjects', JSON.stringify(projects));
+  localStorage.setItem('customerMaster', JSON.stringify(customers));
 }
 
-/* ADD PROJECT */
+function updateCustomerList(){
+  $('customerList').innerHTML =
+    customers.map(c=>`<option value="${c}">`).join('');
+}
+
 $('addBtn').onclick = () => {
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
@@ -213,36 +219,33 @@ $('addBtn').onclick = () => {
 
   if(!p||!c||!r){alert('Fill all fields');return;}
 
+  if(!customers.includes(c)){
+    customers.push(c);
+  }
+
   projects.push({
     id:Date.now(),
-    project:p,customer:c,type:t,
-    received:r,sent:'',
+    project:p,
+    customer:c,
+    type:t,
+    received:r,
+    sent:'',
     status:'RECEIVED',
     revision:0,
-    quoteCC:'',quoteHP:'',
-    remarks:'',updated:Date.now()
+    quoteCC:'',
+    quoteHP:'',
+    remarks:'',
+    updated:Date.now()
   });
 
   saveAll();
+  updateCustomerList();
   $('project').value=$('customer').value=$('received').value='';
   render();
 };
 
-/* RENDER */
 function render(){
-  const s=$('search').value.toLowerCase();
-  const fd=$('filterDate').value;
-  const fs=$('filterStatus').value;
-  const fr=$('filterRevision').value;
-
-  const list=projects
-    .filter(x=>
-      (!s||x.project.toLowerCase().includes(s)||x.customer.toLowerCase().includes(s)) &&
-      (!fd||x.received===fd) &&
-      (!fs||x.status===fs) &&
-      (!fr||(fr==='revised'&&x.revision>0))
-    )
-    .sort((a,b)=>new Date(b.received)-new Date(a.received)||(b.updated||0)-(a.updated||0));
+  const list=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received));
 
   const k={RECEIVED:list.length,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0};
   list.forEach(x=>{if(k[x.status]!==undefined&&x.status!=='RECEIVED')k[x.status]++;});
@@ -258,7 +261,9 @@ function render(){
   list.forEach(x=>{
     const tr=document.createElement('tr');
     tr.innerHTML=`
-      <td>${x.project}</td><td>${x.customer}</td><td>${x.type}</td>
+      <td>${x.project}</td>
+      <td>${x.customer}</td>
+      <td>${x.type}</td>
       <td>${x.received}</td>
       <td><input type="date" value="${x.sent}"></td>
       <td>
@@ -268,10 +273,10 @@ function render(){
         </select>
       </td>
       <td><input type="number" value="${x.revision}"></td>
-      <td><input value="${x.quoteCC}"></td>
-      <td><input value="${x.quoteHP}"></td>
-      <td><textarea>${x.remarks}</textarea></td>
-      <td><button>Save</button></td>
+      <td><input value="${x.quoteCC||''}"></td>
+      <td><input value="${x.quoteHP||''}"></td>
+      <td><textarea>${x.remarks||''}</textarea></td>
+      <td><button class="primary">Save</button></td>
       <td><button class="danger">Del</button></td>
     `;
 
@@ -298,9 +303,7 @@ function render(){
   });
 }
 
-['search','filterDate','filterStatus','filterRevision']
-  .forEach(id=>$(id).addEventListener('input',render));
-
+updateCustomerList();
 render();
 </script>
 
