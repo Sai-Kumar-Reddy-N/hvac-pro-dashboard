@@ -96,12 +96,13 @@ button.danger{background:#ef4444;color:#fff}
   margin-top:6px;
 }
 
+/* Type colors */
 .type-CHW{background:#2563eb}
 .type-DX{background:#f97316}
-.type-CHWCOMBI{background:#7c3aed}
-.type-DXCOMBI{background:#ec4899}
-.type-CHWPLUS{background:#10b981}
-.type-DXPLUS{background:#facc15;color:#000}
+.type-CHW-COMBI{background:#7c3aed}
+.type-DX-COMBI{background:#ec4899}
+.type-CHW-PLUS{background:#10b981}
+.type-DX-PLUS{background:#facc15;color:#000}
 
 .section{margin-top:10px;font-size:12px}
 .status-row{display:flex;gap:14px;margin-top:10px}
@@ -170,14 +171,10 @@ $('addBtn').onclick=()=>{
 
   projects.push({
     id:Date.now(),
-    project:p,
-    customer:c,
-    type:t,
-    received:r,
-    selectionDate:'',
-    quotationDate:'',
+    project:p,customer:c,type:t,
+    received:r,sent:'',
     status:'RECEIVED',
-    revision:'R0',
+    revision:'R1',
     quoteCC:'',
     quoteHP:'',
     remarks:'',
@@ -193,11 +190,20 @@ $('addBtn').onclick=()=>{
 function getTypeClass(type){
   if(type==="CHW")return "type-CHW";
   if(type==="DX")return "type-DX";
-  if(type==="CHW COMBI")return "type-CHWCOMBI";
-  if(type==="DX COMBI")return "type-DXCOMBI";
-  if(type==="CHW + CHW COMBI")return "type-CHWPLUS";
-  if(type==="DX + DX COMBI")return "type-DXPLUS";
+  if(type==="CHW COMBI")return "type-CHW-COMBI";
+  if(type==="DX COMBI")return "type-DX-COMBI";
+  if(type==="CHW + CHW COMBI")return "type-CHW-PLUS";
+  if(type==="DX + DX COMBI")return "type-DX-PLUS";
   return "";
+}
+
+function needsBoth(type){
+  return (
+    type==="CHW COMBI" ||
+    type==="DX COMBI" ||
+    type==="CHW + CHW COMBI" ||
+    type==="DX + DX COMBI"
+  );
 }
 
 function render(){
@@ -221,8 +227,6 @@ function render(){
     const selectionChecked=x.status==="SELECTION SENT"||x.status==="COMPLETED";
     const quotationChecked=x.status==="QUOTATION SENT"||x.status==="COMPLETED";
 
-    const needsBoth = x.type.includes("COMBI") || x.type.includes("+");
-
     const tile=document.createElement('div');
     tile.className='tile';
     tile.innerHTML=`
@@ -235,36 +239,31 @@ function render(){
         ${x.received}
       </div>
 
+      <div class="section">
+        <label>Sent Date</label>
+        <input type="date" value="${x.sent||''}">
+      </div>
+
       <div class="status-row">
         <label><input type="checkbox" ${selectionChecked?'checked':''}> Selection</label>
         <label><input type="checkbox" ${quotationChecked?'checked':''}> Quotation</label>
       </div>
 
       <div class="section">
-        <label>Selection Date</label>
-        <input type="date" value="${x.selectionDate||''}">
-      </div>
-
-      <div class="section">
-        <label>Quotation Date</label>
-        <input type="date" value="${x.quotationDate||''}">
-      </div>
-
-      <div class="section">
         <label>Revision</label>
         <select>
-          ${Array.from({length:11},(_,i)=>`<option ${x.revision==="R"+i?'selected':''}>R${i}</option>`).join('')}
+          ${Array.from({length:10},(_,i)=>`<option ${x.revision==="R"+(i+1)?'selected':''}>R${i+1}</option>`).join('')}
         </select>
       </div>
 
       <div class="section">
-        <label>Quote ID CC</label>
+        <label>${needsBoth(x.type)?"Quote ID - CC":"Quote ID"}</label>
         <input value="${x.quoteCC||''}">
       </div>
 
-      ${needsBoth?`
+      ${needsBoth(x.type)?`
       <div class="section">
-        <label>Quote ID HP</label>
+        <label>Quote ID - HP</label>
         <input value="${x.quoteHP||''}">
       </div>`:''}
 
@@ -282,20 +281,20 @@ function render(){
     const inputs=tile.querySelectorAll('input,select,textarea');
 
     tile.querySelector('.primary').onclick=()=>{
-      const selection=inputs[0].checked;
-      const quotation=inputs[1].checked;
+      x.sent=inputs[0].value;
+
+      const selection=inputs[1].checked;
+      const quotation=inputs[2].checked;
 
       if(selection&&quotation)x.status="COMPLETED";
       else if(selection)x.status="SELECTION SENT";
       else if(quotation)x.status="QUOTATION SENT";
       else x.status="RECEIVED";
 
-      x.selectionDate=inputs[2].value;
-      x.quotationDate=inputs[3].value;
-      x.revision=inputs[4].value;
-      x.quoteCC=inputs[5].value;
-      if(needsBoth)x.quoteHP=inputs[6].value;
-      x.remarks=inputs[needsBoth?7:6].value;
+      x.revision=inputs[3].value;
+      x.quoteCC=inputs[4].value;
+      if(needsBoth(x.type))x.quoteHP=inputs[5].value;
+      x.remarks=inputs[needsBoth(x.type)?6:5].value;
 
       x.updated=Date.now();
       saveAll();render();
