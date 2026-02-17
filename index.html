@@ -96,7 +96,7 @@ nav h1{
   color:var(--text);
 }
 
-/* TILE (Home) */
+/* HOME TILES */
 .tile-grid-home{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
@@ -142,7 +142,7 @@ nav h1{
   font-size:12px;
 }
 
-/* GRID VIEW (UPDATED) */
+/* GRID VIEW */
 .tile-grid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
@@ -153,7 +153,6 @@ nav h1{
   background:var(--card);
   padding:15px;
   border-radius:12px;
-  cursor:pointer;
   transition:0.3s ease;
   overflow:hidden;
 }
@@ -165,6 +164,7 @@ nav h1{
 .tile-basic small{
   display:block;
   color:var(--muted);
+  cursor:pointer;
 }
 
 .tile-expanded{
@@ -204,7 +204,6 @@ button.delete-btn{
 
 <!-- HOME -->
 <div id="dashboard" class="view active">
-
   <div class="kpi-grid" id="kpiGrid"></div>
 
   <div class="add-box">
@@ -225,10 +224,9 @@ button.delete-btn{
 
   <h3>Last 10 Projects</h3>
   <div class="tile-grid-home" id="recentProjects"></div>
-
 </div>
 
-<!-- DETAILED VIEW -->
+<!-- DETAILED -->
 <div id="detailed" class="view">
   <div class="board">
     <div class="column"><h3>🟢 Received</h3><div id="col-received"></div></div>
@@ -407,12 +405,14 @@ function renderGrid(){
             <label>Sent Date:</label><br>
             <input type="date"
               value="${p.sent||''}"
+              onclick="event.stopPropagation()"
               onchange="updateSent(${p.id},this.value)">
             <br><br>
 
             <label>
               <input type="checkbox"
                 ${p.selection&&!p.quotation?'checked':''}
+                onclick="event.stopPropagation()"
                 onchange="updateStatus(${p.id},'selectionOnly',this.checked)">
               Only Selection Sent
             </label><br>
@@ -420,6 +420,7 @@ function renderGrid(){
             <label>
               <input type="checkbox"
                 ${p.quotation&&!p.selection?'checked':''}
+                onclick="event.stopPropagation()"
                 onchange="updateStatus(${p.id},'quoteOnly',this.checked)">
               Only Quote Sent
             </label><br>
@@ -427,6 +428,7 @@ function renderGrid(){
             <label>
               <input type="checkbox"
                 ${p.selection&&p.quotation?'checked':''}
+                onclick="event.stopPropagation()"
                 onchange="updateStatus(${p.id},'both',this.checked)">
               Both Selection & Offer Sent
             </label><br>
@@ -434,21 +436,23 @@ function renderGrid(){
             <label>
               <input type="checkbox"
                 ${p.waiting?'checked':''}
+                onclick="event.stopPropagation()"
                 onchange="updateStatus(${p.id},'waiting',this.checked)">
               Waiting for Customer Confirmation
             </label><br><br>
 
             <button class="delete-btn"
-              onclick="deleteProject(${p.id});event.stopPropagation();">
+              onclick="event.stopPropagation();deleteProject(${p.id});">
               Delete
             </button>
 
           </div>
         `;
 
-        tile.addEventListener('click',()=>{
-          tile.classList.toggle('expanded');
-        });
+        tile.querySelector('.tile-basic')
+          .addEventListener('click',()=>{
+            tile.classList.toggle('expanded');
+          });
 
         $('gridContainer').appendChild(tile);
       });
