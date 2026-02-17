@@ -17,7 +17,6 @@
   --blue:#2563eb;
   --purple:#9333ea;
   --orange:#f59e0b;
-  --danger:#ef4444;
 }
 
 body.light{
@@ -84,16 +83,7 @@ nav h1{
 .kpi h4{margin:0;font-size:12px;color:var(--muted);}
 .kpi p{margin:8px 0 0;font-size:22px;font-weight:700;}
 
-button.primary{
-  margin-top:10px;
-  padding:6px 10px;
-  border:none;
-  border-radius:8px;
-  background:var(--accent);
-  cursor:pointer;
-}
-
-/* ADD SECTION */
+/* ADD */
 .add-box{
   background:var(--card);
   padding:16px;
@@ -101,7 +91,7 @@ button.primary{
   margin-bottom:30px;
 }
 
-.add-box input{
+.add-box input, .add-box select{
   margin-right:10px;
   padding:6px;
   border-radius:6px;
@@ -129,8 +119,8 @@ button.primary{
   color:var(--muted);
 }
 
-/* KANBAN */
-.kanban{
+/* DETAILED VIEW */
+.board{
   display:flex;
   gap:20px;
   overflow-x:auto;
@@ -143,15 +133,23 @@ button.primary{
   padding:10px;
 }
 
-.column h3{margin:0 0 10px;font-size:13px;}
+.column h3{
+  margin:0 0 10px;
+  font-size:13px;
+}
 
 .card{
   background:rgba(255,255,255,.05);
   padding:8px;
   border-radius:8px;
   margin-bottom:8px;
-  cursor:pointer;
   font-size:12px;
+}
+
+.card .date-header{
+  font-size:10px;
+  color:var(--accent);
+  margin-bottom:4px;
 }
 
 /* GRID */
@@ -170,13 +168,13 @@ button.primary{
   <h1>HVAC Workflow Pro</h1>
   <div class="nav-actions">
     <div class="nav-btn" onclick="showView('dashboard')">Home</div>
-    <div class="nav-btn" onclick="showView('kanban')">Kanban</div>
+    <div class="nav-btn" onclick="showView('detailed')">Detailed View</div>
     <div class="nav-btn" onclick="showView('grid')">Grid</div>
     <div class="nav-btn" onclick="toggleTheme()">🌓</div>
   </div>
 </nav>
 
-<!-- HOME DASHBOARD -->
+<!-- HOME -->
 <div id="dashboard" class="view active">
 
   <div class="kpi-grid" id="kpiGrid"></div>
@@ -185,8 +183,16 @@ button.primary{
     <h3>Add New Enquiry</h3>
     <input id="newProject" placeholder="Project Name">
     <input id="newCustomer" placeholder="Customer">
+    <select id="newType">
+      <option>CHW</option>
+      <option>DX</option>
+      <option>CHW COMBI</option>
+      <option>DX COMBI</option>
+      <option>CHW + CHW COMBI</option>
+      <option>DX + DX COMBI</option>
+    </select>
     <input type="date" id="newReceived">
-    <button class="primary" onclick="addProject()">Add</button>
+    <button onclick="addProject()">Add</button>
   </div>
 
   <h3>Last 10 Projects</h3>
@@ -194,9 +200,9 @@ button.primary{
 
 </div>
 
-<!-- KANBAN -->
-<div id="kanban" class="view">
-  <div class="kanban">
+<!-- DETAILED VIEW -->
+<div id="detailed" class="view">
+  <div class="board">
     <div class="column"><h3>🟢 Received</h3><div id="col-received"></div></div>
     <div class="column"><h3>🔵 Selection</h3><div id="col-selection"></div></div>
     <div class="column"><h3>🟣 Quotation</h3><div id="col-quotation"></div></div>
@@ -218,7 +224,9 @@ projects=projects.map(p=>({
   id:p.id,
   project:p.project,
   customer:p.customer||'',
+  type:p.type||'CHW',
   received:p.received||'',
+  sent:p.sent||'',
   selection:p.selection===true,
   quotation:p.quotation===true,
   completed:p.completed===true
@@ -228,7 +236,6 @@ function save(){
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
 }
 
-/* VIEW */
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   $(id).classList.add('active');
@@ -242,18 +249,18 @@ function toggleTheme(){
 function addProject(){
   const name=$('newProject').value.trim();
   const customer=$('newCustomer').value.trim();
+  const type=$('newType').value;
   const received=$('newReceived').value;
 
-  if(!name||!received){
-    alert("Project name & received date required");
-    return;
-  }
+  if(!name||!received) return alert("Project & date required");
 
   projects.push({
     id:Date.now(),
     project:name,
     customer:customer,
+    type:type,
     received:received,
+    sent:'',
     selection:false,
     quotation:false,
     completed:false
@@ -273,14 +280,12 @@ function renderDashboard(){
   const selection=projects.filter(p=>p.selection&&!p.quotation).length;
   const quotation=projects.filter(p=>p.quotation&&!p.completed).length;
   const completed=projects.filter(p=>p.completed).length;
-  const conversion=total?((completed/total)*100).toFixed(1):0;
 
   $('kpiGrid').innerHTML=`
     <div class="kpi"><h4>Total</h4><p>${total}</p></div>
     <div class="kpi"><h4>Selection</h4><p>${selection}</p></div>
     <div class="kpi"><h4>Quotation</h4><p>${quotation}</p></div>
     <div class="kpi"><h4>Completed</h4><p>${completed}</p></div>
-    <div class="kpi"><h4>Conversion %</h4><p>${conversion}%</p></div>
   `;
 
   const recent=[...projects]
@@ -292,19 +297,25 @@ function renderDashboard(){
     $('recentProjects').innerHTML+=`
       <div class="tile">
         <strong>${p.project}</strong>
-        <small>${p.customer}</small>
-        <small>${p.received}</small>
+        <small>Customer: ${p.customer}</small>
+        <small>Type: ${p.type}</small>
+        <small>Received: ${p.received}</small>
+        <small>Sent: ${p.sent||'-'}</small>
       </div>
     `;
   });
 }
 
-/* KANBAN */
-function renderKanban(){
+/* DETAILED VIEW */
+function renderDetailed(){
+
   ['received','selection','quotation','completed']
   .forEach(col=>$('col-'+col).innerHTML='');
 
-  projects.forEach(p=>{
+  const sorted=[...projects]
+    .sort((a,b)=>new Date(b.received)-new Date(a.received));
+
+  sorted.forEach(p=>{
     let column='received';
     if(p.selection&&!p.quotation) column='selection';
     if(p.quotation&&!p.completed) column='quotation';
@@ -312,8 +323,9 @@ function renderKanban(){
 
     $('col-'+column).innerHTML+=`
       <div class="card">
-        ${p.project}
-        <small>${p.customer}</small>
+        <div class="date-header">Received: ${p.received}</div>
+        <strong>${p.project}</strong>
+        <div>${p.customer}</div>
       </div>
     `;
   });
@@ -352,7 +364,7 @@ function update(id,key,value){
 
 function renderAll(){
   renderDashboard();
-  renderKanban();
+  renderDetailed();
   renderGrid();
 }
 
