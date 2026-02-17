@@ -13,29 +13,51 @@
   --glass:rgba(255,255,255,0.06);
   --text:#e5e7eb;
   --muted:#94a3b8;
+  --accent:#22d3ee;
   --green:#16a34a;
   --blue:#2563eb;
   --purple:#9333ea;
   --danger:#ef4444;
 }
+
+body.light{
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --glass:rgba(0,0,0,0.05);
+  --text:#0f172a;
+  --muted:#475569;
+}
+
 body{
   margin:0;
   font-family:Inter,sans-serif;
   background:var(--bg);
   color:var(--text);
+  transition:.3s ease;
 }
 
 /* NAVBAR */
 nav{
-  padding:14px 28px;
-  background:var(--card);
-  box-shadow:0 8px 30px rgba(0,0,0,.4);
-}
-
-.nav-top{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  padding:14px 28px;
+  background:var(--card);
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+  position:relative;
+}
+
+.nav-left{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+
+nav h1{
+  margin:0;
+  font-size:18px;
+  font-weight:700;
+  color:var(--accent);
 }
 
 .nav-kpis{
@@ -60,21 +82,89 @@ nav{
 .kpi-sel{color:var(--blue)}
 .kpi-quo{color:var(--purple)}
 
-/* FILTER BAR */
-.filter-bar{
-  margin-top:12px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:10px;
+.nav-right{
+  display:flex;
+  gap:14px;
+  align-items:center;
 }
 
-.filter-bar input{
-  padding:6px 10px;
-  border-radius:10px;
+.icon-btn{
+  cursor:pointer;
+  font-size:18px;
+}
+
+/* FILTER PANEL */
+.filter-popup{
+  position:absolute;
+  top:60px;
+  right:30px;
+  background:var(--card);
+  padding:16px;
+  border-radius:16px;
+  box-shadow:0 20px 40px rgba(0,0,0,.5);
+  display:none;
+  width:340px;
+  z-index:20;
+  max-height:420px;
+  overflow:auto;
+}
+
+.filter-row{
+  display:flex;
+  gap:6px;
+  margin-bottom:8px;
+}
+
+.filter-row select,
+.filter-row input{
+  flex:1;
+  padding:6px;
+  border-radius:8px;
   border:1px solid rgba(255,255,255,.1);
   background:var(--glass);
   color:var(--text);
-  font-size:12px;
+  font-size:11px;
+}
+
+.filter-row button{
+  background:var(--danger);
+  border:none;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+}
+
+.filter-actions{
+  margin-top:10px;
+  display:flex;
+  gap:8px;
+}
+
+.filter-actions button{
+  flex:1;
+  padding:6px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.apply-btn{background:var(--accent)}
+.clear-btn{background:var(--danger)}
+
+/* ACTIVE FILTER BADGES */
+.filter-badges{
+  margin-top:8px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.filter-badge{
+  background:var(--glass);
+  padding:4px 8px;
+  border-radius:14px;
+  font-size:10px;
 }
 
 /* LAYOUT */
@@ -107,8 +197,8 @@ input,select,textarea{
   font-size:12px;
 }
 
-button{
-  background:#22d3ee;
+button.primary{
+  background:var(--accent);
   border:none;
   padding:6px 14px;
   border-radius:14px;
@@ -129,7 +219,6 @@ button{
   border-radius:16px;
   padding:14px;
   transition:.3s ease;
-  overflow:hidden;
 }
 
 .tile:hover{
@@ -161,6 +250,9 @@ button{
   margin-top:6px;
   font-size:10px;
   color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .details{
@@ -191,17 +283,26 @@ button{
 <body>
 
 <nav>
-  <div class="nav-top">
+  <div class="nav-left">
     <h1>My Work Flow</h1>
     <div class="nav-kpis" id="navKpis"></div>
   </div>
 
-  <div class="filter-bar">
-    <input type="text" id="filterCustomer" placeholder="Filter by Customer">
-    <input type="date" id="filterReceivedFrom">
-    <input type="date" id="filterReceivedTo">
-    <input type="date" id="filterSentFrom">
-    <input type="date" id="filterSentTo">
+  <div class="nav-right">
+    <div class="icon-btn" onclick="toggleFilter()">🧃</div>
+    <div class="icon-btn" onclick="toggleTheme()">🌓</div>
+  </div>
+
+  <div class="filter-popup" id="filterPopup">
+    <div id="filterContainer"></div>
+
+    <div class="filter-actions">
+      <button onclick="addFilterRow()">+ Add</button>
+      <button class="apply-btn" onclick="applyFilters()">Apply</button>
+      <button class="clear-btn" onclick="clearFilters()">Clear</button>
+    </div>
+
+    <div class="filter-badges" id="filterBadges"></div>
   </div>
 </nav>
 
@@ -220,7 +321,7 @@ button{
       <option>DX + DX COMBI</option>
     </select>
     <input type="date" id="received">
-    <button id="addBtn">Add</button>
+    <button id="addBtn" class="primary">Add</button>
   </div>
 </div>
 
@@ -231,15 +332,22 @@ button{
 <script>
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
+let activeFilters=[];
 
 function saveAll(){
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
 }
 
-/* FILTER EVENTS */
-['filterCustomer','filterReceivedFrom','filterReceivedTo','filterSentFrom','filterSentTo']
-.forEach(id=>$(id).addEventListener('input',render));
+function toggleTheme(){
+  document.body.classList.toggle('light');
+}
 
+function toggleFilter(){
+  const popup=$('filterPopup');
+  popup.style.display=popup.style.display==='block'?'none':'block';
+}
+
+/* ADD PROJECT */
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
@@ -262,9 +370,45 @@ $('addBtn').onclick=()=>{
   render();
 };
 
+/* FILTER SYSTEM */
+function addFilterRow(){
+  const row=document.createElement('div');
+  row.className='filter-row';
+  row.innerHTML=`
+    <select>
+      <option value="project">Project</option>
+      <option value="customer">Customer</option>
+      <option value="type">Type</option>
+      <option value="status">Status</option>
+      <option value="received">Received</option>
+      <option value="sent">Sent</option>
+    </select>
+    <input type="text" placeholder="Value">
+    <button onclick="this.parentElement.remove()">✖</button>
+  `;
+  $('filterContainer').appendChild(row);
+}
+
+function applyFilters(){
+  activeFilters=[];
+  document.querySelectorAll('.filter-row').forEach(row=>{
+    const col=row.children[0].value;
+    const val=row.children[1].value.toLowerCase();
+    if(val) activeFilters.push({col,val});
+  });
+  render();
+}
+
+function clearFilters(){
+  activeFilters=[];
+  $('filterContainer').innerHTML='';
+  $('filterBadges').innerHTML='';
+  render();
+}
+
+/* RENDER */
 function render(){
 
-  /* KPI (TOTAL ONLY) */
   const k={
     rec:projects.length,
     sel:projects.filter(x=>x.status==="SELECTION SENT").length,
@@ -277,34 +421,15 @@ function render(){
     <div class="nav-kpi kpi-quo">Quotation<b>${k.quo}</b></div>
   `;
 
-  /* APPLY FILTERS */
   let filtered=[...projects];
 
-  const cust=$('filterCustomer').value.toLowerCase();
-  const rFrom=$('filterReceivedFrom').value;
-  const rTo=$('filterReceivedTo').value;
-  const sFrom=$('filterSentFrom').value;
-  const sTo=$('filterSentTo').value;
+  activeFilters.forEach(f=>{
+    filtered=filtered.filter(x=>{
+      return (x[f.col]||'').toString().toLowerCase().includes(f.val);
+    });
+  });
 
-  if(cust){
-    filtered=filtered.filter(x=>x.customer.toLowerCase().includes(cust));
-  }
-
-  if(rFrom){
-    filtered=filtered.filter(x=>x.received>=rFrom);
-  }
-
-  if(rTo){
-    filtered=filtered.filter(x=>x.received<=rTo);
-  }
-
-  if(sFrom){
-    filtered=filtered.filter(x=>x.sent && x.sent>=sFrom);
-  }
-
-  if(sTo){
-    filtered=filtered.filter(x=>x.sent && x.sent<=sTo);
-  }
+  filtered.sort((a,b)=>new Date(b.received)-new Date(a.received));
 
   $('tileGrid').innerHTML='';
 
@@ -313,7 +438,7 @@ function render(){
     tile.className='tile';
 
     tile.innerHTML=`
-      <h3 onclick="toggleTile(this)">${x.project}</h3>
+      <h3 onclick="this.closest('.tile').classList.toggle('expanded')">${x.project}</h3>
       <div class="customer">${x.customer}</div>
       <div class="badge">${x.type}</div>
       <div class="quick-remark">${x.remarks||'No remarks'}</div>
@@ -345,10 +470,18 @@ function render(){
 
     $('tileGrid').appendChild(tile);
   });
+
+  renderFilterBadges();
 }
 
-function toggleTile(el){
-  el.closest('.tile').classList.toggle('expanded');
+function renderFilterBadges(){
+  $('filterBadges').innerHTML='';
+  activeFilters.forEach(f=>{
+    const badge=document.createElement('div');
+    badge.className='filter-badge';
+    badge.innerText=`${f.col}: ${f.val}`;
+    $('filterBadges').appendChild(badge);
+  });
 }
 
 function autoSave(id,key,value){
