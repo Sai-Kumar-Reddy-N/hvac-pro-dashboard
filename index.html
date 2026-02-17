@@ -4,282 +4,205 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Work Flow</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --bg:#0f172a;
-  --card:#111827;
-  --glass:rgba(255,255,255,0.05);
-  --text:#e5e7eb;
-  --muted:#94a3b8;
-  --accent:#22d3ee;
-  --green:#16a34a;
-  --blue:#2563eb;
-  --purple:#9333ea;
-  --danger:#ef4444;
-}
-
-body.light{
-  --bg:#f1f5f9;
-  --card:#ffffff;
-  --glass:rgba(0,0,0,0.05);
-  --text:#0f172a;
-  --muted:#475569;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
   font-family:Inter,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+  overflow-x:hidden;
+  background:#0f2027;
+  color:#fff;
 }
 
-/* NAVBAR */
+/* ===== ANIMATED GRADIENT BLOBS ===== */
+.background{
+  position:fixed;
+  width:100%;
+  height:100%;
+  z-index:-2;
+  overflow:hidden;
+}
+
+.blob{
+  position:absolute;
+  width:400px;
+  height:400px;
+  background:radial-gradient(circle at 30% 30%,#00c6ff,#0072ff);
+  border-radius:50%;
+  filter:blur(100px);
+  animation:float 12s infinite alternate ease-in-out;
+  opacity:.6;
+}
+
+.blob:nth-child(2){
+  background:radial-gradient(circle at 30% 30%,#ff00cc,#3333ff);
+  left:60%;
+  top:30%;
+  animation-duration:15s;
+}
+
+@keyframes float{
+  from{transform:translateY(-50px) translateX(-30px)}
+  to{transform:translateY(50px) translateX(30px)}
+}
+
+/* ===== GLASS EFFECT ===== */
+.glass{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* ===== NAVBAR ===== */
 nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:16px 30px;
-  background:var(--card);
-  box-shadow:0 8px 30px rgba(0,0,0,.4);
-  position:relative;
+  padding:20px 40px;
+  position:sticky;
+  top:0;
+  z-index:10;
 }
 
 nav h1{
   margin:0;
-  font-size:18px;
+  font-size:20px;
   font-weight:700;
-  color:var(--accent);
+  letter-spacing:1px;
 }
 
 .nav-kpis{
   display:flex;
-  gap:30px;
+  gap:40px;
 }
 
-.kpi-box{
-  text-align:center;
-}
+.kpi-box{text-align:center}
+.kpi-label{font-size:11px;opacity:.6;text-transform:uppercase;}
+.kpi-value{font-size:24px;font-weight:700;margin-top:4px}
 
-.kpi-label{
-  font-size:11px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
-
-.kpi-value{
-  font-size:20px;
-  font-weight:700;
-  margin-top:4px;
-}
-
-.kpi-rec .kpi-value{color:var(--green)}
-.kpi-sel .kpi-value{color:var(--blue)}
-.kpi-quo .kpi-value{color:var(--purple)}
-
-.nav-right{
-  display:flex;
-  gap:16px;
-}
-
-.icon-btn{
-  cursor:pointer;
-  font-size:20px;
-}
-
-/* CLEAN FILTER POPUP */
-.filter-popup{
-  position:absolute;
-  top:70px;
-  right:30px;
-  background:var(--card);
-  padding:16px;
-  border-radius:16px;
-  box-shadow:0 20px 40px rgba(0,0,0,.5);
-  display:none;
-  width:260px;
-  z-index:20;
-}
-
-.filter-popup h4{
-  margin:0 0 10px 0;
-  font-size:13px;
-  color:var(--muted);
-}
-
-.filter-popup input{
-  width:100%;
-  margin-bottom:8px;
-  padding:6px 8px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.1);
-  background:var(--glass);
-  color:var(--text);
-  font-size:12px;
-}
-
-.filter-popup button{
-  width:100%;
-  padding:6px;
-  border:none;
-  border-radius:12px;
-  background:var(--accent);
-  cursor:pointer;
-  font-weight:600;
-}
-
-/* LAYOUT */
+/* ===== CONTAINER ===== */
 .container{
-  max-width:1700px;
+  max-width:1600px;
   margin:auto;
-  padding:28px;
+  padding:30px;
 }
 
+/* ===== ADD SECTION ===== */
 .card{
-  background:var(--card);
-  border-radius:16px;
-  padding:14px;
-  margin-bottom:28px;
+  padding:20px;
+  border-radius:20px;
+  margin-bottom:30px;
 }
 
 .form-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:12px;
+  gap:15px;
 }
 
-input,select,textarea{
-  width:100%;
-  padding:6px 10px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.1);
-  background:var(--glass);
-  color:var(--text);
-  font-size:12px;
-}
-
-button.primary{
-  background:var(--accent);
+input{
+  padding:8px;
+  border-radius:12px;
   border:none;
-  padding:6px 14px;
-  border-radius:14px;
+  outline:none;
+  background:rgba(255,255,255,0.15);
+  color:#fff;
+}
+
+/* ===== MAGNETIC BUTTON ===== */
+button{
+  background:#00c6ff;
+  border:none;
+  padding:10px 18px;
+  border-radius:30px;
   cursor:pointer;
   font-weight:600;
+  transition:.2s ease;
+  position:relative;
 }
+button:hover{transform:scale(1.05)}
 
-/* TILE */
+/* ===== TILE GRID ===== */
 .tile-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(260px,280px));
-  gap:20px;
-  justify-content:center;
+  gap:30px;
 }
 
+/* ===== 3D GLASS TILES ===== */
 .tile{
-  background:var(--card);
-  border-radius:16px;
-  padding:14px;
-  transition:.3s ease;
+  padding:20px;
+  border-radius:24px;
+  transition:transform .2s ease, box-shadow .2s ease;
+  transform-style:preserve-3d;
+  cursor:pointer;
+}
+
+.tile:hover{
+  box-shadow:0 25px 50px rgba(0,0,0,.6);
 }
 
 .tile h3{
   margin:0;
-  font-size:13px;
-  cursor:pointer;
+  font-size:15px;
+  font-weight:600;
 }
 
-.customer{
+.tile .customer{
   font-size:11px;
-  color:var(--muted);
+  opacity:.7;
+  margin-top:6px;
 }
 
-.badge{
-  display:inline-block;
-  padding:3px 8px;
-  border-radius:14px;
+.tile .date{
+  font-size:10px;
+  margin-top:6px;
+  opacity:.7;
+}
+
+.status-badge{
   font-size:9px;
-  background:#16a34a;
-  margin-top:6px;
-}
-
-.date-row{
-  margin-top:6px;
-  font-size:10px;
-  color:var(--muted);
-  display:flex;
-  justify-content:space-between;
-}
-
-.quick-remark{
-  margin-top:6px;
-  font-size:10px;
-  color:var(--muted);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  padding:5px 10px;
+  border-radius:15px;
+  margin-top:10px;
+  display:inline-block;
+  background:rgba(0,255,150,.3);
 }
 
 .details{
   margin-top:10px;
-  font-size:11px;
   display:none;
+  font-size:11px;
 }
-
-.tile.expanded .details{
-  display:block;
-}
-
-.delete-btn{
-  text-align:right;
-  color:var(--danger);
-  margin-top:8px;
-  cursor:pointer;
-}
+.tile.expanded .details{display:block}
 </style>
 </head>
 
 <body>
 
-<nav>
+<div class="background">
+  <div class="blob"></div>
+  <div class="blob"></div>
+</div>
+
+<nav class="glass">
   <h1>My Work Flow</h1>
-
   <div class="nav-kpis" id="navKpis"></div>
-
-  <div class="nav-right">
-    <div class="icon-btn" onclick="toggleFilter()">🔍</div>
-    <div class="icon-btn" onclick="toggleTheme()">🌓</div>
-  </div>
-
-  <div class="filter-popup" id="filterPopup">
-    <h4>Filter</h4>
-    <input type="text" id="filterProject" placeholder="Project name">
-    <input type="text" id="filterCustomer" placeholder="Customer name">
-    <input type="date" id="filterReceivedFrom">
-    <input type="date" id="filterReceivedTo">
-    <input type="date" id="filterSentFrom">
-    <input type="date" id="filterSentTo">
-    <button onclick="clearFilters()">Clear Filters</button>
-  </div>
 </nav>
 
 <div class="container">
 
-<div class="card">
+<div class="card glass">
   <div class="form-grid">
     <input id="project" placeholder="Project Name">
     <input id="customer" placeholder="Customer Name">
-    <select id="type">
-      <option>CHW</option>
-      <option>DX</option>
-      <option>CHW COMBI</option>
-      <option>DX COMBI</option>
-      <option>CHW + CHW COMBI</option>
-      <option>DX + DX COMBI</option>
-    </select>
     <input type="date" id="received">
-    <button id="addBtn" class="primary">Add</button>
+    <button id="addBtn">Add</button>
   </div>
 </div>
 
@@ -291,34 +214,37 @@ button.primary{
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
 
-function saveAll(){
-  localStorage.setItem('hvacProjects',JSON.stringify(projects));
-}
+/* ===== MAGNETIC BUTTON EFFECT ===== */
+document.querySelectorAll("button").forEach(btn=>{
+  btn.addEventListener("mousemove",e=>{
+    const rect=btn.getBoundingClientRect();
+    const x=e.clientX-rect.left;
+    const y=e.clientY-rect.top;
+    btn.style.transform=`translate(${(x-rect.width/2)/10}px,${(y-rect.height/2)/10}px)`;
+  });
+  btn.addEventListener("mouseleave",()=>btn.style.transform="translate(0,0)");
+});
 
-function toggleTheme(){
-  document.body.classList.toggle('light');
-}
-
-function toggleFilter(){
-  const popup=$('filterPopup');
-  popup.style.display=popup.style.display==='block'?'none':'block';
-}
-
-['filterProject','filterCustomer','filterReceivedFrom',
- 'filterReceivedTo','filterSentFrom','filterSentTo']
-.forEach(id=>$(id).addEventListener('input',render));
-
-function clearFilters(){
-  ['filterProject','filterCustomer','filterReceivedFrom',
-   'filterReceivedTo','filterSentFrom','filterSentTo']
-   .forEach(id=>$(id).value='');
-  render();
+/* ===== 3D TILE EFFECT ===== */
+function applyTilt(tile){
+  tile.addEventListener("mousemove",e=>{
+    const rect=tile.getBoundingClientRect();
+    const x=e.clientX-rect.left;
+    const y=e.clientY-rect.top;
+    const centerX=rect.width/2;
+    const centerY=rect.height/2;
+    const rotateX=(y-centerY)/15;
+    const rotateY=(centerX-x)/15;
+    tile.style.transform=`rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+  tile.addEventListener("mouseleave",()=>{
+    tile.style.transform="rotateX(0) rotateY(0)";
+  });
 }
 
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
-  const t=$('type').value;
   const r=$('received').value;
   if(!p||!c||!r)return;
 
@@ -326,108 +252,55 @@ $('addBtn').onclick=()=>{
     id:Date.now(),
     project:p,
     customer:c,
-    type:t,
     received:r,
-    sent:'',
-    status:'RECEIVED',
-    remarks:''
+    status:'Received'
   });
 
-  saveAll();
+  localStorage.setItem('hvacProjects',JSON.stringify(projects));
   render();
 };
 
-function render(){
-
-  const k={
-    rec:projects.length,
-    sel:projects.filter(x=>x.status==="SELECTION SENT").length,
-    quo:projects.filter(x=>x.status==="QUOTATION SENT").length
+function animateCount(el,target){
+  let start=0;
+  const step=()=>{
+    start+=Math.ceil(target/25);
+    if(start>=target){el.textContent=target;return;}
+    el.textContent=start;
+    requestAnimationFrame(step);
   };
+  step();
+}
+
+function render(){
+  const total=projects.length;
 
   $('navKpis').innerHTML=`
-    <div class="kpi-box kpi-rec">
+    <div class="kpi-box">
       <div class="kpi-label">Received</div>
-      <div class="kpi-value">${k.rec}</div>
-    </div>
-    <div class="kpi-box kpi-sel">
-      <div class="kpi-label">Selection</div>
-      <div class="kpi-value">${k.sel}</div>
-    </div>
-    <div class="kpi-box kpi-quo">
-      <div class="kpi-label">Quotation</div>
-      <div class="kpi-value">${k.quo}</div>
+      <div class="kpi-value" id="recCount">0</div>
     </div>
   `;
 
-  let filtered=[...projects];
-
-  const fp=$('filterProject').value.toLowerCase();
-  const fc=$('filterCustomer').value.toLowerCase();
-  const rf=$('filterReceivedFrom').value;
-  const rt=$('filterReceivedTo').value;
-  const sf=$('filterSentFrom').value;
-  const st=$('filterSentTo').value;
-
-  if(fp) filtered=filtered.filter(x=>x.project.toLowerCase().includes(fp));
-  if(fc) filtered=filtered.filter(x=>x.customer.toLowerCase().includes(fc));
-  if(rf) filtered=filtered.filter(x=>x.received>=rf);
-  if(rt) filtered=filtered.filter(x=>x.received<=rt);
-  if(sf) filtered=filtered.filter(x=>x.sent && x.sent>=sf);
-  if(st) filtered=filtered.filter(x=>x.sent && x.sent<=st);
-
-  filtered.sort((a,b)=>new Date(b.received)-new Date(a.received));
+  animateCount($('recCount'),total);
 
   $('tileGrid').innerHTML='';
+  projects.sort((a,b)=>new Date(b.received)-new Date(a.received));
 
-  filtered.forEach(x=>{
+  projects.forEach(x=>{
     const tile=document.createElement('div');
-    tile.className='tile';
+    tile.className='tile glass';
 
     tile.innerHTML=`
       <h3 onclick="this.closest('.tile').classList.toggle('expanded')">${x.project}</h3>
       <div class="customer">${x.customer}</div>
-      <div class="badge">${x.type}</div>
-
-      <div class="date-row">
-        <span>Received: ${x.received}</span>
-        <span>Sent: ${x.sent||'-'}</span>
-      </div>
-
-      <div class="quick-remark">${x.remarks||'No remarks'}</div>
-
-      <div class="details">
-        <div>
-          <label>Sent Date</label>
-          <input type="date" value="${x.sent||''}" 
-          onchange="autoSave(${x.id},'sent',this.value)">
-        </div>
-
-        <div>
-          <label>Remarks</label>
-          <textarea onchange="autoSave(${x.id},'remarks',this.value)">
-          ${x.remarks||''}</textarea>
-        </div>
-
-        <div class="delete-btn" onclick="deleteProject(${x.id})">❌</div>
-      </div>
+      <div class="date">Received: ${x.received}</div>
+      <span class="status-badge">${x.status}</span>
+      <div class="details">More details...</div>
     `;
 
     $('tileGrid').appendChild(tile);
+    applyTilt(tile);
   });
-}
-
-function autoSave(id,key,value){
-  const p=projects.find(x=>x.id===id);
-  p[key]=value;
-  saveAll();
-  render();
-}
-
-function deleteProject(id){
-  projects=projects.filter(p=>p.id!==id);
-  saveAll();
-  render();
 }
 
 render();
