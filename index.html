@@ -154,29 +154,29 @@ nav h1{
   padding:15px;
   border-radius:12px;
   transition:0.3s ease;
-  overflow:hidden;
 }
 
 .grid-tile:hover{
   transform:translateY(-4px);
 }
 
-.tile-basic small{
-  display:block;
-  color:var(--muted);
+.tile-basic{
   cursor:pointer;
 }
 
+.tile-basic small{
+  display:block;
+  color:var(--muted);
+}
+
 .tile-expanded{
-  max-height:0;
-  overflow:hidden;
-  transition:max-height 0.4s ease;
+  display:none;
+  margin-top:10px;
   font-size:12px;
 }
 
 .grid-tile.expanded .tile-expanded{
-  max-height:500px;
-  margin-top:10px;
+  display:block;
 }
 
 button.delete-btn{
@@ -272,7 +272,6 @@ function toggleTheme(){
   document.body.classList.toggle('light');
 }
 
-/* ADD PROJECT */
 function addProject(){
   const name=$('newProject').value.trim();
   const customer=$('newCustomer').value.trim();
@@ -302,7 +301,6 @@ function addProject(){
   $('newReceived').value='';
 }
 
-/* DASHBOARD */
 function renderDashboard(){
   const total=projects.length;
   const selection=projects.filter(p=>p.selection&&!p.quotation).length;
@@ -334,7 +332,6 @@ function renderDashboard(){
   });
 }
 
-/* DETAILED VIEW */
 function renderDetailed(){
   ['received','selection','quotation','completed']
   .forEach(col=>$('col-'+col).innerHTML='');
@@ -360,10 +357,9 @@ function renderDetailed(){
   });
 }
 
-/* GRID VIEW */
 function renderGrid(){
-
-  $('gridContainer').innerHTML='';
+  const container=$('gridContainer');
+  container.innerHTML='';
 
   const sorted=[...projects]
     .sort((a,b)=>new Date(b.received)-new Date(a.received));
@@ -379,14 +375,13 @@ function renderGrid(){
     .sort((a,b)=>new Date(b)-new Date(a))
     .forEach(date=>{
 
-      $('gridContainer').innerHTML+=`
-        <div style="grid-column:1/-1;
-                    font-weight:600;
-                    color:var(--accent);
-                    margin:10px 0;">
-          ${date}
-        </div>
-      `;
+      const header=document.createElement('div');
+      header.style.gridColumn="1/-1";
+      header.style.fontWeight="600";
+      header.style.color="var(--accent)";
+      header.style.margin="10px 0";
+      header.innerText=date;
+      container.appendChild(header);
 
       grouped[date].forEach(p=>{
 
@@ -454,7 +449,7 @@ function renderGrid(){
             tile.classList.toggle('expanded');
           });
 
-        $('gridContainer').appendChild(tile);
+        container.appendChild(tile);
       });
 
     });
