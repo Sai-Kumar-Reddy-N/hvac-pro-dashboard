@@ -63,15 +63,9 @@ nav h1{
   background:rgba(255,255,255,.05);
 }
 
-/* VIEW SECTIONS */
-.view{
-  display:none;
-  padding:30px;
-}
-
-.view.active{
-  display:block;
-}
+/* VIEWS */
+.view{display:none;padding:30px;}
+.view.active{display:block;}
 
 /* DASHBOARD */
 .kpi-grid{
@@ -86,16 +80,16 @@ nav h1{
   border-radius:14px;
 }
 
-.kpi h4{
-  margin:0;
-  font-size:12px;
-  color:var(--muted);
-}
+.kpi h4{margin:0;font-size:12px;color:var(--muted);}
+.kpi p{margin:8px 0 0;font-size:22px;font-weight:700;}
 
-.kpi p{
-  margin:8px 0 0;
-  font-size:22px;
-  font-weight:700;
+button.export{
+  margin-top:10px;
+  padding:6px 10px;
+  border:none;
+  border-radius:8px;
+  background:var(--accent);
+  cursor:pointer;
 }
 
 /* KANBAN */
@@ -149,14 +143,8 @@ nav h1{
   font-size:11px;
 }
 
-input,select{
-  width:100%;
+input{
   margin-top:4px;
-  padding:4px;
-  border-radius:6px;
-  border:1px solid rgba(255,255,255,.1);
-  background:rgba(255,255,255,.05);
-  color:var(--text);
 }
 </style>
 </head>
@@ -219,60 +207,56 @@ projects=projects.map(p=>({
   selection:p.selection===true,
   quotation:p.quotation===true,
   completed:p.completed===true,
-  sent:p.sent||''
 }));
 
 function save(){
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
 }
 
-/* VIEW SWITCH */
+/* VIEW */
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   $(id).classList.add('active');
 }
 
-/* THEME */
 function toggleTheme(){
   document.body.classList.toggle('light');
 }
 
-/* ================= DASHBOARD ================= */
+/* DASHBOARD */
 function renderDashboard(){
-
   const total=projects.length;
   const selection=projects.filter(p=>p.selection&&!p.quotation).length;
   const quotation=projects.filter(p=>p.quotation&&!p.completed).length;
   const completed=projects.filter(p=>p.completed).length;
-
-  const conversion= total ? ((completed/total)*100).toFixed(1) : 0;
+  const conversion= total?((completed/total)*100).toFixed(1):0;
 
   $('kpiGrid').innerHTML=`
     <div class="kpi"><h4>Total Received</h4><p>${total}</p></div>
     <div class="kpi"><h4>Selection Only</h4><p>${selection}</p></div>
     <div class="kpi"><h4>Quotation</h4><p>${quotation}</p></div>
     <div class="kpi"><h4>Completed</h4><p>${completed}</p></div>
-    <div class="kpi"><h4>Conversion %</h4><p>${conversion}%</p></div>
-    <div class="kpi"><button onclick="exportCSV()">Export Excel</button></div>
+    <div class="kpi"><h4>Conversion %</h4><p>${conversion}%</p>
+    <button class="export" onclick="exportCSV()">Export Excel</button></div>
   `;
 }
 
-/* ================= OVERDUE CHECK ================= */
+/* OVERDUE */
 function isOverdue(date){
   if(!date) return false;
   const diff=(new Date()-new Date(date))/(1000*60*60*24);
   return diff>3;
 }
 
-/* ================= KANBAN ================= */
+/* KANBAN */
 function renderKanban(){
 
   ['received','selection','quotation','completed']
   .forEach(col=>{
-    const container=$('col-'+col);
-    container.innerHTML='';
-    container.ondragover=e=>e.preventDefault();
-    container.ondrop=e=>handleDrop(e,col);
+    const c=$('col-'+col);
+    c.innerHTML='';
+    c.ondragover=e=>e.preventDefault();
+    c.ondrop=e=>handleDrop(e,col);
   });
 
   projects.forEach(p=>{
@@ -304,57 +288,43 @@ function handleDrop(e,targetCol){
   const p=projects.find(x=>x.id===id);
 
   if(targetCol==='received'){
-    p.selection=false;
-    p.quotation=false;
-    p.completed=false;
+    p.selection=false; p.quotation=false; p.completed=false;
   }
-
   if(targetCol==='selection'){
-    p.selection=true;
-    p.quotation=false;
-    p.completed=false;
+    p.selection=true; p.quotation=false; p.completed=false;
   }
-
   if(targetCol==='quotation'){
-    p.selection=true;
-    p.quotation=true;
-    p.completed=false;
+    p.selection=true; p.quotation=true; p.completed=false;
   }
-
   if(targetCol==='completed'){
-    p.selection=true;
-    p.quotation=true;
-    p.completed=true;
+    p.selection=true; p.quotation=true; p.completed=true;
   }
 
   save();
   renderAll();
 }
 
-/* ================= GRID ================= */
+/* GRID */
 function renderGrid(){
   $('tileGrid').innerHTML='';
-
   projects.forEach(p=>{
     const tile=document.createElement('div');
     tile.className='tile';
-
     tile.innerHTML=`
       <strong>${p.project}</strong>
       <small>${p.customer}</small>
 
       <div class="details">
         <label><input type="checkbox" ${p.selection?'checked':''}
-        onchange="update(${p.id},'selection',this.checked)"> Selection</label>
+        onchange="update(${p.id},'selection',this.checked)"> Selection</label><br>
 
         <label><input type="checkbox" ${p.quotation?'checked':''}
-        onchange="update(${p.id},'quotation',this.checked)"> Quotation</label>
+        onchange="update(${p.id},'quotation',this.checked)"> Quotation</label><br>
 
         <label><input type="checkbox" ${p.completed?'checked':''}
         onchange="update(${p.id},'completed',this.checked)"> Completed</label>
       </div>
     `;
-
     $('tileGrid').appendChild(tile);
   });
 }
@@ -363,16 +333,15 @@ function update(id,key,value){
   const p=projects.find(x=>x.id===id);
   p[key]=value;
 
-  if(key==='completed' && value===true){
-    p.selection=true;
-    p.quotation=true;
+  if(key==='completed'&&value){
+    p.selection=true; p.quotation=true;
   }
 
   save();
   renderAll();
 }
 
-/* ================= EXPORT ================= */
+/* EXPORT */
 function exportCSV(){
   let csv="Project,Customer,Received,Selection,Quotation,Completed\n";
   projects.forEach(p=>{
@@ -387,7 +356,6 @@ function exportCSV(){
   a.click();
 }
 
-/* ================= MASTER RENDER ================= */
 function renderAll(){
   renderDashboard();
   renderKanban();
