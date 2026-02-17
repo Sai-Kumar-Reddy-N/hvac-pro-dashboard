@@ -20,20 +20,6 @@ body{
   font-family:Inter,sans-serif;
   background:var(--bg);
   color:var(--text);
-  transition:0.3s;
-}
-
-/* THEMES */
-body.light{
-  --bg:#f1f5f9;
-  --card:#ffffff;
-  --text:#0f172a;
-}
-body.blue{
-  --bg:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-}
-body.purple{
-  --bg:linear-gradient(135deg,#41295a,#2F0743);
 }
 
 /* NAVBAR */
@@ -42,12 +28,7 @@ body.purple{
   justify-content:space-between;
   align-items:center;
   padding:14px 30px;
-  backdrop-filter:blur(16px);
-  background:rgba(17,24,39,0.85);
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  position:sticky;
-  top:0;
-  z-index:1000;
+  background:rgba(17,24,39,0.9);
 }
 
 .brand{
@@ -78,54 +59,12 @@ body.purple{
 .nav-item{
   cursor:pointer;
   padding:6px 4px;
-  position:relative;
 }
 
-.nav-item::after{
-  content:'';
-  position:absolute;
-  bottom:-4px;
-  left:0;
-  width:0%;
-  height:2px;
-  background:#22d3ee;
-  transition:0.3s;
+.nav-item.active{
+  color:var(--accent);
 }
 
-.nav-item:hover::after,
-.nav-item.active::after{
-  width:100%;
-}
-
-.avatar{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#9333ea,#ec4899);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.profile-menu{
-  position:absolute;
-  top:60px;
-  right:30px;
-  background:var(--card);
-  padding:12px;
-  border-radius:10px;
-  width:180px;
-  display:none;
-  box-shadow:0 10px 25px rgba(0,0,0,0.5);
-}
-
-.profile-menu.active{display:block;}
-.profile-menu div{padding:6px;cursor:pointer;font-size:14px;}
-.profile-menu div:hover{color:#22d3ee;}
-
-/* VIEWS */
 .view{display:none;padding:30px;}
 .view.active{display:block;}
 
@@ -137,13 +76,10 @@ body.purple{
 
 .tile{
   background:var(--card);
-  backdrop-filter:blur(10px);
   padding:15px;
   border-radius:12px;
   cursor:pointer;
-  transition:0.3s;
 }
-.tile:hover{transform:translateY(-6px);}
 
 .badge{
   display:inline-block;
@@ -163,7 +99,7 @@ body.purple{
   background:var(--card);
   padding:15px;
   border-radius:12px;
-  font-size:18px;
+  font-size:16px;
   font-weight:600;
 }
 
@@ -184,7 +120,6 @@ button{
   cursor:pointer;
 }
 
-/* MODAL */
 .modal{
   position:fixed;
   inset:0;
@@ -219,21 +154,7 @@ button{
     <div class="nav-item" onclick="setActive(this);showView('dashboard')">Dashboard</div>
     <div class="nav-item" onclick="setActive(this);openModal()">Add New</div>
   </div>
-
-  <div>
-    <div class="avatar" onclick="toggleProfile()">SK</div>
-  </div>
 </nav>
-
-<div class="profile-menu" id="profileMenu">
-  <div>Profile</div>
-  <div>Theme:</div>
-  <div onclick="changeTheme('')">Dark</div>
-  <div onclick="changeTheme('light')">Light</div>
-  <div onclick="changeTheme('blue')">Blue Gradient</div>
-  <div onclick="changeTheme('purple')">Purple Gradient</div>
-  <div onclick="exportCSV()">Export CSV</div>
-</div>
 
 <!-- HOME -->
 <div id="home" class="view active">
@@ -243,14 +164,6 @@ button{
 
 <!-- PROJECTS -->
 <div id="projects" class="view">
-  <input id="searchInput" placeholder="Search..." oninput="renderProjects()">
-  <select id="filterStatus" onchange="renderProjects()">
-    <option value="">All</option>
-    <option value="selection">Only Selection</option>
-    <option value="quotation">Only Quotation</option>
-    <option value="both">Both</option>
-    <option value="revision">Revised</option>
-  </select>
   <div id="projectGrid" class="tile-grid"></div>
 </div>
 
@@ -262,8 +175,11 @@ button{
 <!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modal-content">
+    <h3>Project Details</h3>
+
     <input id="projectName" placeholder="Project Name">
     <input id="customerName" placeholder="Customer">
+
     <select id="coilType">
       <option>CHW</option>
       <option>DX</option>
@@ -271,16 +187,28 @@ button{
       <option>DX + COMBI</option>
       <option>DUAL COIL</option>
     </select>
+
+    <label>Received</label>
     <input type="date" id="receivedDate">
+
+    <label>Sent</label>
     <input type="date" id="sentDate">
+
     <input id="quoteId" placeholder="Quote ID">
     <textarea id="remarks" placeholder="Remarks"></textarea>
 
+    <hr>
+
+    <strong>Status</strong>
+    <label><input type="checkbox" id="selectionSent"> Selection Sent</label>
+    <label><input type="checkbox" id="quotationSent"> Quotation Sent</label>
+
+    <hr>
+
     <label><input type="checkbox" id="isNew" onclick="toggleType('new')"> New</label>
     <label><input type="checkbox" id="isRevision" onclick="toggleType('revision')"> Revision</label>
-    <label><input type="checkbox" id="selectionSent"> Selection</label>
-    <label><input type="checkbox" id="quotationSent"> Quotation</label>
 
+    <br><br>
     <button onclick="saveProject()">Save</button>
     <button onclick="closeModal()">Close</button>
   </div>
@@ -291,40 +219,38 @@ const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacElite'))||[];
 let editing=null;
 
-/* NAV */
 function setActive(el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   el.classList.add('active');
 }
-function toggleProfile(){
-  $('profileMenu').classList.toggle('active');
-}
-window.onclick=function(e){
-  if(!e.target.closest('.avatar')) $('profileMenu').classList.remove('active');
-}
 
-/* VIEW */
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   $(id).classList.add('active');
 }
 
-function changeTheme(t){
-  document.body.className=t;
-}
-
-/* MODAL */
 function openModal(project=null){
   $('modal').style.display='flex';
   if(project){
     editing=project.id;
-    Object.keys(project).forEach(k=>{ if($(k)) $(k).value=project[k]; });
+    $('projectName').value=project.project;
+    $('customerName').value=project.customer;
+    $('coilType').value=project.type;
+    $('receivedDate').value=project.received;
+    $('sentDate').value=project.sent;
+    $('quoteId').value=project.quoteId;
+    $('remarks').value=project.remarks;
+    $('selectionSent').checked=project.selection;
+    $('quotationSent').checked=project.quotation;
+    $('isNew').checked=project.isNew;
+    $('isRevision').checked=project.isRevision;
   }else{
     editing=null;
     document.querySelectorAll('.modal input,textarea').forEach(i=>i.value='');
     document.querySelectorAll('.modal input[type=checkbox]').forEach(c=>c.checked=false);
   }
 }
+
 function closeModal(){ $('modal').style.display='none'; }
 
 function toggleType(type){
@@ -347,6 +273,7 @@ function saveProject(){
     selection:$('selectionSent').checked,
     quotation:$('quotationSent').checked
   };
+
   if(editing)
     projects=projects.map(p=>p.id===editing?data:p);
   else
@@ -357,7 +284,6 @@ function saveProject(){
   renderAll();
 }
 
-/* RENDER */
 function renderHome(){
   const recent=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received)).slice(0,10);
   $('homeGrid').innerHTML='';
@@ -374,23 +300,8 @@ function renderHome(){
 }
 
 function renderProjects(){
-  let filtered=[...projects];
-  const search=$('searchInput').value?.toLowerCase()||'';
-  const filter=$('filterStatus').value;
-
-  if(search)
-    filtered=filtered.filter(p=>p.project.toLowerCase().includes(search)||p.customer.toLowerCase().includes(search));
-  if(filter==='selection')
-    filtered=filtered.filter(p=>p.selection&&!p.quotation);
-  if(filter==='quotation')
-    filtered=filtered.filter(p=>p.quotation&&!p.selection);
-  if(filter==='both')
-    filtered=filtered.filter(p=>p.selection&&p.quotation);
-  if(filter==='revision')
-    filtered=filtered.filter(p=>p.isRevision);
-
   $('projectGrid').innerHTML='';
-  filtered.forEach(p=>{
+  projects.forEach(p=>{
     $('projectGrid').innerHTML+=`
       <div class="tile" onclick='openModal(${JSON.stringify(p)})'>
         <strong>${p.project}</strong>
@@ -415,19 +326,6 @@ function renderDashboard(){
     <div class="kpi">Only Quotation: ${onlyQuo}</div>
     <div class="kpi">Both: ${both}</div>
     <div class="kpi">Revised: ${revised}</div>`;
-}
-
-function exportCSV(){
-  let csv="Project,Customer,Type,Received,Sent,QuoteID,Revision\n";
-  projects.forEach(p=>{
-    csv+=`${p.project},${p.customer},${p.type},${p.received},${p.sent},${p.quoteId},${p.isRevision}\n`;
-  });
-  const blob=new Blob([csv],{type:'text/csv'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download='projects.csv';
-  a.click();
 }
 
 function renderAll(){
