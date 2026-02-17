@@ -337,51 +337,83 @@ function renderDetailed(){
   });
 }
 
-/* GRID VIEW WITH STATUS + DELETE */
+/* GRID VIEW */
 function renderGrid(){
   $('gridContainer').innerHTML='';
 
   const sorted=[...projects]
     .sort((a,b)=>new Date(b.received)-new Date(a.received));
 
+  const grouped={};
+
   sorted.forEach(p=>{
-    $('gridContainer').innerHTML+=`
-      <div class="grid-tile">
-        <strong>${p.project}</strong><br>
-        <small>${p.customer}</small><br><br>
-
-        <label>
-          <input type="checkbox" ${p.selection&&!p.quotation?'checked':''}
-          onchange="updateStatus(${p.id},'selectionOnly',this.checked)">
-          Only Selection Sent
-        </label><br>
-
-        <label>
-          <input type="checkbox" ${p.quotation&&!p.completed?'checked':''}
-          onchange="updateStatus(${p.id},'quoteOnly',this.checked)">
-          Only Quote Sent
-        </label><br>
-
-        <label>
-          <input type="checkbox" ${(p.selection&&p.quotation&&!p.completed)?'checked':''}
-          onchange="updateStatus(${p.id},'both',this.checked)">
-          Both Selection & Offer Sent
-        </label><br>
-
-        <label>
-          <input type="checkbox" ${p.waiting?'checked':''}
-          onchange="updateStatus(${p.id},'waiting',this.checked)">
-          Waiting for Customer Confirmation
-        </label><br><br>
-
-        <button class="delete-btn"
-        onclick="deleteProject(${p.id})">Delete</button>
-      </div>
-    `;
+    if(!grouped[p.received]) grouped[p.received]=[];
+    grouped[p.received].push(p);
   });
+
+  Object.keys(grouped)
+    .sort((a,b)=>new Date(b)-new Date(a))
+    .forEach(date=>{
+
+      $('gridContainer').innerHTML+=`
+        <div style="margin:15px 0 8px; font-weight:600; color:var(--accent);">
+          ${date}
+        </div>
+      `;
+
+      grouped[date].forEach(p=>{
+        $('gridContainer').innerHTML+=`
+          <div class="grid-tile">
+            <strong>${p.project}</strong><br>
+            <small>${p.customer}</small><br><br>
+
+            <label>Sent Date:</label><br>
+            <input type="date" value="${p.sent||''}"
+              onchange="updateSent(${p.id}, this.value)">
+            <br><br>
+
+            <label>
+              <input type="checkbox" ${p.selection&&!p.quotation?'checked':''}
+              onchange="updateStatus(${p.id},'selectionOnly',this.checked)">
+              Only Selection Sent
+            </label><br>
+
+            <label>
+              <input type="checkbox" ${p.quotation&&!p.completed?'checked':''}
+              onchange="updateStatus(${p.id},'quoteOnly',this.checked)">
+              Only Quote Sent
+            </label><br>
+
+            <label>
+              <input type="checkbox" ${(p.selection&&p.quotation&&!p.completed)?'checked':''}
+              onchange="updateStatus(${p.id},'both',this.checked)">
+              Both Selection & Offer Sent
+            </label><br>
+
+            <label>
+              <input type="checkbox" ${p.waiting?'checked':''}
+              onchange="updateStatus(${p.id},'waiting',this.checked)">
+              Waiting for Customer Confirmation
+            </label><br><br>
+
+            <button class="delete-btn"
+              onclick="deleteProject(${p.id})">
+              Delete
+            </button>
+          </div>
+        `;
+      });
+
+    });
 }
 
-/* STATUS LOGIC */
+function updateSent(id,value){
+  const p=projects.find(x=>x.id===id);
+  p.sent=value;
+  save();
+  renderAll();
+}
+
 function updateStatus(id,type,value){
   const p=projects.find(x=>x.id===id);
 
@@ -407,17 +439,10 @@ function updateStatus(id,type,value){
     p.waiting=value;
   }
 
-  if(p.selection||p.quotation){
-    if(!p.sent){
-      p.sent=new Date().toISOString().split('T')[0];
-    }
-  }
-
   save();
   renderAll();
 }
 
-/* DELETE */
 function deleteProject(id){
   if(!confirm("Delete this enquiry?")) return;
   projects=projects.filter(p=>p.id!==id);
