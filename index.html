@@ -17,7 +17,7 @@ body{
   color:#fff;
 }
 
-/* ===== ANIMATED GRADIENT BLOBS ===== */
+/* ===== BACKGROUND BLOBS ===== */
 .background{
   position:fixed;
   width:100%;
@@ -25,35 +25,31 @@ body{
   z-index:-2;
   overflow:hidden;
 }
-
 .blob{
   position:absolute;
   width:400px;
   height:400px;
-  background:radial-gradient(circle at 30% 30%,#00c6ff,#0072ff);
+  background:radial-gradient(circle,#00c6ff,#0072ff);
   border-radius:50%;
-  filter:blur(100px);
+  filter:blur(120px);
   animation:float 12s infinite alternate ease-in-out;
   opacity:.6;
 }
-
 .blob:nth-child(2){
-  background:radial-gradient(circle at 30% 30%,#ff00cc,#3333ff);
+  background:radial-gradient(circle,#ff00cc,#3333ff);
   left:60%;
   top:30%;
   animation-duration:15s;
 }
-
 @keyframes float{
-  from{transform:translateY(-50px) translateX(-30px)}
-  to{transform:translateY(50px) translateX(30px)}
+  from{transform:translate(-50px,-50px)}
+  to{transform:translate(50px,50px)}
 }
 
-/* ===== GLASS EFFECT ===== */
+/* ===== GLASS ===== */
 .glass{
   background:rgba(255,255,255,0.08);
   backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
   border:1px solid rgba(255,255,255,0.15);
   box-shadow:0 8px 32px rgba(0,0,0,0.4);
 }
@@ -63,27 +59,67 @@ nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:20px 40px;
+  padding:16px 40px;
   position:sticky;
   top:0;
-  z-index:10;
+  z-index:100;
+}
+
+.nav-left{
+  display:flex;
+  align-items:center;
+  gap:20px;
 }
 
 nav h1{
   margin:0;
   font-size:20px;
   font-weight:700;
-  letter-spacing:1px;
 }
 
 .nav-kpis{
   display:flex;
-  gap:40px;
+  gap:30px;
 }
 
 .kpi-box{text-align:center}
-.kpi-label{font-size:11px;opacity:.6;text-transform:uppercase;}
-.kpi-value{font-size:24px;font-weight:700;margin-top:4px}
+.kpi-label{font-size:10px;opacity:.6;text-transform:uppercase}
+.kpi-value{font-size:18px;font-weight:700}
+
+.nav-right{
+  display:flex;
+  gap:20px;
+  align-items:center;
+}
+
+.nav-icon{
+  cursor:pointer;
+  font-size:18px;
+  transition:.2s ease;
+}
+.nav-icon:hover{
+  transform:scale(1.2);
+}
+
+/* ===== FILTER POPUP ===== */
+.popup{
+  position:absolute;
+  top:70px;
+  right:40px;
+  padding:15px;
+  border-radius:16px;
+  display:none;
+  width:240px;
+}
+.popup input{
+  width:100%;
+  margin-bottom:8px;
+  padding:6px;
+  border-radius:8px;
+  border:none;
+  background:rgba(255,255,255,.15);
+  color:white;
+}
 
 /* ===== CONTAINER ===== */
 .container{
@@ -98,23 +134,18 @@ nav h1{
   border-radius:20px;
   margin-bottom:30px;
 }
-
 .form-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:15px;
 }
-
 input{
   padding:8px;
   border-radius:12px;
   border:none;
-  outline:none;
-  background:rgba(255,255,255,0.15);
-  color:#fff;
+  background:rgba(255,255,255,.15);
+  color:white;
 }
-
-/* ===== MAGNETIC BUTTON ===== */
 button{
   background:#00c6ff;
   border:none;
@@ -123,7 +154,6 @@ button{
   cursor:pointer;
   font-weight:600;
   transition:.2s ease;
-  position:relative;
 }
 button:hover{transform:scale(1.05)}
 
@@ -131,54 +161,23 @@ button:hover{transform:scale(1.05)}
 .tile-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(260px,280px));
-  gap:30px;
+  gap:25px;
 }
 
-/* ===== 3D GLASS TILES ===== */
 .tile{
   padding:20px;
   border-radius:24px;
-  transition:transform .2s ease, box-shadow .2s ease;
-  transform-style:preserve-3d;
+  transition:.2s ease;
   cursor:pointer;
+  transform-style:preserve-3d;
 }
-
 .tile:hover{
   box-shadow:0 25px 50px rgba(0,0,0,.6);
 }
-
-.tile h3{
-  margin:0;
-  font-size:15px;
-  font-weight:600;
-}
-
-.tile .customer{
-  font-size:11px;
-  opacity:.7;
-  margin-top:6px;
-}
-
-.tile .date{
-  font-size:10px;
-  margin-top:6px;
-  opacity:.7;
-}
-
-.status-badge{
-  font-size:9px;
-  padding:5px 10px;
-  border-radius:15px;
-  margin-top:10px;
-  display:inline-block;
-  background:rgba(0,255,150,.3);
-}
-
-.details{
-  margin-top:10px;
-  display:none;
-  font-size:11px;
-}
+.tile h3{margin:0;font-size:14px}
+.customer{font-size:11px;opacity:.7;margin-top:4px}
+.date{font-size:10px;margin-top:6px;opacity:.7}
+.details{display:none;margin-top:10px;font-size:11px}
 .tile.expanded .details{display:block}
 </style>
 </head>
@@ -191,13 +190,26 @@ button:hover{transform:scale(1.05)}
 </div>
 
 <nav class="glass">
-  <h1>My Work Flow</h1>
+  <div class="nav-left">
+    <h1>My Work Flow</h1>
+  </div>
+
   <div class="nav-kpis" id="navKpis"></div>
+
+  <div class="nav-right">
+    <div class="nav-icon" onclick="toggleFilter()">🔍</div>
+    <div class="nav-icon" onclick="scrollToAdd()">➕</div>
+  </div>
+
+  <div class="popup glass" id="filterPopup">
+    <input type="text" id="filterProject" placeholder="Project name">
+    <input type="text" id="filterCustomer" placeholder="Customer name">
+  </div>
 </nav>
 
 <div class="container">
 
-<div class="card glass">
+<div class="card glass" id="addSection">
   <div class="form-grid">
     <input id="project" placeholder="Project Name">
     <input id="customer" placeholder="Customer Name">
@@ -214,33 +226,18 @@ button:hover{transform:scale(1.05)}
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
 
-/* ===== MAGNETIC BUTTON EFFECT ===== */
-document.querySelectorAll("button").forEach(btn=>{
-  btn.addEventListener("mousemove",e=>{
-    const rect=btn.getBoundingClientRect();
-    const x=e.clientX-rect.left;
-    const y=e.clientY-rect.top;
-    btn.style.transform=`translate(${(x-rect.width/2)/10}px,${(y-rect.height/2)/10}px)`;
-  });
-  btn.addEventListener("mouseleave",()=>btn.style.transform="translate(0,0)");
-});
-
-/* ===== 3D TILE EFFECT ===== */
-function applyTilt(tile){
-  tile.addEventListener("mousemove",e=>{
-    const rect=tile.getBoundingClientRect();
-    const x=e.clientX-rect.left;
-    const y=e.clientY-rect.top;
-    const centerX=rect.width/2;
-    const centerY=rect.height/2;
-    const rotateX=(y-centerY)/15;
-    const rotateY=(centerX-x)/15;
-    tile.style.transform=`rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-  });
-  tile.addEventListener("mouseleave",()=>{
-    tile.style.transform="rotateX(0) rotateY(0)";
-  });
+function scrollToAdd(){
+  document.getElementById('addSection').scrollIntoView({behavior:'smooth'});
 }
+
+function toggleFilter(){
+  const popup=$('filterPopup');
+  popup.style.display=popup.style.display==='block'?'none':'block';
+}
+
+['filterProject','filterCustomer'].forEach(id=>{
+  $(id).addEventListener('input',render);
+});
 
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
@@ -252,54 +249,42 @@ $('addBtn').onclick=()=>{
     id:Date.now(),
     project:p,
     customer:c,
-    received:r,
-    status:'Received'
+    received:r
   });
 
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
   render();
 };
 
-function animateCount(el,target){
-  let start=0;
-  const step=()=>{
-    start+=Math.ceil(target/25);
-    if(start>=target){el.textContent=target;return;}
-    el.textContent=start;
-    requestAnimationFrame(step);
-  };
-  step();
-}
-
 function render(){
   const total=projects.length;
-
   $('navKpis').innerHTML=`
     <div class="kpi-box">
       <div class="kpi-label">Received</div>
-      <div class="kpi-value" id="recCount">0</div>
+      <div class="kpi-value">${total}</div>
     </div>
   `;
 
-  animateCount($('recCount'),total);
+  let filtered=[...projects];
+  const fp=$('filterProject').value.toLowerCase();
+  const fc=$('filterCustomer').value.toLowerCase();
+
+  if(fp) filtered=filtered.filter(x=>x.project.toLowerCase().includes(fp));
+  if(fc) filtered=filtered.filter(x=>x.customer.toLowerCase().includes(fc));
+
+  filtered.sort((a,b)=>new Date(b.received)-new Date(a.received));
 
   $('tileGrid').innerHTML='';
-  projects.sort((a,b)=>new Date(b.received)-new Date(a.received));
-
-  projects.forEach(x=>{
+  filtered.forEach(x=>{
     const tile=document.createElement('div');
     tile.className='tile glass';
-
     tile.innerHTML=`
       <h3 onclick="this.closest('.tile').classList.toggle('expanded')">${x.project}</h3>
       <div class="customer">${x.customer}</div>
       <div class="date">Received: ${x.received}</div>
-      <span class="status-badge">${x.status}</span>
-      <div class="details">More details...</div>
+      <div class="details">Expandable details here</div>
     `;
-
     $('tileGrid').appendChild(tile);
-    applyTilt(tile);
   });
 }
 
