@@ -4,15 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HVAC Workflow Pro Elite</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --bg:#0f172a;
   --card:rgba(255,255,255,0.06);
+  --glass:rgba(255,255,255,0.08);
   --text:#e5e7eb;
   --muted:#94a3b8;
   --accent:#22d3ee;
+  --gradient:linear-gradient(135deg,#22d3ee,#3b82f6,#9333ea);
 }
 
 body{
@@ -20,6 +22,21 @@ body{
   font-family:Inter,sans-serif;
   background:var(--bg);
   color:var(--text);
+  transition:0.4s ease;
+}
+
+/* THEMES */
+body.light{
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --glass:rgba(0,0,0,0.05);
+  --text:#0f172a;
+}
+body.blue{
+  --bg:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
+body.purple{
+  --bg:linear-gradient(135deg,#41295a,#2F0743);
 }
 
 /* NAVBAR */
@@ -27,115 +44,235 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:14px 30px;
-  background:rgba(17,24,39,0.9);
+  padding:14px 40px;
+  backdrop-filter:blur(16px);
+  background:rgba(17,24,39,0.75);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  position:sticky;
+  top:0;
+  z-index:1000;
 }
 
 .brand{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
   font-weight:600;
+  letter-spacing:0.5px;
 }
 
 .logo-circle{
-  width:36px;
-  height:36px;
+  width:38px;
+  height:38px;
   border-radius:50%;
-  background:linear-gradient(135deg,#22d3ee,#3b82f6);
+  background:var(--gradient);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:13px;
+  font-size:14px;
   font-weight:700;
   color:#000;
+  box-shadow:0 0 20px rgba(34,211,238,.6);
 }
 
 .nav-center{
   display:flex;
-  gap:30px;
+  gap:35px;
 }
 
 .nav-item{
   cursor:pointer;
+  position:relative;
   padding:6px 4px;
+  font-weight:500;
+  transition:0.3s;
 }
 
-.nav-item.active{
-  color:var(--accent);
+.nav-item::after{
+  content:'';
+  position:absolute;
+  bottom:-6px;
+  left:0;
+  width:0%;
+  height:2px;
+  background:var(--gradient);
+  transition:0.3s;
 }
 
-.view{display:none;padding:30px;}
+.nav-item:hover::after,
+.nav-item.active::after{
+  width:100%;
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#9333ea,#ec4899);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 0 15px rgba(236,72,153,.6);
+}
+
+/* PROFILE MENU */
+.profile-wrapper{position:relative;}
+
+.profile-menu{
+  position:absolute;
+  top:55px;
+  right:0;
+  background:var(--card);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:14px;
+  border-radius:12px;
+  width:200px;
+  display:none;
+  animation:fadeIn 0.3s ease;
+}
+
+.profile-menu.active{display:block;}
+
+.profile-menu div{
+  padding:6px;
+  cursor:pointer;
+  font-size:14px;
+  border-radius:6px;
+}
+
+.profile-menu div:hover{
+  background:var(--glass);
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(-10px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* VIEWS */
+.view{
+  display:none;
+  padding:40px;
+  animation:fadeIn 0.4s ease;
+}
 .view.active{display:block;}
 
+/* TILES */
 .tile-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:24px;
 }
 
 .tile{
   background:var(--card);
-  padding:15px;
-  border-radius:12px;
+  padding:18px;
+  border-radius:16px;
   cursor:pointer;
+  position:relative;
+  transition:0.4s;
+  border:1px solid transparent;
+}
+
+.tile::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:16px;
+  padding:1px;
+  background:var(--gradient);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  opacity:0;
+  transition:0.4s;
+}
+
+.tile:hover{
+  transform:translateY(-8px);
+  box-shadow:0 15px 40px rgba(0,0,0,0.4);
+}
+
+.tile:hover::before{
+  opacity:1;
 }
 
 .badge{
   display:inline-block;
-  padding:3px 8px;
-  border-radius:10px;
+  padding:4px 10px;
+  border-radius:20px;
   font-size:10px;
-  background:var(--accent);
+  background:var(--gradient);
+  color:#000;
+  font-weight:600;
+  margin-top:6px;
 }
 
+/* KPI */
 .kpi-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:24px;
 }
 
 .kpi{
   background:var(--card);
-  padding:15px;
-  border-radius:12px;
-  font-size:16px;
+  padding:20px;
+  border-radius:16px;
+  font-size:18px;
   font-weight:600;
+  transition:0.3s;
 }
 
+.kpi:hover{
+  transform:translateY(-5px);
+  box-shadow:0 12px 30px rgba(0,0,0,0.4);
+}
+
+/* INPUTS */
 input,select,textarea{
   width:100%;
-  margin-bottom:10px;
-  padding:6px;
-  border-radius:6px;
-  border:none;
+  margin-bottom:12px;
+  padding:8px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:var(--glass);
+  color:var(--text);
 }
 
 button{
-  padding:6px 10px;
+  padding:8px 14px;
   border:none;
-  border-radius:6px;
-  background:var(--accent);
+  border-radius:8px;
+  background:var(--gradient);
   color:#000;
+  font-weight:600;
   cursor:pointer;
 }
 
+/* MODAL */
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,.7);
   display:none;
   justify-content:center;
   align-items:center;
+  backdrop-filter:blur(6px);
 }
 
 .modal-content{
   background:var(--card);
-  padding:20px;
-  border-radius:12px;
-  width:400px;
+  padding:24px;
+  border-radius:18px;
+  width:420px;
   max-height:90vh;
   overflow:auto;
+  animation:fadeIn 0.3s ease;
 }
 </style>
 </head>
@@ -145,7 +282,7 @@ button{
 <nav class="navbar">
   <div class="brand">
     <div class="logo-circle">HW</div>
-    <span>HVAC Workflow</span>
+    HVAC Workflow
   </div>
 
   <div class="nav-center">
@@ -154,32 +291,39 @@ button{
     <div class="nav-item" onclick="setActive(this);showView('dashboard')">Dashboard</div>
     <div class="nav-item" onclick="setActive(this);openModal()">Add New</div>
   </div>
+
+  <div class="profile-wrapper">
+    <div class="avatar" onclick="toggleProfile()">SK</div>
+    <div class="profile-menu" id="profileMenu">
+      <div>Profile</div>
+      <div onclick="changeTheme('')">Dark</div>
+      <div onclick="changeTheme('light')">Light</div>
+      <div onclick="changeTheme('blue')">Blue</div>
+      <div onclick="changeTheme('purple')">Purple</div>
+      <div onclick="exportCSV()">Export CSV</div>
+    </div>
+  </div>
 </nav>
 
-<!-- HOME -->
 <div id="home" class="view active">
   <h2>History</h2>
   <div id="homeGrid" class="tile-grid"></div>
 </div>
 
-<!-- PROJECTS -->
 <div id="projects" class="view">
   <div id="projectGrid" class="tile-grid"></div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="view">
   <div class="kpi-grid" id="kpiGrid"></div>
 </div>
 
-<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <h3>Project Details</h3>
 
     <input id="projectName" placeholder="Project Name">
     <input id="customerName" placeholder="Customer">
-
     <select id="coilType">
       <option>CHW</option>
       <option>DX</option>
@@ -187,28 +331,16 @@ button{
       <option>DX + COMBI</option>
       <option>DUAL COIL</option>
     </select>
-
-    <label>Received</label>
     <input type="date" id="receivedDate">
-
-    <label>Sent</label>
     <input type="date" id="sentDate">
-
     <input id="quoteId" placeholder="Quote ID">
     <textarea id="remarks" placeholder="Remarks"></textarea>
 
-    <hr>
-
-    <strong>Status</strong>
     <label><input type="checkbox" id="selectionSent"> Selection Sent</label>
     <label><input type="checkbox" id="quotationSent"> Quotation Sent</label>
-
-    <hr>
-
     <label><input type="checkbox" id="isNew" onclick="toggleType('new')"> New</label>
     <label><input type="checkbox" id="isRevision" onclick="toggleType('revision')"> Revision</label>
 
-    <br><br>
     <button onclick="saveProject()">Save</button>
     <button onclick="closeModal()">Close</button>
   </div>
@@ -224,9 +356,22 @@ function setActive(el){
   el.classList.add('active');
 }
 
+function toggleProfile(){
+  $('profileMenu').classList.toggle('active');
+}
+
+window.onclick=function(e){
+  if(!e.target.closest('.profile-wrapper'))
+    $('profileMenu').classList.remove('active');
+}
+
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   $(id).classList.add('active');
+}
+
+function changeTheme(theme){
+  document.body.className=theme;
 }
 
 function openModal(project=null){
@@ -326,6 +471,19 @@ function renderDashboard(){
     <div class="kpi">Only Quotation: ${onlyQuo}</div>
     <div class="kpi">Both: ${both}</div>
     <div class="kpi">Revised: ${revised}</div>`;
+}
+
+function exportCSV(){
+  let csv="Project,Customer,Type,Received,Sent,QuoteID,Revision\n";
+  projects.forEach(p=>{
+    csv+=`${p.project},${p.customer},${p.type},${p.received},${p.sent},${p.quoteId},${p.isRevision}\n`;
+  });
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='projects.csv';
+  a.click();
 }
 
 function renderAll(){
