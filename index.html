@@ -8,6 +8,7 @@
 
 <style>
 *{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:Inter,sans-serif;
@@ -18,19 +19,19 @@ body{
 .theme1{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:white;}
 .theme2{background:#111827;color:white;}
 .theme3{background:#0b3d3d;color:#e0ffff;}
-.theme4{background:#1e1e2f;color:#fff;}
+.theme4{background:#1e1e2f;color:white;}
 .theme5{background:#101820;color:#f8fafc;}
 .theme6{background:#002b36;color:#eee8d5;}
 .theme7{background:#1a1a1a;color:#f3f4f6;}
 .theme8{background:#f4f6f8;color:#1f2937;}
 .theme9{background:#0a192f;color:#ccd6f6;}
-.theme10{background:#2d1b69;color:#fff;}
+.theme10{background:#2d1b69;color:white;}
 
 .glass{
   background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(15px);
+  backdrop-filter:blur(14px);
   border:1px solid rgba(255,255,255,0.15);
-  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
 }
 
 /* NAVBAR */
@@ -43,14 +44,16 @@ nav{
   top:0;
   z-index:100;
 }
+
 nav h1{margin:0;font-size:18px}
 
 .nav-kpis{
   display:flex;
   gap:30px;
 }
+
 .kpi{text-align:center}
-.kpi span{font-size:11px;opacity:.6;display:block}
+.kpi span{display:block;font-size:11px;opacity:.7}
 .kpi b{font-size:18px}
 
 .nav-right{
@@ -59,7 +62,7 @@ nav h1{margin:0;font-size:18px}
   cursor:pointer;
 }
 
-/* FILTER */
+/* FILTER & THEME POPUPS */
 .filter-popup,.theme-popup{
   position:absolute;
   top:65px;
@@ -69,6 +72,7 @@ nav h1{margin:0;font-size:18px}
   display:none;
   width:240px;
 }
+
 .filter-popup input{
   width:100%;
   margin-bottom:8px;
@@ -86,17 +90,19 @@ nav h1{margin:0;font-size:18px}
   padding:30px;
 }
 
-/* ADD */
+/* ADD SECTION */
 .card{
   padding:20px;
   border-radius:16px;
   margin-bottom:30px;
 }
+
 .form-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:15px;
 }
+
 input,select,textarea{
   padding:8px;
   border-radius:8px;
@@ -104,6 +110,7 @@ input,select,textarea{
   background:rgba(255,255,255,.15);
   color:inherit;
 }
+
 button{
   background:#00c6ff;
   border:none;
@@ -125,16 +132,24 @@ button{
   transition:.3s ease;
   cursor:pointer;
 }
+
 .tile:hover{transform:translateY(-5px)}
 
-.small{font-size:11px;opacity:.7;margin-top:4px}
+.small{
+  font-size:11px;
+  opacity:.7;
+  margin-top:4px;
+}
+
 .badge{
   display:inline-block;
   padding:3px 8px;
   font-size:9px;
   border-radius:12px;
   margin-top:6px;
+  margin-right:4px;
 }
+
 .selection{background:#2ecc71;}
 .quotation{background:#3498db;}
 
@@ -143,7 +158,10 @@ button{
   display:none;
   font-size:11px;
 }
-.tile.expanded .details{display:block}
+
+.tile.expanded .details{
+  display:block;
+}
 </style>
 </head>
 
@@ -167,8 +185,17 @@ button{
   </div>
 
   <div class="theme-popup glass" id="themePopup">
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
-      ${Array.from({length:10},(_,i)=>`<div onclick="setTheme('theme${i+1}')" style="width:24px;height:24px;border-radius:50%;background:hsl(${i*36},70%,50%)"></div>`).join('')}
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+      <div onclick="setTheme('theme1')" style="width:24px;height:24px;border-radius:50%;background:#0f2027;cursor:pointer"></div>
+      <div onclick="setTheme('theme2')" style="width:24px;height:24px;border-radius:50%;background:#111827;cursor:pointer"></div>
+      <div onclick="setTheme('theme3')" style="width:24px;height:24px;border-radius:50%;background:#0b3d3d;cursor:pointer"></div>
+      <div onclick="setTheme('theme4')" style="width:24px;height:24px;border-radius:50%;background:#1e1e2f;cursor:pointer"></div>
+      <div onclick="setTheme('theme5')" style="width:24px;height:24px;border-radius:50%;background:#101820;cursor:pointer"></div>
+      <div onclick="setTheme('theme6')" style="width:24px;height:24px;border-radius:50%;background:#002b36;cursor:pointer"></div>
+      <div onclick="setTheme('theme7')" style="width:24px;height:24px;border-radius:50%;background:#1a1a1a;cursor:pointer"></div>
+      <div onclick="setTheme('theme8')" style="width:24px;height:24px;border-radius:50%;background:#f4f6f8;cursor:pointer"></div>
+      <div onclick="setTheme('theme9')" style="width:24px;height:24px;border-radius:50%;background:#0a192f;cursor:pointer"></div>
+      <div onclick="setTheme('theme10')" style="width:24px;height:24px;border-radius:50%;background:#2d1b69;cursor:pointer"></div>
     </div>
   </div>
 </nav>
@@ -200,27 +227,30 @@ button{
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
 
-/* THEME */
+/* ===== THEME ===== */
 function toggleTheme(){
   const p=$('themePopup');
   p.style.display=p.style.display==='block'?'none':'block';
 }
+
 function setTheme(t){
   document.body.className=t;
   localStorage.setItem('theme',t);
 }
-const savedTheme=localStorage.getItem('theme');
-if(savedTheme)document.body.className=savedTheme;
 
-/* FILTER */
+const savedTheme=localStorage.getItem('theme');
+if(savedTheme) document.body.className=savedTheme;
+
+/* ===== FILTER ===== */
 function toggleFilter(){
   const p=$('filterPopup');
   p.style.display=p.style.display==='block'?'none':'block';
 }
+
 ['filterProject','filterCustomer','filterReceived','filterSent']
 .forEach(id=>$(id).addEventListener('input',render));
 
-/* ADD */
+/* ===== ADD ===== */
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
@@ -248,12 +278,18 @@ function save(){
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
 }
 
-/* RENDER */
+/* ===== RENDER ===== */
 function render(){
 
   const rec=projects.length;
-  const sel=projects.filter(p=>p.selection).length;
-  const quo=projects.filter(p=>p.quotation).length;
+
+  const sel=projects.filter(p=> 
+    p.selection===true && p.quotation===false
+  ).length;
+
+  const quo=projects.filter(p=> 
+    p.quotation===true
+  ).length;
 
   $('navKpis').innerHTML=`
     <div class="kpi"><span>Received</span><b>${rec}</b></div>
@@ -282,8 +318,10 @@ function render(){
     tile.className='tile glass';
 
     let badges='';
-    if(p.selection) badges+=`<span class="badge selection">Selection Sent</span>`;
-    if(p.quotation) badges+=`<span class="badge quotation">Quotation Sent</span>`;
+    if(p.selection && !p.quotation)
+      badges+=`<span class="badge selection">Selection Sent</span>`;
+    if(p.quotation)
+      badges+=`<span class="badge quotation">Quotation Sent</span>`;
 
     tile.innerHTML=`
       <h3 onclick="this.closest('.tile').classList.toggle('expanded')">${p.project}</h3>
