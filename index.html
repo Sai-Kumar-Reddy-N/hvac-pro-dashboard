@@ -8,23 +8,31 @@
 
 <style>
 :root{
-  --bg:#020617;
+  --bg:#0f172a;
+  --card:#111827;
   --glass:rgba(255,255,255,0.06);
   --accent:#22d3ee;
   --text:#e5e7eb;
   --muted:#94a3b8;
   --danger:#ef4444;
 }
+
+body.light{
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --glass:rgba(0,0,0,0.05);
+  --text:#0f172a;
+  --muted:#475569;
+}
+
 *{box-sizing:border-box}
 
 body{
   margin:0;
   font-family:Inter,sans-serif;
-  background:
-    radial-gradient(circle at 20% 20%, #0f172a, transparent 40%),
-    radial-gradient(circle at 80% 80%, #0ea5e9, transparent 40%),
-    var(--bg);
+  background:var(--bg);
   color:var(--text);
+  transition:.3s ease;
 }
 
 /* NAVBAR */
@@ -32,146 +40,126 @@ nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:16px 30px;
-  background:rgba(2,6,23,.8);
-  backdrop-filter:blur(14px);
+  padding:14px 28px;
+  background:var(--card);
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
   position:sticky;
   top:0;
   z-index:10;
 }
 
+.nav-left{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+
 nav h1{
   margin:0;
-  font-size:20px;
+  font-size:18px;
   font-weight:700;
-  background:linear-gradient(90deg,#22d3ee,#38bdf8);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+  color:var(--accent);
 }
 
 .nav-kpis{
   display:flex;
-  gap:14px;
+  gap:12px;
 }
 
 .nav-kpi{
   background:var(--glass);
   padding:6px 14px;
   border-radius:20px;
-  text-align:center;
-  min-width:80px;
   font-size:11px;
-  transition:.3s ease;
+  text-align:center;
 }
 
 .nav-kpi b{
   display:block;
-  font-size:16px;
-  margin-top:2px;
+  font-size:15px;
 }
 
-.nav-kpi:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 25px rgba(34,211,238,.35);
+.nav-controls{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+select, input{
+  padding:6px 10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.1);
+  background:var(--glass);
+  color:var(--text);
+  font-size:12px;
+}
+
+/* THEME TOGGLE */
+.theme-toggle{
+  cursor:pointer;
+  font-size:14px;
+  padding:6px 10px;
+  border-radius:12px;
+  background:var(--glass);
 }
 
 /* LAYOUT */
 .container{
   max-width:1700px;
   margin:auto;
-  padding:30px;
+  padding:28px;
 }
 
 /* ADD SECTION */
 .card{
-  background:var(--glass);
-  backdrop-filter:blur(18px);
-  border-radius:20px;
-  padding:18px;
-  margin-bottom:30px;
-  box-shadow:0 20px 50px rgba(0,0,0,.6);
+  background:var(--card);
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:28px;
+  box-shadow:0 15px 40px rgba(0,0,0,.3);
 }
 
 .form-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:16px;
-}
-
-input,select,textarea{
-  width:100%;
-  padding:8px 10px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.05);
-  color:var(--text);
-  font-size:12px;
-}
-
-input:focus,select:focus,textarea:focus{
-  outline:none;
-  border:1px solid var(--accent);
-  box-shadow:0 0 12px rgba(34,211,238,.4);
-}
-
-/* BUTTONS */
-button{
-  padding:6px 16px;
-  border-radius:20px;
-  border:none;
-  cursor:pointer;
-  font-weight:600;
-  font-size:12px;
-  transition:.3s ease;
+  gap:14px;
 }
 
 button.primary{
-  background:linear-gradient(135deg,#22d3ee,#0ea5e9);
-  color:#002;
-}
-
-button.primary:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px rgba(34,211,238,.4);
-}
-
-button.danger{
-  background:linear-gradient(135deg,#ef4444,#dc2626);
-  color:#fff;
-}
-
-button.danger:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px rgba(239,68,68,.4);
+  background:var(--accent);
+  border:none;
+  color:#000;
+  border-radius:14px;
+  cursor:pointer;
+  font-weight:600;
+  padding:6px 14px;
 }
 
 /* TILE GRID */
 .tile-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,300px));
-  gap:22px;
+  grid-template-columns:repeat(auto-fill,minmax(260px,280px));
+  gap:20px;
   justify-content:center;
 }
 
 /* TILE */
 .tile{
-  background:linear-gradient(145deg,rgba(255,255,255,0.07),rgba(255,255,255,0.03));
-  border-radius:20px;
-  padding:16px;
-  box-shadow:0 15px 40px rgba(0,0,0,.6);
-  backdrop-filter:blur(16px);
-  transition:.35s ease;
+  background:var(--card);
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  transition:.3s ease;
 }
 
 .tile:hover{
-  transform:translateY(-6px) scale(1.02);
-  box-shadow:0 25px 60px rgba(34,211,238,.35);
+  transform:translateY(-4px);
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
 }
 
 .tile h3{
   margin:0;
-  font-size:14px;
-  font-weight:600;
+  font-size:13px;
 }
 
 .customer{
@@ -180,22 +168,17 @@ button.danger:hover{
   margin-bottom:6px;
 }
 
-/* TYPE BADGES */
+/* GREEN TYPE BADGE */
 .badge{
   display:inline-block;
   padding:4px 10px;
   border-radius:20px;
   font-size:10px;
   font-weight:600;
+  background:#16a34a;
+  color:white;
   margin-bottom:8px;
 }
-
-.type-CHW{background:#2563eb}
-.type-DX{background:#f97316}
-.type-CHWCOMBI{background:#7c3aed}
-.type-DXCOMBI{background:#ec4899}
-.type-CHWPLUS{background:#10b981}
-.type-DXPLUS{background:#facc15;color:#000}
 
 /* SECTION */
 .section{
@@ -205,8 +188,8 @@ button.danger:hover{
 
 .section label{
   display:block;
-  color:var(--muted);
   font-size:10px;
+  color:var(--muted);
   margin-bottom:2px;
 }
 
@@ -217,14 +200,24 @@ button.danger:hover{
   font-size:11px;
 }
 
-.actions{
-  display:flex;
-  justify-content:space-between;
-  margin-top:10px;
+textarea{
+  width:100%;
+  border-radius:10px;
+  background:var(--glass);
+  color:var(--text);
+  border:none;
+  padding:6px;
+  font-size:11px;
+  min-height:40px;
 }
 
-textarea{
-  min-height:50px;
+/* DELETE ICON */
+.delete-btn{
+  margin-top:8px;
+  cursor:pointer;
+  color:var(--danger);
+  font-size:16px;
+  text-align:right;
 }
 </style>
 </head>
@@ -232,8 +225,32 @@ textarea{
 <body>
 
 <nav>
-  <h1>My Work Flow</h1>
-  <div id="navKpis" class="nav-kpis"></div>
+  <div class="nav-left">
+    <h1>My Work Flow</h1>
+
+    <div class="nav-kpis" id="navKpis"></div>
+  </div>
+
+  <div class="nav-controls">
+    <select id="filterType">
+      <option value="">All Types</option>
+      <option>CHW</option>
+      <option>DX</option>
+      <option>CHW COMBI</option>
+      <option>DX COMBI</option>
+      <option>CHW + CHW COMBI</option>
+      <option>DX + DX COMBI</option>
+    </select>
+
+    <select id="filterStatus">
+      <option value="">All Status</option>
+      <option>RECEIVED</option>
+      <option>SELECTION SENT</option>
+      <option>QUOTATION SENT</option>
+    </select>
+
+    <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
+  </div>
 </nav>
 
 <div class="container">
@@ -273,36 +290,21 @@ function saveAll(){
   localStorage.setItem('customerMaster',JSON.stringify(customers));
 }
 
-function updateCustomerList(){
-  $('customerList').innerHTML=
-    customers.map(c=>`<option value="${c}">`).join('');
+/* THEME */
+function toggleTheme(){
+  document.body.classList.toggle('light');
 }
 
-function needsBoth(type){
-  return (
-    type==="CHW COMBI" ||
-    type==="DX COMBI" ||
-    type==="CHW + CHW COMBI" ||
-    type==="DX + DX COMBI"
-  );
-}
+/* FILTER CHANGE */
+$('filterType').onchange=render;
+$('filterStatus').onchange=render;
 
-function typeClass(type){
-  if(type==="CHW")return "type-CHW";
-  if(type==="DX")return "type-DX";
-  if(type==="CHW COMBI")return "type-CHWCOMBI";
-  if(type==="DX COMBI")return "type-DXCOMBI";
-  if(type==="CHW + CHW COMBI")return "type-CHWPLUS";
-  if(type==="DX + DX COMBI")return "type-DXPLUS";
-  return "";
-}
-
+/* ADD */
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
   const t=$('type').value;
   const r=$('received').value;
-
   if(!p||!c||!r){alert("Fill all fields");return;}
 
   if(!customers.includes(c))customers.push(c);
@@ -323,39 +325,42 @@ $('addBtn').onclick=()=>{
   });
 
   saveAll();
-  updateCustomerList();
   $('project').value=$('customer').value=$('received').value='';
   render();
 };
 
 function render(){
 
-  const list=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received));
+  const typeFilter=$('filterType').value;
+  const statusFilter=$('filterStatus').value;
 
-  const k={RECEIVED:list.length,'SELECTION SENT':0,'QUOTATION SENT':0,COMPLETED:0};
-  list.forEach(x=>{if(k[x.status]!==undefined&&x.status!=='RECEIVED')k[x.status]++;});
+  const list=projects.filter(x=>
+    (!typeFilter||x.type===typeFilter) &&
+    (!statusFilter||x.status===statusFilter)
+  );
+
+  const k={
+    RECEIVED:list.filter(x=>x.status==="RECEIVED").length,
+    SEL:list.filter(x=>x.status==="SELECTION SENT").length,
+    QUO:list.filter(x=>x.status==="QUOTATION SENT").length
+  };
 
   $('navKpis').innerHTML=`
     <div class="nav-kpi">REC<b>${k.RECEIVED}</b></div>
-    <div class="nav-kpi">SEL<b>${k['SELECTION SENT']}</b></div>
-    <div class="nav-kpi">QUO<b>${k['QUOTATION SENT']}</b></div>
-    <div class="nav-kpi">COMP<b>${k.COMPLETED}</b></div>
+    <div class="nav-kpi">SEL<b>${k.SEL}</b></div>
+    <div class="nav-kpi">QUO<b>${k.QUO}</b></div>
   `;
 
   $('tileGrid').innerHTML='';
 
   list.forEach(x=>{
-
-    const selectionChecked=x.status==="SELECTION SENT"||x.status==="COMPLETED";
-    const quotationChecked=x.status==="QUOTATION SENT"||x.status==="COMPLETED";
-
     const tile=document.createElement('div');
     tile.className='tile';
 
     tile.innerHTML=`
       <h3>${x.project}</h3>
       <div class="customer">${x.customer}</div>
-      <div class="badge ${typeClass(x.type)}">${x.type}</div>
+      <div class="badge">${x.type}</div>
 
       <div class="section">
         <label>Received</label>
@@ -364,79 +369,48 @@ function render(){
 
       <div class="section">
         <label>Sent Date</label>
-        <input type="date" value="${x.sent||''}">
+        <input type="date" value="${x.sent||''}" onchange="autoSave(${x.id},'sent',this.value)">
       </div>
 
       <div class="status-row">
-        <label><input type="checkbox" ${selectionChecked?'checked':''}> Selection</label>
-        <label><input type="checkbox" ${quotationChecked?'checked':''}> Quotation</label>
+        <label><input type="checkbox" ${x.status==="SELECTION SENT"||x.status==="QUOTATION SENT"?'checked':''}
+        onchange="autoStatus(${x.id},'selection',this.checked)"> Selection</label>
+
+        <label><input type="checkbox" ${x.status==="QUOTATION SENT"?'checked':''}
+        onchange="autoStatus(${x.id},'quotation',this.checked)"> Quotation</label>
       </div>
 
-      <div class="section">
-        <label>Revision</label>
-        <select>
-          ${Array.from({length:10},(_,i)=>`<option ${x.revision==="R"+(i+1)?'selected':''}>R${i+1}</option>`).join('')}
-        </select>
-      </div>
-
-      <div class="section">
-        <label>${needsBoth(x.type)?"Quote ID - CC":"Quote ID"}</label>
-        <input value="${x.quoteCC||''}">
-      </div>
-
-      ${needsBoth(x.type)?`
-      <div class="section">
-        <label>Quote ID - HP</label>
-        <input value="${x.quoteHP||''}">
-      </div>`:''}
-
-      <div class="section">
-        <label>Remarks</label>
-        <textarea>${x.remarks||''}</textarea>
-      </div>
-
-      <div class="actions">
-        <button class="primary">Save</button>
-        <button class="danger">Delete</button>
-      </div>
+      <div class="delete-btn" onclick="deleteProject(${x.id})">❌</div>
     `;
-
-    const inputs=tile.querySelectorAll('input,select,textarea');
-
-    tile.querySelector('.primary').onclick=()=>{
-      x.sent=inputs[0].value;
-
-      const selection=inputs[1].checked;
-      const quotation=inputs[2].checked;
-
-      if(selection&&quotation)x.status="COMPLETED";
-      else if(selection)x.status="SELECTION SENT";
-      else if(quotation)x.status="QUOTATION SENT";
-      else x.status="RECEIVED";
-
-      x.revision=inputs[3].value;
-      x.quoteCC=inputs[4].value;
-      if(needsBoth(x.type))x.quoteHP=inputs[5].value;
-      x.remarks=inputs[needsBoth(x.type)?6:5].value;
-
-      x.updated=Date.now();
-      saveAll();
-      render();
-    };
-
-    tile.querySelector('.danger').onclick=()=>{
-      if(confirm("Delete project?")){
-        projects=projects.filter(p=>p.id!==x.id);
-        saveAll();
-        render();
-      }
-    };
 
     $('tileGrid').appendChild(tile);
   });
 }
 
-updateCustomerList();
+function autoSave(id,key,value){
+  const p=projects.find(x=>x.id===id);
+  p[key]=value;
+  saveAll();
+}
+
+function autoStatus(id,type,checked){
+  const p=projects.find(x=>x.id===id);
+  if(type==='selection'){
+    p.status=checked?"SELECTION SENT":"RECEIVED";
+  }
+  if(type==='quotation'){
+    p.status=checked?"QUOTATION SENT":"RECEIVED";
+  }
+  saveAll();
+  render();
+}
+
+function deleteProject(id){
+  projects=projects.filter(p=>p.id!==id);
+  saveAll();
+  render();
+}
+
 render();
 </script>
 
