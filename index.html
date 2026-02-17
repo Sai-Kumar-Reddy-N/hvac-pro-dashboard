@@ -210,12 +210,12 @@ input,select{
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
 
-/* Normalize */
+/* NORMALIZE */
 projects=projects.map(p=>({
   id:p.id,
   project:p.project,
-  customer:p.customer,
-  received:p.received,
+  customer:p.customer||'',
+  received:p.received||'',
   selection:p.selection===true,
   quotation:p.quotation===true,
   completed:p.completed===true,
@@ -237,25 +237,43 @@ function toggleTheme(){
   document.body.classList.toggle('light');
 }
 
-/* DASHBOARD */
+/* ================= DASHBOARD ================= */
 function renderDashboard(){
+
   const total=projects.length;
   const selection=projects.filter(p=>p.selection&&!p.quotation).length;
   const quotation=projects.filter(p=>p.quotation&&!p.completed).length;
   const completed=projects.filter(p=>p.completed).length;
+
+  const conversion= total ? ((completed/total)*100).toFixed(1) : 0;
 
   $('kpiGrid').innerHTML=`
     <div class="kpi"><h4>Total Received</h4><p>${total}</p></div>
     <div class="kpi"><h4>Selection Only</h4><p>${selection}</p></div>
     <div class="kpi"><h4>Quotation</h4><p>${quotation}</p></div>
     <div class="kpi"><h4>Completed</h4><p>${completed}</p></div>
+    <div class="kpi"><h4>Conversion %</h4><p>${conversion}%</p></div>
+    <div class="kpi"><button onclick="exportCSV()">Export Excel</button></div>
   `;
 }
 
-/* KANBAN */
+/* ================= OVERDUE CHECK ================= */
+function isOverdue(date){
+  if(!date) return false;
+  const diff=(new Date()-new Date(date))/(1000*60*60*24);
+  return diff>3;
+}
+
+/* ================= KANBAN ================= */
 function renderKanban(){
+
   ['received','selection','quotation','completed']
-  .forEach(col=>$('col-'+col).innerHTML='');
+  .forEach(col=>{
+    const container=$('col-'+col);
+    container.innerHTML='';
+    container.ondragover=e=>e.preventDefault();
+    container.ondrop=e=>handleDrop(e,col);
+  });
 
   projects.forEach(p=>{
     let column='received';
@@ -265,24 +283,65 @@ function renderKanban(){
 
     const card=document.createElement('div');
     card.className='card';
+    card.draggable=true;
+    card.ondragstart=e=>e.dataTransfer.setData('id',p.id);
+
+    if(isOverdue(p.received)&&!p.selection)
+      card.style.border='1px solid red';
+
     card.innerHTML=`
       <strong>${p.project}</strong>
-      <small>${p.customer||''}</small>
-      <small>${p.received||''}</small>
+      <small>${p.customer}</small>
+      <small>${p.received}</small>
     `;
+
     $('col-'+column).appendChild(card);
   });
 }
 
-/* GRID */
+function handleDrop(e,targetCol){
+  const id=Number(e.dataTransfer.getData('id'));
+  const p=projects.find(x=>x.id===id);
+
+  if(targetCol==='received'){
+    p.selection=false;
+    p.quotation=false;
+    p.completed=false;
+  }
+
+  if(targetCol==='selection'){
+    p.selection=true;
+    p.quotation=false;
+    p.completed=false;
+  }
+
+  if(targetCol==='quotation'){
+    p.selection=true;
+    p.quotation=true;
+    p.completed=false;
+  }
+
+  if(targetCol==='completed'){
+    p.selection=true;
+    p.quotation=true;
+    p.completed=true;
+  }
+
+  save();
+  renderAll();
+}
+
+/* ================= GRID ================= */
 function renderGrid(){
   $('tileGrid').innerHTML='';
+
   projects.forEach(p=>{
     const tile=document.createElement('div');
     tile.className='tile';
+
     tile.innerHTML=`
       <strong>${p.project}</strong>
-      <small>${p.customer||''}</small>
+      <small>${p.customer}</small>
 
       <div class="details">
         <label><input type="checkbox" ${p.selection?'checked':''}
@@ -295,6 +354,7 @@ function renderGrid(){
         onchange="update(${p.id},'completed',this.checked)"> Completed</label>
       </div>
     `;
+
     $('tileGrid').appendChild(tile);
   });
 }
@@ -302,10 +362,32 @@ function renderGrid(){
 function update(id,key,value){
   const p=projects.find(x=>x.id===id);
   p[key]=value;
+
+  if(key==='completed' && value===true){
+    p.selection=true;
+    p.quotation=true;
+  }
+
   save();
   renderAll();
 }
 
+/* ================= EXPORT ================= */
+function exportCSV(){
+  let csv="Project,Customer,Received,Selection,Quotation,Completed\n";
+  projects.forEach(p=>{
+    csv+=`${p.project},${p.customer},${p.received},${p.selection},${p.quotation},${p.completed}\n`;
+  });
+
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download="hvac_workflow.csv";
+  a.click();
+}
+
+/* ================= MASTER RENDER ================= */
 function renderAll(){
   renderDashboard();
   renderKanban();
