@@ -44,6 +44,7 @@ nav{
   padding:16px 30px;
   background:var(--card);
   box-shadow:0 8px 30px rgba(0,0,0,.4);
+  position:relative;
 }
 
 nav h1{
@@ -55,7 +56,7 @@ nav h1{
 
 .nav-kpis{
   display:flex;
-  gap:20px;
+  gap:30px;
 }
 
 .kpi-box{
@@ -82,7 +83,6 @@ nav h1{
 .nav-right{
   display:flex;
   gap:16px;
-  align-items:center;
 }
 
 .icon-btn{
@@ -95,7 +95,7 @@ nav h1{
   transform:scale(1.15);
 }
 
-/* FILTER PANEL */
+/* FILTER POPUP */
 .filter-popup{
   position:absolute;
   top:70px;
@@ -105,8 +105,18 @@ nav h1{
   border-radius:16px;
   box-shadow:0 20px 40px rgba(0,0,0,.5);
   display:none;
-  width:320px;
+  width:260px;
   z-index:20;
+}
+
+.filter-popup input{
+  width:100%;
+  margin-bottom:8px;
+  padding:6px 8px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.1);
+  background:var(--glass);
+  color:var(--text);
 }
 
 /* LAYOUT */
@@ -116,7 +126,6 @@ nav h1{
   padding:28px;
 }
 
-/* ADD SECTION */
 .card{
   background:var(--card);
   border-radius:16px;
@@ -242,6 +251,16 @@ button.primary{
     <div class="icon-btn" onclick="toggleFilter()">🔎</div>
     <div class="icon-btn" onclick="toggleTheme()">🌓</div>
   </div>
+
+  <div class="filter-popup" id="filterPopup">
+    <input type="text" id="filterProject" placeholder="Project name">
+    <input type="text" id="filterCustomer" placeholder="Customer name">
+    <input type="date" id="filterReceivedFrom">
+    <input type="date" id="filterReceivedTo">
+    <input type="date" id="filterSentFrom">
+    <input type="date" id="filterSentTo">
+    <button onclick="clearFilters()" class="primary" style="width:100%;">Clear Filters</button>
+  </div>
 </nav>
 
 <div class="container">
@@ -277,6 +296,22 @@ function saveAll(){
 
 function toggleTheme(){
   document.body.classList.toggle('light');
+}
+
+function toggleFilter(){
+  const popup=$('filterPopup');
+  popup.style.display=popup.style.display==='block'?'none':'block';
+}
+
+['filterProject','filterCustomer','filterReceivedFrom',
+ 'filterReceivedTo','filterSentFrom','filterSentTo']
+.forEach(id=>$(id).addEventListener('input',render));
+
+function clearFilters(){
+  ['filterProject','filterCustomer','filterReceivedFrom',
+   'filterReceivedTo','filterSentFrom','filterSentTo']
+   .forEach(id=>$(id).value='');
+  render();
 }
 
 $('addBtn').onclick=()=>{
@@ -324,11 +359,27 @@ function render(){
     </div>
   `;
 
-  const sorted=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received));
+  let filtered=[...projects];
+
+  const fp=$('filterProject').value.toLowerCase();
+  const fc=$('filterCustomer').value.toLowerCase();
+  const rf=$('filterReceivedFrom').value;
+  const rt=$('filterReceivedTo').value;
+  const sf=$('filterSentFrom').value;
+  const st=$('filterSentTo').value;
+
+  if(fp) filtered=filtered.filter(x=>x.project.toLowerCase().includes(fp));
+  if(fc) filtered=filtered.filter(x=>x.customer.toLowerCase().includes(fc));
+  if(rf) filtered=filtered.filter(x=>x.received>=rf);
+  if(rt) filtered=filtered.filter(x=>x.received<=rt);
+  if(sf) filtered=filtered.filter(x=>x.sent && x.sent>=sf);
+  if(st) filtered=filtered.filter(x=>x.sent && x.sent<=st);
+
+  filtered.sort((a,b)=>new Date(b.received)-new Date(a.received));
 
   $('tileGrid').innerHTML='';
 
-  sorted.forEach(x=>{
+  filtered.forEach(x=>{
     const tile=document.createElement('div');
     tile.className='tile';
 
