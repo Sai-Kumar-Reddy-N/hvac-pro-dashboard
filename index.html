@@ -4,99 +4,273 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Work Flow</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,sans-serif;background:#0f2027;color:white}
-
-.glass{
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,0.15);
-  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+:root{
+  --bg:#0f172a;
+  --card:#111827;
+  --glass:rgba(255,255,255,0.05);
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --accent:#22d3ee;
+  --green:#16a34a;
+  --blue:#2563eb;
+  --purple:#9333ea;
+  --danger:#ef4444;
 }
 
+body.light{
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --glass:rgba(0,0,0,0.05);
+  --text:#0f172a;
+  --muted:#475569;
+}
+
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* NAVBAR */
 nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:16px 30px;
-  position:sticky;
-  top:0;
+  background:var(--card);
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+  position:relative;
 }
 
-.nav-kpis{display:flex;gap:30px}
-.kpi{text-align:center}
-.kpi span{font-size:11px;opacity:.7;display:block}
-.kpi b{font-size:18px}
+nav h1{
+  margin:0;
+  font-size:18px;
+  font-weight:700;
+  color:var(--accent);
+}
 
-.container{max-width:1600px;margin:auto;padding:30px}
+.nav-kpis{
+  display:flex;
+  gap:30px;
+}
 
-.card{padding:20px;border-radius:16px;margin-bottom:30px}
+.kpi-box{
+  text-align:center;
+}
+
+.kpi-label{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.kpi-value{
+  font-size:20px;
+  font-weight:700;
+  margin-top:4px;
+}
+
+.kpi-rec .kpi-value{color:var(--green)}
+.kpi-sel .kpi-value{color:var(--blue)}
+.kpi-quo .kpi-value{color:var(--purple)}
+
+.nav-right{
+  display:flex;
+  gap:16px;
+}
+
+.icon-btn{
+  cursor:pointer;
+  font-size:20px;
+}
+
+/* CLEAN FILTER POPUP */
+.filter-popup{
+  position:absolute;
+  top:70px;
+  right:30px;
+  background:var(--card);
+  padding:16px;
+  border-radius:16px;
+  box-shadow:0 20px 40px rgba(0,0,0,.5);
+  display:none;
+  width:260px;
+  z-index:20;
+}
+
+.filter-popup h4{
+  margin:0 0 10px 0;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.filter-popup input{
+  width:100%;
+  margin-bottom:8px;
+  padding:6px 8px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.1);
+  background:var(--glass);
+  color:var(--text);
+  font-size:12px;
+}
+
+.filter-popup button{
+  width:100%;
+  padding:6px;
+  border:none;
+  border-radius:12px;
+  background:var(--accent);
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* LAYOUT */
+.container{
+  max-width:1700px;
+  margin:auto;
+  padding:28px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:28px;
+}
 
 .form-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:15px;
+  gap:12px;
 }
 
 input,select,textarea{
-  padding:8px;border-radius:8px;border:none;
-  background:rgba(255,255,255,.15);
-  color:white;
+  width:100%;
+  padding:6px 10px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.1);
+  background:var(--glass);
+  color:var(--text);
+  font-size:12px;
 }
 
-button{
-  background:#00c6ff;border:none;padding:8px 16px;
-  border-radius:20px;cursor:pointer;
+button.primary{
+  background:var(--accent);
+  border:none;
+  padding:6px 14px;
+  border-radius:14px;
+  cursor:pointer;
+  font-weight:600;
 }
 
+/* TILE */
 .tile-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,300px));
-  gap:25px;
+  grid-template-columns:repeat(auto-fill,minmax(260px,280px));
+  gap:20px;
+  justify-content:center;
 }
 
 .tile{
-  padding:18px;border-radius:18px;
-  transition:.3s ease;cursor:pointer;
+  background:var(--card);
+  border-radius:16px;
+  padding:14px;
+  transition:.3s ease;
 }
-.tile:hover{transform:translateY(-5px)}
 
-.small{font-size:11px;opacity:.7;margin-top:4px}
+.tile h3{
+  margin:0;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.customer{
+  font-size:11px;
+  color:var(--muted);
+}
 
 .badge{
   display:inline-block;
   padding:3px 8px;
+  border-radius:14px;
   font-size:9px;
-  border-radius:12px;
+  background:#16a34a;
   margin-top:6px;
-  margin-right:4px;
 }
 
-.selection{background:#2ecc71;}
-.quotation{background:#3498db;}
+.date-row{
+  margin-top:6px;
+  font-size:10px;
+  color:var(--muted);
+  display:flex;
+  justify-content:space-between;
+}
 
-.details{margin-top:10px;display:none;font-size:11px}
-.tile.expanded .details{display:block}
+.quick-remark{
+  margin-top:6px;
+  font-size:10px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.details{
+  margin-top:10px;
+  font-size:11px;
+  display:none;
+}
+
+.tile.expanded .details{
+  display:block;
+}
+
+.delete-btn{
+  text-align:right;
+  color:var(--danger);
+  margin-top:8px;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<nav class="glass">
+<nav>
   <h1>My Work Flow</h1>
+
   <div class="nav-kpis" id="navKpis"></div>
+
+  <div class="nav-right">
+    <div class="icon-btn" onclick="toggleFilter()">🔍</div>
+    <div class="icon-btn" onclick="toggleTheme()">🌓</div>
+  </div>
+
+  <div class="filter-popup" id="filterPopup">
+    <h4>Filter</h4>
+    <input type="text" id="filterProject" placeholder="Project name">
+    <input type="text" id="filterCustomer" placeholder="Customer name">
+    <input type="date" id="filterReceivedFrom">
+    <input type="date" id="filterReceivedTo">
+    <input type="date" id="filterSentFrom">
+    <input type="date" id="filterSentTo">
+    <button onclick="clearFilters()">Clear Filters</button>
+  </div>
 </nav>
 
 <div class="container">
 
-<div class="card glass">
+<div class="card">
   <div class="form-grid">
     <input id="project" placeholder="Project Name">
     <input id="customer" placeholder="Customer Name">
-    <select id="coilType">
+    <select id="type">
       <option>CHW</option>
       <option>DX</option>
       <option>CHW COMBI</option>
@@ -105,7 +279,7 @@ button{
       <option>DX + DX COMBI</option>
     </select>
     <input type="date" id="received">
-    <button id="addBtn">Add</button>
+    <button id="addBtn" class="primary">Add</button>
   </div>
 </div>
 
@@ -117,45 +291,34 @@ button{
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
 
-/* ===== STRONG DATA MIGRATION ===== */
-projects = projects.map(p => {
+function saveAll(){
+  localStorage.setItem('hvacProjects',JSON.stringify(projects));
+}
 
-  if(typeof p.selection !== "undefined") return p;
+function toggleTheme(){
+  document.body.classList.toggle('light');
+}
 
-  let selection=false;
-  let quotation=false;
+function toggleFilter(){
+  const popup=$('filterPopup');
+  popup.style.display=popup.style.display==='block'?'none':'block';
+}
 
-  if(p.status){
-    const s=p.status.toLowerCase();
+['filterProject','filterCustomer','filterReceivedFrom',
+ 'filterReceivedTo','filterSentFrom','filterSentTo']
+.forEach(id=>$(id).addEventListener('input',render));
 
-    if(s.includes("selection") && !s.includes("quotation")){
-      selection=true;
-    }
-    if(s.includes("quotation")){
-      quotation=true;
-    }
-    if(s.includes("both")){
-      selection=true;
-      quotation=true;
-    }
-  }
+function clearFilters(){
+  ['filterProject','filterCustomer','filterReceivedFrom',
+   'filterReceivedTo','filterSentFrom','filterSentTo']
+   .forEach(id=>$(id).value='');
+  render();
+}
 
-  return {
-    ...p,
-    selection:selection,
-    quotation:quotation,
-    sent:p.sent||"",
-    remarks:p.remarks||""
-  };
-});
-
-localStorage.setItem('hvacProjects',JSON.stringify(projects));
-
-/* ===== ADD ===== */
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
-  const t=$('coilType').value;
+  const t=$('type').value;
   const r=$('received').value;
   if(!p||!c||!r)return;
 
@@ -166,88 +329,104 @@ $('addBtn').onclick=()=>{
     type:t,
     received:r,
     sent:'',
-    selection:false,
-    quotation:false,
+    status:'RECEIVED',
     remarks:''
   });
 
-  save();
+  saveAll();
   render();
 };
 
-function save(){
-  localStorage.setItem('hvacProjects',JSON.stringify(projects));
-}
-
-/* ===== RENDER ===== */
 function render(){
 
-  const rec=projects.length;
-
-  const sel=projects.filter(p =>
-    p.selection===true && p.quotation===false
-  ).length;
-
-  const quo=projects.filter(p =>
-    p.quotation===true
-  ).length;
+  const k={
+    rec:projects.length,
+    sel:projects.filter(x=>x.status==="SELECTION SENT").length,
+    quo:projects.filter(x=>x.status==="QUOTATION SENT").length
+  };
 
   $('navKpis').innerHTML=`
-    <div class="kpi"><span>Received</span><b>${rec}</b></div>
-    <div class="kpi"><span>Selection</span><b>${sel}</b></div>
-    <div class="kpi"><span>Quotation</span><b>${quo}</b></div>
+    <div class="kpi-box kpi-rec">
+      <div class="kpi-label">Received</div>
+      <div class="kpi-value">${k.rec}</div>
+    </div>
+    <div class="kpi-box kpi-sel">
+      <div class="kpi-label">Selection</div>
+      <div class="kpi-value">${k.sel}</div>
+    </div>
+    <div class="kpi-box kpi-quo">
+      <div class="kpi-label">Quotation</div>
+      <div class="kpi-value">${k.quo}</div>
+    </div>
   `;
+
+  let filtered=[...projects];
+
+  const fp=$('filterProject').value.toLowerCase();
+  const fc=$('filterCustomer').value.toLowerCase();
+  const rf=$('filterReceivedFrom').value;
+  const rt=$('filterReceivedTo').value;
+  const sf=$('filterSentFrom').value;
+  const st=$('filterSentTo').value;
+
+  if(fp) filtered=filtered.filter(x=>x.project.toLowerCase().includes(fp));
+  if(fc) filtered=filtered.filter(x=>x.customer.toLowerCase().includes(fc));
+  if(rf) filtered=filtered.filter(x=>x.received>=rf);
+  if(rt) filtered=filtered.filter(x=>x.received<=rt);
+  if(sf) filtered=filtered.filter(x=>x.sent && x.sent>=sf);
+  if(st) filtered=filtered.filter(x=>x.sent && x.sent<=st);
+
+  filtered.sort((a,b)=>new Date(b.received)-new Date(a.received));
 
   $('tileGrid').innerHTML='';
 
-  projects.sort((a,b)=>new Date(b.received)-new Date(a.received));
-
-  projects.forEach(p=>{
-
-    let badges='';
-    if(p.selection && !p.quotation)
-      badges+=`<span class="badge selection">Selection Sent</span>`;
-    if(p.quotation)
-      badges+=`<span class="badge quotation">Quotation Sent</span>`;
-
+  filtered.forEach(x=>{
     const tile=document.createElement('div');
-    tile.className='tile glass';
+    tile.className='tile';
+
     tile.innerHTML=`
-      <h3 onclick="this.closest('.tile').classList.toggle('expanded')">${p.project}</h3>
-      <div class="small">${p.customer}</div>
-      <div class="small">Type: ${p.type}</div>
-      <div class="small">Received: ${p.received}</div>
-      <div class="small">Sent: ${p.sent||'-'}</div>
-      ${badges}
+      <h3 onclick="this.closest('.tile').classList.toggle('expanded')">${x.project}</h3>
+      <div class="customer">${x.customer}</div>
+      <div class="badge">${x.type}</div>
+
+      <div class="date-row">
+        <span>Received: ${x.received}</span>
+        <span>Sent: ${x.sent||'-'}</span>
+      </div>
+
+      <div class="quick-remark">${x.remarks||'No remarks'}</div>
 
       <div class="details">
-        <input type="date" value="${p.sent||''}"
-          onchange="update(${p.id},'sent',this.value)">
         <div>
-          <label><input type="checkbox" ${p.selection?'checked':''}
-            onchange="update(${p.id},'selection',this.checked)"> Selection</label>
-          <label><input type="checkbox" ${p.quotation?'checked':''}
-            onchange="update(${p.id},'quotation',this.checked)"> Quotation</label>
+          <label>Sent Date</label>
+          <input type="date" value="${x.sent||''}" 
+          onchange="autoSave(${x.id},'sent',this.value)">
         </div>
-        <textarea onchange="update(${p.id},'remarks',this.value)">${p.remarks||''}</textarea>
-        <div style="color:red;cursor:pointer"
-          onclick="deleteProject(${p.id})">Delete</div>
+
+        <div>
+          <label>Remarks</label>
+          <textarea onchange="autoSave(${x.id},'remarks',this.value)">
+          ${x.remarks||''}</textarea>
+        </div>
+
+        <div class="delete-btn" onclick="deleteProject(${x.id})">❌</div>
       </div>
     `;
+
     $('tileGrid').appendChild(tile);
   });
 }
 
-function update(id,key,value){
+function autoSave(id,key,value){
   const p=projects.find(x=>x.id===id);
   p[key]=value;
-  save();
+  saveAll();
   render();
 }
 
 function deleteProject(id){
-  projects=projects.filter(x=>x.id!==id);
-  save();
+  projects=projects.filter(p=>p.id!==id);
+  saveAll();
   render();
 }
 
