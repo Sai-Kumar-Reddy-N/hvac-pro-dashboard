@@ -8,106 +8,224 @@
 
 <style>
 :root{
-  --bg:#0b1220;
+  --bg:#020617;
   --glass:rgba(255,255,255,0.06);
   --accent:#22d3ee;
   --text:#e5e7eb;
-  --muted:#9ca3af;
+  --muted:#94a3b8;
   --danger:#ef4444;
 }
+*{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:Inter,sans-serif;
-  background:radial-gradient(circle at top,#0f172a,#020617);
+  background:
+    radial-gradient(circle at 20% 20%, #0f172a, transparent 40%),
+    radial-gradient(circle at 80% 80%, #0ea5e9, transparent 40%),
+    var(--bg);
   color:var(--text);
 }
+
+/* NAVBAR */
 nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:16px 28px;
-  background:#020617;
+  padding:16px 30px;
+  background:rgba(2,6,23,.8);
+  backdrop-filter:blur(14px);
+  position:sticky;
+  top:0;
+  z-index:10;
 }
+
 nav h1{
   margin:0;
+  font-size:20px;
   font-weight:700;
   background:linear-gradient(90deg,#22d3ee,#38bdf8);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-.nav-kpis{display:flex;gap:16px}
+
+.nav-kpis{
+  display:flex;
+  gap:14px;
+}
+
 .nav-kpi{
   background:var(--glass);
-  padding:8px 16px;
-  border-radius:16px;
+  padding:6px 14px;
+  border-radius:20px;
   text-align:center;
+  min-width:80px;
+  font-size:11px;
+  transition:.3s ease;
 }
-.container{max-width:1700px;margin:auto;padding:24px}
 
+.nav-kpi b{
+  display:block;
+  font-size:16px;
+  margin-top:2px;
+}
+
+.nav-kpi:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(34,211,238,.35);
+}
+
+/* LAYOUT */
+.container{
+  max-width:1700px;
+  margin:auto;
+  padding:30px;
+}
+
+/* ADD SECTION */
 .card{
   background:var(--glass);
+  backdrop-filter:blur(18px);
   border-radius:20px;
-  padding:20px;
-  margin-bottom:28px;
+  padding:18px;
+  margin-bottom:30px;
+  box-shadow:0 20px 50px rgba(0,0,0,.6);
 }
 
 .form-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:16px;
 }
 
 input,select,textarea{
   width:100%;
-  padding:8px;
-  border-radius:12px;
+  padding:8px 10px;
+  border-radius:14px;
   border:1px solid rgba(255,255,255,.12);
   background:rgba(255,255,255,.05);
   color:var(--text);
+  font-size:12px;
 }
+
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border:1px solid var(--accent);
+  box-shadow:0 0 12px rgba(34,211,238,.4);
+}
+
+/* BUTTONS */
 button{
-  padding:6px 14px;
-  border-radius:10px;
+  padding:6px 16px;
+  border-radius:20px;
   border:none;
   cursor:pointer;
   font-weight:600;
+  font-size:12px;
+  transition:.3s ease;
 }
-button.primary{background:#22d3ee;color:#002}
-button.danger{background:#ef4444;color:#fff}
 
+button.primary{
+  background:linear-gradient(135deg,#22d3ee,#0ea5e9);
+  color:#002;
+}
+
+button.primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(34,211,238,.4);
+}
+
+button.danger{
+  background:linear-gradient(135deg,#ef4444,#dc2626);
+  color:#fff;
+}
+
+button.danger:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(239,68,68,.4);
+}
+
+/* TILE GRID */
 .tile-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(280px,300px));
   gap:22px;
+  justify-content:center;
 }
 
+/* TILE */
 .tile{
-  background:var(--glass);
-  border-radius:22px;
-  padding:18px;
-  position:relative;
+  background:linear-gradient(145deg,rgba(255,255,255,0.07),rgba(255,255,255,0.03));
+  border-radius:20px;
+  padding:16px;
+  box-shadow:0 15px 40px rgba(0,0,0,.6);
+  backdrop-filter:blur(16px);
+  transition:.35s ease;
 }
 
+.tile:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 25px 60px rgba(34,211,238,.35);
+}
+
+.tile h3{
+  margin:0;
+  font-size:14px;
+  font-weight:600;
+}
+
+.customer{
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+/* TYPE BADGES */
 .badge{
   display:inline-block;
-  padding:4px 8px;
-  border-radius:12px;
+  padding:4px 10px;
+  border-radius:20px;
   font-size:10px;
-  margin-top:6px;
+  font-weight:600;
+  margin-bottom:8px;
 }
 
-/* Type colors */
 .type-CHW{background:#2563eb}
 .type-DX{background:#f97316}
-.type-CHW-COMBI{background:#7c3aed}
-.type-DX-COMBI{background:#ec4899}
-.type-CHW-PLUS{background:#10b981}
-.type-DX-PLUS{background:#facc15;color:#000}
+.type-CHWCOMBI{background:#7c3aed}
+.type-DXCOMBI{background:#ec4899}
+.type-CHWPLUS{background:#10b981}
+.type-DXPLUS{background:#facc15;color:#000}
 
-.section{margin-top:10px;font-size:12px}
-.status-row{display:flex;gap:14px;margin-top:10px}
-.actions{display:flex;justify-content:space-between;margin-top:12px}
-textarea{min-height:50px}
+/* SECTION */
+.section{
+  margin-top:8px;
+  font-size:11px;
+}
+
+.section label{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:2px;
+}
+
+.status-row{
+  display:flex;
+  gap:12px;
+  margin-top:8px;
+  font-size:11px;
+}
+
+.actions{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
+}
+
+textarea{
+  min-height:50px;
+}
 </style>
 </head>
 
@@ -160,19 +278,42 @@ function updateCustomerList(){
     customers.map(c=>`<option value="${c}">`).join('');
 }
 
+function needsBoth(type){
+  return (
+    type==="CHW COMBI" ||
+    type==="DX COMBI" ||
+    type==="CHW + CHW COMBI" ||
+    type==="DX + DX COMBI"
+  );
+}
+
+function typeClass(type){
+  if(type==="CHW")return "type-CHW";
+  if(type==="DX")return "type-DX";
+  if(type==="CHW COMBI")return "type-CHWCOMBI";
+  if(type==="DX COMBI")return "type-DXCOMBI";
+  if(type==="CHW + CHW COMBI")return "type-CHWPLUS";
+  if(type==="DX + DX COMBI")return "type-DXPLUS";
+  return "";
+}
+
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
   const t=$('type').value;
   const r=$('received').value;
+
   if(!p||!c||!r){alert("Fill all fields");return;}
 
   if(!customers.includes(c))customers.push(c);
 
   projects.push({
     id:Date.now(),
-    project:p,customer:c,type:t,
-    received:r,sent:'',
+    project:p,
+    customer:c,
+    type:t,
+    received:r,
+    sent:'',
     status:'RECEIVED',
     revision:'R1',
     quoteCC:'',
@@ -187,25 +328,6 @@ $('addBtn').onclick=()=>{
   render();
 };
 
-function getTypeClass(type){
-  if(type==="CHW")return "type-CHW";
-  if(type==="DX")return "type-DX";
-  if(type==="CHW COMBI")return "type-CHW-COMBI";
-  if(type==="DX COMBI")return "type-DX-COMBI";
-  if(type==="CHW + CHW COMBI")return "type-CHW-PLUS";
-  if(type==="DX + DX COMBI")return "type-DX-PLUS";
-  return "";
-}
-
-function needsBoth(type){
-  return (
-    type==="CHW COMBI" ||
-    type==="DX COMBI" ||
-    type==="CHW + CHW COMBI" ||
-    type==="DX + DX COMBI"
-  );
-}
-
 function render(){
 
   const list=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received));
@@ -214,10 +336,10 @@ function render(){
   list.forEach(x=>{if(k[x.status]!==undefined&&x.status!=='RECEIVED')k[x.status]++;});
 
   $('navKpis').innerHTML=`
-    <div class="nav-kpi"><span>RECEIVED</span><b>${k.RECEIVED}</b></div>
-    <div class="nav-kpi"><span>SELECTION</span><b>${k['SELECTION SENT']}</b></div>
-    <div class="nav-kpi"><span>QUOTATION</span><b>${k['QUOTATION SENT']}</b></div>
-    <div class="nav-kpi"><span>COMPLETED</span><b>${k.COMPLETED}</b></div>
+    <div class="nav-kpi">REC<b>${k.RECEIVED}</b></div>
+    <div class="nav-kpi">SEL<b>${k['SELECTION SENT']}</b></div>
+    <div class="nav-kpi">QUO<b>${k['QUOTATION SENT']}</b></div>
+    <div class="nav-kpi">COMP<b>${k.COMPLETED}</b></div>
   `;
 
   $('tileGrid').innerHTML='';
@@ -229,10 +351,11 @@ function render(){
 
     const tile=document.createElement('div');
     tile.className='tile';
+
     tile.innerHTML=`
-      <div><strong>${x.project}</strong></div>
-      <div style="color:#9ca3af;font-size:12px">${x.customer}</div>
-      <div class="badge ${getTypeClass(x.type)}">${x.type}</div>
+      <h3>${x.project}</h3>
+      <div class="customer">${x.customer}</div>
+      <div class="badge ${typeClass(x.type)}">${x.type}</div>
 
       <div class="section">
         <label>Received</label>
@@ -297,13 +420,15 @@ function render(){
       x.remarks=inputs[needsBoth(x.type)?6:5].value;
 
       x.updated=Date.now();
-      saveAll();render();
+      saveAll();
+      render();
     };
 
     tile.querySelector('.danger').onclick=()=>{
       if(confirm("Delete project?")){
         projects=projects.filter(p=>p.id!==x.id);
-        saveAll();render();
+        saveAll();
+        render();
       }
     };
 
