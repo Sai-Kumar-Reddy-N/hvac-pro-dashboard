@@ -33,7 +33,6 @@ body{
   font-family:Inter,sans-serif;
   background:var(--bg);
   color:var(--text);
-  transition:.3s ease;
 }
 
 /* NAVBAR */
@@ -88,14 +87,9 @@ nav h1{
 .icon-btn{
   cursor:pointer;
   font-size:20px;
-  transition:.2s ease;
 }
 
-.icon-btn:hover{
-  transform:scale(1.15);
-}
-
-/* FILTER POPUP */
+/* CLEAN FILTER POPUP */
 .filter-popup{
   position:absolute;
   top:70px;
@@ -109,6 +103,12 @@ nav h1{
   z-index:20;
 }
 
+.filter-popup h4{
+  margin:0 0 10px 0;
+  font-size:13px;
+  color:var(--muted);
+}
+
 .filter-popup input{
   width:100%;
   margin-bottom:8px;
@@ -117,6 +117,17 @@ nav h1{
   border:1px solid rgba(255,255,255,.1);
   background:var(--glass);
   color:var(--text);
+  font-size:12px;
+}
+
+.filter-popup button{
+  width:100%;
+  padding:6px;
+  border:none;
+  border-radius:12px;
+  background:var(--accent);
+  cursor:pointer;
+  font-weight:600;
 }
 
 /* LAYOUT */
@@ -158,7 +169,7 @@ button.primary{
   font-weight:600;
 }
 
-/* TILE GRID */
+/* TILE */
 .tile-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(260px,280px));
@@ -171,11 +182,6 @@ button.primary{
   border-radius:16px;
   padding:14px;
   transition:.3s ease;
-}
-
-.tile:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 25px rgba(0,0,0,.5);
 }
 
 .tile h3{
@@ -225,12 +231,6 @@ button.primary{
   display:block;
 }
 
-.status-row{
-  display:flex;
-  gap:10px;
-  margin-top:8px;
-}
-
 .delete-btn{
   text-align:right;
   color:var(--danger);
@@ -248,18 +248,19 @@ button.primary{
   <div class="nav-kpis" id="navKpis"></div>
 
   <div class="nav-right">
-    <div class="icon-btn" onclick="toggleFilter()">🔎</div>
+    <div class="icon-btn" onclick="toggleFilter()">🔍</div>
     <div class="icon-btn" onclick="toggleTheme()">🌓</div>
   </div>
 
   <div class="filter-popup" id="filterPopup">
+    <h4>Filter</h4>
     <input type="text" id="filterProject" placeholder="Project name">
     <input type="text" id="filterCustomer" placeholder="Customer name">
     <input type="date" id="filterReceivedFrom">
     <input type="date" id="filterReceivedTo">
     <input type="date" id="filterSentFrom">
     <input type="date" id="filterSentTo">
-    <button onclick="clearFilters()" class="primary" style="width:100%;">Clear Filters</button>
+    <button onclick="clearFilters()">Clear Filters</button>
   </div>
 </nav>
 
@@ -402,14 +403,6 @@ function render(){
           onchange="autoSave(${x.id},'sent',this.value)">
         </div>
 
-        <div class="status-row">
-          <label><input type="checkbox" ${x.status==="SELECTION SENT"?'checked':''}
-          onchange="autoStatus(${x.id},'SELECTION SENT',this.checked)"> Selection</label>
-
-          <label><input type="checkbox" ${x.status==="QUOTATION SENT"?'checked':''}
-          onchange="autoStatus(${x.id},'QUOTATION SENT',this.checked)"> Quotation</label>
-        </div>
-
         <div>
           <label>Remarks</label>
           <textarea onchange="autoSave(${x.id},'remarks',this.value)">
@@ -427,13 +420,6 @@ function render(){
 function autoSave(id,key,value){
   const p=projects.find(x=>x.id===id);
   p[key]=value;
-  saveAll();
-  render();
-}
-
-function autoStatus(id,status,checked){
-  const p=projects.find(x=>x.id===id);
-  p.status=checked?status:"RECEIVED";
   saveAll();
   render();
 }
