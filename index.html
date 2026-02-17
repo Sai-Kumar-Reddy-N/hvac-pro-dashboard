@@ -8,110 +8,52 @@
 
 <style>
 *{box-sizing:border-box}
-
 body{
   margin:0;
   font-family:Inter,sans-serif;
-  overflow-x:hidden;
-  background:#0f2027;
-  color:#fff;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:white;
 }
 
-/* ===== BACKGROUND BLOBS ===== */
-.background{
-  position:fixed;
-  width:100%;
-  height:100%;
-  z-index:-2;
-  overflow:hidden;
-}
-.blob{
-  position:absolute;
-  width:400px;
-  height:400px;
-  background:radial-gradient(circle,#00c6ff,#0072ff);
-  border-radius:50%;
-  filter:blur(120px);
-  animation:float 12s infinite alternate ease-in-out;
-  opacity:.6;
-}
-.blob:nth-child(2){
-  background:radial-gradient(circle,#ff00cc,#3333ff);
-  left:60%;
-  top:30%;
-  animation-duration:15s;
-}
-@keyframes float{
-  from{transform:translate(-50px,-50px)}
-  to{transform:translate(50px,50px)}
-}
-
-/* ===== GLASS ===== */
+/* GLASS */
 .glass{
   background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(20px);
+  backdrop-filter:blur(18px);
   border:1px solid rgba(255,255,255,0.15);
   box-shadow:0 8px 32px rgba(0,0,0,0.4);
 }
 
-/* ===== NAVBAR ===== */
+/* NAVBAR */
 nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:16px 40px;
+  padding:18px 40px;
   position:sticky;
   top:0;
-  z-index:100;
+  z-index:10;
 }
-
-.nav-left{
-  display:flex;
-  align-items:center;
-  gap:20px;
-}
-
-nav h1{
-  margin:0;
-  font-size:20px;
-  font-weight:700;
-}
+nav h1{margin:0;font-size:18px}
 
 .nav-kpis{
   display:flex;
-  gap:30px;
+  gap:40px;
 }
+.kpi{text-align:center}
+.kpi span{display:block;font-size:11px;opacity:.6}
+.kpi b{font-size:18px}
 
-.kpi-box{text-align:center}
-.kpi-label{font-size:10px;opacity:.6;text-transform:uppercase}
-.kpi-value{font-size:18px;font-weight:700}
-
-.nav-right{
-  display:flex;
-  gap:20px;
-  align-items:center;
-}
-
-.nav-icon{
-  cursor:pointer;
-  font-size:18px;
-  transition:.2s ease;
-}
-.nav-icon:hover{
-  transform:scale(1.2);
-}
-
-/* ===== FILTER POPUP ===== */
-.popup{
+/* FILTER */
+.filter-popup{
   position:absolute;
   top:70px;
   right:40px;
+  width:260px;
   padding:15px;
   border-radius:16px;
   display:none;
-  width:240px;
 }
-.popup input{
+.filter-popup input{
   width:100%;
   margin-bottom:8px;
   padding:6px;
@@ -121,14 +63,13 @@ nav h1{
   color:white;
 }
 
-/* ===== CONTAINER ===== */
 .container{
   max-width:1600px;
   margin:auto;
   padding:30px;
 }
 
-/* ===== ADD SECTION ===== */
+/* ADD SECTION */
 .card{
   padding:20px;
   border-radius:20px;
@@ -141,7 +82,7 @@ nav h1{
 }
 input{
   padding:8px;
-  border-radius:12px;
+  border-radius:10px;
   border:none;
   background:rgba(255,255,255,.15);
   color:white;
@@ -149,67 +90,73 @@ input{
 button{
   background:#00c6ff;
   border:none;
-  padding:10px 18px;
-  border-radius:30px;
+  padding:8px 16px;
+  border-radius:20px;
   cursor:pointer;
-  font-weight:600;
-  transition:.2s ease;
 }
-button:hover{transform:scale(1.05)}
 
-/* ===== TILE GRID ===== */
+/* TILE GRID */
 .tile-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,280px));
+  grid-template-columns:repeat(auto-fill,minmax(260px,300px));
   gap:25px;
 }
 
 .tile{
-  padding:20px;
-  border-radius:24px;
-  transition:.2s ease;
+  padding:18px;
+  border-radius:20px;
+  transition:.3s ease;
   cursor:pointer;
-  transform-style:preserve-3d;
 }
-.tile:hover{
-  box-shadow:0 25px 50px rgba(0,0,0,.6);
-}
+.tile:hover{transform:translateY(-5px)}
+
 .tile h3{margin:0;font-size:14px}
-.customer{font-size:11px;opacity:.7;margin-top:4px}
-.date{font-size:10px;margin-top:6px;opacity:.7}
-.details{display:none;margin-top:10px;font-size:11px}
+.small{font-size:11px;opacity:.7;margin-top:4px}
+
+.status{
+  display:inline-block;
+  padding:3px 8px;
+  font-size:9px;
+  border-radius:12px;
+  margin-top:6px;
+}
+.received{background:#888}
+.selection{background:#2ecc71}
+.quotation{background:#3498db}
+
+.details{
+  margin-top:10px;
+  display:none;
+  font-size:11px;
+}
 .tile.expanded .details{display:block}
 </style>
 </head>
 
 <body>
 
-<div class="background">
-  <div class="blob"></div>
-  <div class="blob"></div>
-</div>
-
 <nav class="glass">
-  <div class="nav-left">
-    <h1>My Work Flow</h1>
-  </div>
+  <h1>My Work Flow</h1>
 
   <div class="nav-kpis" id="navKpis"></div>
 
-  <div class="nav-right">
-    <div class="nav-icon" onclick="toggleFilter()">🔍</div>
-    <div class="nav-icon" onclick="scrollToAdd()">➕</div>
+  <div>
+    <span style="cursor:pointer" onclick="toggleFilter()">🔍</span>
   </div>
 
-  <div class="popup glass" id="filterPopup">
+  <div class="filter-popup glass" id="filterPopup">
     <input type="text" id="filterProject" placeholder="Project name">
     <input type="text" id="filterCustomer" placeholder="Customer name">
+    <input type="date" id="filterReceivedFrom">
+    <input type="date" id="filterReceivedTo">
+    <input type="date" id="filterSentFrom">
+    <input type="date" id="filterSentTo">
   </div>
 </nav>
 
 <div class="container">
 
-<div class="card glass" id="addSection">
+<div class="card glass">
   <div class="form-grid">
     <input id="project" placeholder="Project Name">
     <input id="customer" placeholder="Customer Name">
@@ -226,18 +173,14 @@ button:hover{transform:scale(1.05)}
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
 
-function scrollToAdd(){
-  document.getElementById('addSection').scrollIntoView({behavior:'smooth'});
-}
-
 function toggleFilter(){
   const popup=$('filterPopup');
   popup.style.display=popup.style.display==='block'?'none':'block';
 }
 
-['filterProject','filterCustomer'].forEach(id=>{
-  $(id).addEventListener('input',render);
-});
+['filterProject','filterCustomer','filterReceivedFrom',
+ 'filterReceivedTo','filterSentFrom','filterSentTo']
+.forEach(id=>$(id).addEventListener('input',render));
 
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
@@ -249,7 +192,10 @@ $('addBtn').onclick=()=>{
     id:Date.now(),
     project:p,
     customer:c,
-    received:r
+    received:r,
+    sent:'',
+    status:'received',
+    remarks:''
   });
 
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
@@ -257,35 +203,79 @@ $('addBtn').onclick=()=>{
 };
 
 function render(){
-  const total=projects.length;
+
+  const rec=projects.length;
+  const sel=projects.filter(x=>x.status==='selection').length;
+  const quo=projects.filter(x=>x.status==='quotation').length;
+
   $('navKpis').innerHTML=`
-    <div class="kpi-box">
-      <div class="kpi-label">Received</div>
-      <div class="kpi-value">${total}</div>
-    </div>
+    <div class="kpi"><span>Received</span><b>${rec}</b></div>
+    <div class="kpi"><span>Selection</span><b>${sel}</b></div>
+    <div class="kpi"><span>Quotation</span><b>${quo}</b></div>
   `;
 
   let filtered=[...projects];
+
   const fp=$('filterProject').value.toLowerCase();
   const fc=$('filterCustomer').value.toLowerCase();
+  const rf=$('filterReceivedFrom').value;
+  const rt=$('filterReceivedTo').value;
+  const sf=$('filterSentFrom').value;
+  const st=$('filterSentTo').value;
 
   if(fp) filtered=filtered.filter(x=>x.project.toLowerCase().includes(fp));
   if(fc) filtered=filtered.filter(x=>x.customer.toLowerCase().includes(fc));
+  if(rf) filtered=filtered.filter(x=>x.received>=rf);
+  if(rt) filtered=filtered.filter(x=>x.received<=rt);
+  if(sf) filtered=filtered.filter(x=>x.sent && x.sent>=sf);
+  if(st) filtered=filtered.filter(x=>x.sent && x.sent<=st);
 
   filtered.sort((a,b)=>new Date(b.received)-new Date(a.received));
 
   $('tileGrid').innerHTML='';
+
   filtered.forEach(x=>{
     const tile=document.createElement('div');
     tile.className='tile glass';
+
     tile.innerHTML=`
       <h3 onclick="this.closest('.tile').classList.toggle('expanded')">${x.project}</h3>
-      <div class="customer">${x.customer}</div>
-      <div class="date">Received: ${x.received}</div>
-      <div class="details">Expandable details here</div>
+      <div class="small">${x.customer}</div>
+      <div class="small">Received: ${x.received}</div>
+      <div class="small">Sent: ${x.sent||'-'}</div>
+      <span class="status ${x.status}">${x.status.toUpperCase()}</span>
+
+      <div class="details">
+        <label>Sent Date</label>
+        <input type="date" value="${x.sent||''}" onchange="update(${x.id},'sent',this.value)">
+        <div style="margin-top:6px">
+          <label><input type="radio" name="status${x.id}" ${x.status==='selection'?'checked':''}
+            onchange="update(${x.id},'status','selection')"> Selection</label>
+          <label><input type="radio" name="status${x.id}" ${x.status==='quotation'?'checked':''}
+            onchange="update(${x.id},'status','quotation')"> Quotation</label>
+        </div>
+        <textarea style="margin-top:6px;width:100%;border-radius:6px"
+          onchange="update(${x.id},'remarks',this.value)">${x.remarks||''}</textarea>
+        <div style="margin-top:6px;color:red;cursor:pointer"
+          onclick="deleteProject(${x.id})">Delete</div>
+      </div>
     `;
+
     $('tileGrid').appendChild(tile);
   });
+}
+
+function update(id,key,value){
+  const p=projects.find(x=>x.id===id);
+  p[key]=value;
+  localStorage.setItem('hvacProjects',JSON.stringify(projects));
+  render();
+}
+
+function deleteProject(id){
+  projects=projects.filter(x=>x.id!==id);
+  localStorage.setItem('hvacProjects',JSON.stringify(projects));
+  render();
 }
 
 render();
