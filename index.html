@@ -11,59 +11,36 @@
   --bg:#0f172a;
   --card:#111827;
   --glass:rgba(255,255,255,0.06);
-  --accent:#22d3ee;
   --text:#e5e7eb;
   --muted:#94a3b8;
+  --green:#16a34a;
+  --blue:#2563eb;
+  --purple:#9333ea;
   --danger:#ef4444;
 }
-
-body.light{
-  --bg:#f1f5f9;
-  --card:#ffffff;
-  --glass:rgba(0,0,0,0.05);
-  --text:#0f172a;
-  --muted:#475569;
-}
-
-*{box-sizing:border-box}
-
 body{
   margin:0;
   font-family:Inter,sans-serif;
   background:var(--bg);
   color:var(--text);
-  transition:.3s ease;
 }
 
 /* NAVBAR */
 nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
   padding:14px 28px;
   background:var(--card);
   box-shadow:0 8px 30px rgba(0,0,0,.4);
-  position:sticky;
-  top:0;
-  z-index:10;
 }
 
-.nav-left{
+.nav-top{
   display:flex;
+  justify-content:space-between;
   align-items:center;
-  gap:20px;
-}
-
-nav h1{
-  margin:0;
-  font-size:18px;
-  font-weight:700;
-  color:var(--accent);
 }
 
 .nav-kpis{
   display:flex;
-  gap:12px;
+  gap:14px;
 }
 
 .nav-kpi{
@@ -79,28 +56,25 @@ nav h1{
   font-size:15px;
 }
 
-.nav-controls{
-  display:flex;
-  gap:12px;
-  align-items:center;
+.kpi-rec{color:var(--green)}
+.kpi-sel{color:var(--blue)}
+.kpi-quo{color:var(--purple)}
+
+/* FILTER BAR */
+.filter-bar{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:10px;
 }
 
-select, input{
+.filter-bar input{
   padding:6px 10px;
-  border-radius:12px;
+  border-radius:10px;
   border:1px solid rgba(255,255,255,.1);
   background:var(--glass);
   color:var(--text);
   font-size:12px;
-}
-
-/* THEME TOGGLE */
-.theme-toggle{
-  cursor:pointer;
-  font-size:14px;
-  padding:6px 10px;
-  border-radius:12px;
-  background:var(--glass);
 }
 
 /* LAYOUT */
@@ -110,29 +84,36 @@ select, input{
   padding:28px;
 }
 
-/* ADD SECTION */
 .card{
   background:var(--card);
-  border-radius:18px;
-  padding:16px;
+  border-radius:16px;
+  padding:14px;
   margin-bottom:28px;
-  box-shadow:0 15px 40px rgba(0,0,0,.3);
 }
 
 .form-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:14px;
+  gap:12px;
 }
 
-button.primary{
-  background:var(--accent);
+input,select,textarea{
+  width:100%;
+  padding:6px 10px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.1);
+  background:var(--glass);
+  color:var(--text);
+  font-size:12px;
+}
+
+button{
+  background:#22d3ee;
   border:none;
-  color:#000;
+  padding:6px 14px;
   border-radius:14px;
   cursor:pointer;
   font-weight:600;
-  padding:6px 14px;
 }
 
 /* TILE GRID */
@@ -143,81 +124,66 @@ button.primary{
   justify-content:center;
 }
 
-/* TILE */
 .tile{
   background:var(--card);
-  border-radius:18px;
+  border-radius:16px;
   padding:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.4);
   transition:.3s ease;
+  overflow:hidden;
 }
 
 .tile:hover{
-  transform:translateY(-4px);
-  box-shadow:0 20px 40px rgba(0,0,0,.6);
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,.5);
 }
 
 .tile h3{
   margin:0;
   font-size:13px;
+  cursor:pointer;
 }
 
 .customer{
   font-size:11px;
   color:var(--muted);
-  margin-bottom:6px;
 }
 
-/* GREEN TYPE BADGE */
 .badge{
   display:inline-block;
-  padding:4px 10px;
-  border-radius:20px;
-  font-size:10px;
-  font-weight:600;
+  padding:3px 8px;
+  border-radius:14px;
+  font-size:9px;
   background:#16a34a;
-  color:white;
-  margin-bottom:8px;
+  margin-top:6px;
 }
 
-/* SECTION */
-.section{
-  margin-top:8px;
-  font-size:11px;
-}
-
-.section label{
-  display:block;
+.quick-remark{
+  margin-top:6px;
   font-size:10px;
   color:var(--muted);
-  margin-bottom:2px;
+}
+
+.details{
+  margin-top:10px;
+  font-size:11px;
+  display:none;
+}
+
+.tile.expanded .details{
+  display:block;
 }
 
 .status-row{
   display:flex;
-  gap:12px;
+  gap:10px;
   margin-top:8px;
-  font-size:11px;
 }
 
-textarea{
-  width:100%;
-  border-radius:10px;
-  background:var(--glass);
-  color:var(--text);
-  border:none;
-  padding:6px;
-  font-size:11px;
-  min-height:40px;
-}
-
-/* DELETE ICON */
 .delete-btn{
+  text-align:right;
+  color:var(--danger);
   margin-top:8px;
   cursor:pointer;
-  color:var(--danger);
-  font-size:16px;
-  text-align:right;
 }
 </style>
 </head>
@@ -225,31 +191,17 @@ textarea{
 <body>
 
 <nav>
-  <div class="nav-left">
+  <div class="nav-top">
     <h1>My Work Flow</h1>
-
     <div class="nav-kpis" id="navKpis"></div>
   </div>
 
-  <div class="nav-controls">
-    <select id="filterType">
-      <option value="">All Types</option>
-      <option>CHW</option>
-      <option>DX</option>
-      <option>CHW COMBI</option>
-      <option>DX COMBI</option>
-      <option>CHW + CHW COMBI</option>
-      <option>DX + DX COMBI</option>
-    </select>
-
-    <select id="filterStatus">
-      <option value="">All Status</option>
-      <option>RECEIVED</option>
-      <option>SELECTION SENT</option>
-      <option>QUOTATION SENT</option>
-    </select>
-
-    <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
+  <div class="filter-bar">
+    <input type="text" id="filterCustomer" placeholder="Filter by Customer">
+    <input type="date" id="filterReceivedFrom">
+    <input type="date" id="filterReceivedTo">
+    <input type="date" id="filterSentFrom">
+    <input type="date" id="filterSentTo">
   </div>
 </nav>
 
@@ -258,9 +210,7 @@ textarea{
 <div class="card">
   <div class="form-grid">
     <input id="project" placeholder="Project Name">
-    <input id="customer" list="customerList" placeholder="Customer Name">
-    <datalist id="customerList"></datalist>
-
+    <input id="customer" placeholder="Customer Name">
     <select id="type">
       <option>CHW</option>
       <option>DX</option>
@@ -269,9 +219,8 @@ textarea{
       <option>CHW + CHW COMBI</option>
       <option>DX + DX COMBI</option>
     </select>
-
     <input type="date" id="received">
-    <button id="addBtn" class="primary">Add</button>
+    <button id="addBtn">Add</button>
   </div>
 </div>
 
@@ -281,33 +230,22 @@ textarea{
 
 <script>
 const $=id=>document.getElementById(id);
-
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
-let customers=JSON.parse(localStorage.getItem('customerMaster'))||[];
 
 function saveAll(){
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
-  localStorage.setItem('customerMaster',JSON.stringify(customers));
 }
 
-/* THEME */
-function toggleTheme(){
-  document.body.classList.toggle('light');
-}
+/* FILTER EVENTS */
+['filterCustomer','filterReceivedFrom','filterReceivedTo','filterSentFrom','filterSentTo']
+.forEach(id=>$(id).addEventListener('input',render));
 
-/* FILTER CHANGE */
-$('filterType').onchange=render;
-$('filterStatus').onchange=render;
-
-/* ADD */
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
   const t=$('type').value;
   const r=$('received').value;
-  if(!p||!c||!r){alert("Fill all fields");return;}
-
-  if(!customers.includes(c))customers.push(c);
+  if(!p||!c||!r)return;
 
   projects.push({
     id:Date.now(),
@@ -317,74 +255,100 @@ $('addBtn').onclick=()=>{
     received:r,
     sent:'',
     status:'RECEIVED',
-    revision:'R1',
-    quoteCC:'',
-    quoteHP:'',
-    remarks:'',
-    updated:Date.now()
+    remarks:''
   });
 
   saveAll();
-  $('project').value=$('customer').value=$('received').value='';
   render();
 };
 
 function render(){
 
-  const typeFilter=$('filterType').value;
-  const statusFilter=$('filterStatus').value;
-
-  const list=projects.filter(x=>
-    (!typeFilter||x.type===typeFilter) &&
-    (!statusFilter||x.status===statusFilter)
-  );
-
+  /* KPI (TOTAL ONLY) */
   const k={
-    RECEIVED:list.filter(x=>x.status==="RECEIVED").length,
-    SEL:list.filter(x=>x.status==="SELECTION SENT").length,
-    QUO:list.filter(x=>x.status==="QUOTATION SENT").length
+    rec:projects.length,
+    sel:projects.filter(x=>x.status==="SELECTION SENT").length,
+    quo:projects.filter(x=>x.status==="QUOTATION SENT").length
   };
 
   $('navKpis').innerHTML=`
-    <div class="nav-kpi">REC<b>${k.RECEIVED}</b></div>
-    <div class="nav-kpi">SEL<b>${k.SEL}</b></div>
-    <div class="nav-kpi">QUO<b>${k.QUO}</b></div>
+    <div class="nav-kpi kpi-rec">Received<b>${k.rec}</b></div>
+    <div class="nav-kpi kpi-sel">Selection<b>${k.sel}</b></div>
+    <div class="nav-kpi kpi-quo">Quotation<b>${k.quo}</b></div>
   `;
+
+  /* APPLY FILTERS */
+  let filtered=[...projects];
+
+  const cust=$('filterCustomer').value.toLowerCase();
+  const rFrom=$('filterReceivedFrom').value;
+  const rTo=$('filterReceivedTo').value;
+  const sFrom=$('filterSentFrom').value;
+  const sTo=$('filterSentTo').value;
+
+  if(cust){
+    filtered=filtered.filter(x=>x.customer.toLowerCase().includes(cust));
+  }
+
+  if(rFrom){
+    filtered=filtered.filter(x=>x.received>=rFrom);
+  }
+
+  if(rTo){
+    filtered=filtered.filter(x=>x.received<=rTo);
+  }
+
+  if(sFrom){
+    filtered=filtered.filter(x=>x.sent && x.sent>=sFrom);
+  }
+
+  if(sTo){
+    filtered=filtered.filter(x=>x.sent && x.sent<=sTo);
+  }
 
   $('tileGrid').innerHTML='';
 
-  list.forEach(x=>{
+  filtered.forEach(x=>{
     const tile=document.createElement('div');
     tile.className='tile';
 
     tile.innerHTML=`
-      <h3>${x.project}</h3>
+      <h3 onclick="toggleTile(this)">${x.project}</h3>
       <div class="customer">${x.customer}</div>
       <div class="badge">${x.type}</div>
+      <div class="quick-remark">${x.remarks||'No remarks'}</div>
 
-      <div class="section">
-        <label>Received</label>
-        ${x.received}
+      <div class="details">
+        <div>
+          <label>Sent Date</label>
+          <input type="date" value="${x.sent||''}" 
+          onchange="autoSave(${x.id},'sent',this.value)">
+        </div>
+
+        <div class="status-row">
+          <label><input type="checkbox" ${x.status==="SELECTION SENT"?'checked':''}
+          onchange="autoStatus(${x.id},'SELECTION SENT',this.checked)"> Selection</label>
+
+          <label><input type="checkbox" ${x.status==="QUOTATION SENT"?'checked':''}
+          onchange="autoStatus(${x.id},'QUOTATION SENT',this.checked)"> Quotation</label>
+        </div>
+
+        <div>
+          <label>Remarks</label>
+          <textarea onchange="autoSave(${x.id},'remarks',this.value)">
+          ${x.remarks||''}</textarea>
+        </div>
+
+        <div class="delete-btn" onclick="deleteProject(${x.id})">❌</div>
       </div>
-
-      <div class="section">
-        <label>Sent Date</label>
-        <input type="date" value="${x.sent||''}" onchange="autoSave(${x.id},'sent',this.value)">
-      </div>
-
-      <div class="status-row">
-        <label><input type="checkbox" ${x.status==="SELECTION SENT"||x.status==="QUOTATION SENT"?'checked':''}
-        onchange="autoStatus(${x.id},'selection',this.checked)"> Selection</label>
-
-        <label><input type="checkbox" ${x.status==="QUOTATION SENT"?'checked':''}
-        onchange="autoStatus(${x.id},'quotation',this.checked)"> Quotation</label>
-      </div>
-
-      <div class="delete-btn" onclick="deleteProject(${x.id})">❌</div>
     `;
 
     $('tileGrid').appendChild(tile);
   });
+}
+
+function toggleTile(el){
+  el.closest('.tile').classList.toggle('expanded');
 }
 
 function autoSave(id,key,value){
@@ -393,14 +357,9 @@ function autoSave(id,key,value){
   saveAll();
 }
 
-function autoStatus(id,type,checked){
+function autoStatus(id,status,checked){
   const p=projects.find(x=>x.id===id);
-  if(type==='selection'){
-    p.status=checked?"SELECTION SENT":"RECEIVED";
-  }
-  if(type==='quotation'){
-    p.status=checked?"QUOTATION SENT":"RECEIVED";
-  }
+  p.status=checked?status:"RECEIVED";
   saveAll();
   render();
 }
