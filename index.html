@@ -43,7 +43,6 @@ nav{
   padding:16px 30px;
   background:var(--card);
   box-shadow:0 8px 30px rgba(0,0,0,.4);
-  position:relative;
 }
 
 nav h1{
@@ -68,31 +67,6 @@ nav h1{
 
 .nav-right{display:flex;gap:16px}
 .icon-btn{cursor:pointer;font-size:20px}
-
-/* FILTER */
-.filter-popup{
-  position:absolute;
-  top:70px;
-  right:30px;
-  background:var(--card);
-  padding:16px;
-  border-radius:16px;
-  box-shadow:0 20px 40px rgba(0,0,0,.5);
-  display:none;
-  width:260px;
-  z-index:20;
-}
-
-.filter-popup input{
-  width:100%;
-  margin-bottom:8px;
-  padding:6px 8px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.1);
-  background:var(--glass);
-  color:var(--text);
-  font-size:12px;
-}
 
 /* LAYOUT */
 .container{max-width:1700px;margin:auto;padding:28px}
@@ -171,17 +145,7 @@ button.primary{
   <div class="nav-kpis" id="navKpis"></div>
 
   <div class="nav-right">
-    <div class="icon-btn" onclick="toggleFilter()">🔍</div>
     <div class="icon-btn" onclick="toggleTheme()">🌓</div>
-  </div>
-
-  <div class="filter-popup" id="filterPopup">
-    <input type="text" id="filterProject" placeholder="Project name">
-    <input type="text" id="filterCustomer" placeholder="Customer name">
-    <input type="date" id="filterReceivedFrom">
-    <input type="date" id="filterReceivedTo">
-    <input type="date" id="filterSentFrom">
-    <input type="date" id="filterSentTo">
   </div>
 </nav>
 
@@ -210,29 +174,33 @@ button.primary{
 
 <script>
 const $=id=>document.getElementById(id);
-let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
 
-/* ===== SAVE ===== */
+/* ===== LOAD & NORMALIZE DATA ===== */
+let projects = JSON.parse(localStorage.getItem('hvacProjects')) || [];
+
+projects = projects.map(p => ({
+  id: p.id,
+  project: p.project,
+  customer: p.customer,
+  type: p.type,
+  received: p.received,
+  sent: p.sent || '',
+  remarks: p.remarks || '',
+  selection: p.selection === true,
+  quotation: p.quotation === true
+}));
+
+localStorage.setItem('hvacProjects', JSON.stringify(projects));
+
 function saveAll(){
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
 }
 
-/* ===== THEME ===== */
 function toggleTheme(){
   document.body.classList.toggle('light');
 }
 
-/* ===== FILTER ===== */
-function toggleFilter(){
-  const popup=$('filterPopup');
-  popup.style.display=popup.style.display==='block'?'none':'block';
-}
-
-['filterProject','filterCustomer','filterReceivedFrom',
- 'filterReceivedTo','filterSentFrom','filterSentTo']
-.forEach(id=>$(id).addEventListener('input',render));
-
-/* ===== ADD ===== */
+/* ===== ADD PROJECT ===== */
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
@@ -283,6 +251,7 @@ function render(){
   projects.sort((a,b)=>new Date(b.received)-new Date(a.received));
 
   projects.forEach(x=>{
+
     let badges='';
     if(x.selection && !x.quotation)
       badges+=`<span class="badge selection">Selection Sent</span>`;
@@ -327,7 +296,6 @@ function render(){
   });
 }
 
-/* ===== UPDATE ===== */
 function update(id,key,value){
   const p=projects.find(x=>x.id===id);
   p[key]=value;
