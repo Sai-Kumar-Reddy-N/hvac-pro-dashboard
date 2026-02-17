@@ -8,24 +8,7 @@
 
 <style>
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:Inter,sans-serif;
-  transition:.3s ease;
-}
-
-/* ===== THEMES ===== */
-.theme1{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:white;}
-.theme2{background:#111827;color:white;}
-.theme3{background:#0b3d3d;color:#e0ffff;}
-.theme4{background:#1e1e2f;color:white;}
-.theme5{background:#101820;color:#f8fafc;}
-.theme6{background:#002b36;color:#eee8d5;}
-.theme7{background:#1a1a1a;color:#f3f4f6;}
-.theme8{background:#f4f6f8;color:#1f2937;}
-.theme9{background:#0a192f;color:#ccd6f6;}
-.theme10{background:#2d1b69;color:white;}
+body{margin:0;font-family:Inter,sans-serif;background:#0f2027;color:white}
 
 .glass{
   background:rgba(255,255,255,0.08);
@@ -34,7 +17,6 @@ body{
   box-shadow:0 8px 32px rgba(0,0,0,0.3);
 }
 
-/* NAVBAR */
 nav{
   display:flex;
   justify-content:space-between;
@@ -42,60 +24,16 @@ nav{
   padding:16px 30px;
   position:sticky;
   top:0;
-  z-index:100;
 }
 
-nav h1{margin:0;font-size:18px}
-
-.nav-kpis{
-  display:flex;
-  gap:30px;
-}
-
+.nav-kpis{display:flex;gap:30px}
 .kpi{text-align:center}
-.kpi span{display:block;font-size:11px;opacity:.7}
+.kpi span{font-size:11px;opacity:.7;display:block}
 .kpi b{font-size:18px}
 
-.nav-right{
-  display:flex;
-  gap:15px;
-  cursor:pointer;
-}
+.container{max-width:1600px;margin:auto;padding:30px}
 
-/* FILTER & THEME POPUPS */
-.filter-popup,.theme-popup{
-  position:absolute;
-  top:65px;
-  right:30px;
-  padding:15px;
-  border-radius:16px;
-  display:none;
-  width:240px;
-}
-
-.filter-popup input{
-  width:100%;
-  margin-bottom:8px;
-  padding:6px;
-  border-radius:8px;
-  border:none;
-  background:rgba(255,255,255,.15);
-  color:inherit;
-}
-
-/* CONTAINER */
-.container{
-  max-width:1600px;
-  margin:auto;
-  padding:30px;
-}
-
-/* ADD SECTION */
-.card{
-  padding:20px;
-  border-radius:16px;
-  margin-bottom:30px;
-}
+.card{padding:20px;border-radius:16px;margin-bottom:30px}
 
 .form-grid{
   display:grid;
@@ -104,22 +42,16 @@ nav h1{margin:0;font-size:18px}
 }
 
 input,select,textarea{
-  padding:8px;
-  border-radius:8px;
-  border:none;
+  padding:8px;border-radius:8px;border:none;
   background:rgba(255,255,255,.15);
-  color:inherit;
+  color:white;
 }
 
 button{
-  background:#00c6ff;
-  border:none;
-  padding:8px 16px;
-  border-radius:20px;
-  cursor:pointer;
+  background:#00c6ff;border:none;padding:8px 16px;
+  border-radius:20px;cursor:pointer;
 }
 
-/* TILE */
 .tile-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(260px,300px));
@@ -127,19 +59,12 @@ button{
 }
 
 .tile{
-  padding:18px;
-  border-radius:18px;
-  transition:.3s ease;
-  cursor:pointer;
+  padding:18px;border-radius:18px;
+  transition:.3s ease;cursor:pointer;
 }
-
 .tile:hover{transform:translateY(-5px)}
 
-.small{
-  font-size:11px;
-  opacity:.7;
-  margin-top:4px;
-}
+.small{font-size:11px;opacity:.7;margin-top:4px}
 
 .badge{
   display:inline-block;
@@ -153,51 +78,16 @@ button{
 .selection{background:#2ecc71;}
 .quotation{background:#3498db;}
 
-.details{
-  margin-top:10px;
-  display:none;
-  font-size:11px;
-}
-
-.tile.expanded .details{
-  display:block;
-}
+.details{margin-top:10px;display:none;font-size:11px}
+.tile.expanded .details{display:block}
 </style>
 </head>
 
-<body class="theme1">
+<body>
 
 <nav class="glass">
   <h1>My Work Flow</h1>
-
   <div class="nav-kpis" id="navKpis"></div>
-
-  <div class="nav-right">
-    <span onclick="toggleFilter()">🔍</span>
-    <span onclick="toggleTheme()">🎨</span>
-  </div>
-
-  <div class="filter-popup glass" id="filterPopup">
-    <input type="text" id="filterProject" placeholder="Project name">
-    <input type="text" id="filterCustomer" placeholder="Customer name">
-    <input type="date" id="filterReceived">
-    <input type="date" id="filterSent">
-  </div>
-
-  <div class="theme-popup glass" id="themePopup">
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
-      <div onclick="setTheme('theme1')" style="width:24px;height:24px;border-radius:50%;background:#0f2027;cursor:pointer"></div>
-      <div onclick="setTheme('theme2')" style="width:24px;height:24px;border-radius:50%;background:#111827;cursor:pointer"></div>
-      <div onclick="setTheme('theme3')" style="width:24px;height:24px;border-radius:50%;background:#0b3d3d;cursor:pointer"></div>
-      <div onclick="setTheme('theme4')" style="width:24px;height:24px;border-radius:50%;background:#1e1e2f;cursor:pointer"></div>
-      <div onclick="setTheme('theme5')" style="width:24px;height:24px;border-radius:50%;background:#101820;cursor:pointer"></div>
-      <div onclick="setTheme('theme6')" style="width:24px;height:24px;border-radius:50%;background:#002b36;cursor:pointer"></div>
-      <div onclick="setTheme('theme7')" style="width:24px;height:24px;border-radius:50%;background:#1a1a1a;cursor:pointer"></div>
-      <div onclick="setTheme('theme8')" style="width:24px;height:24px;border-radius:50%;background:#f4f6f8;cursor:pointer"></div>
-      <div onclick="setTheme('theme9')" style="width:24px;height:24px;border-radius:50%;background:#0a192f;cursor:pointer"></div>
-      <div onclick="setTheme('theme10')" style="width:24px;height:24px;border-radius:50%;background:#2d1b69;cursor:pointer"></div>
-    </div>
-  </div>
 </nav>
 
 <div class="container">
@@ -225,43 +115,41 @@ button{
 
 <script>
 const $=id=>document.getElementById(id);
-
-/* ===== LOAD DATA ===== */
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
 
-/* ===== DATA MIGRATION ===== */
-projects=projects.map(p=>{
-  if(typeof p.selection!=="undefined") return p;
+/* ===== STRONG DATA MIGRATION ===== */
+projects = projects.map(p => {
+
+  if(typeof p.selection !== "undefined") return p;
+
+  let selection=false;
+  let quotation=false;
+
+  if(p.status){
+    const s=p.status.toLowerCase();
+
+    if(s.includes("selection") && !s.includes("quotation")){
+      selection=true;
+    }
+    if(s.includes("quotation")){
+      quotation=true;
+    }
+    if(s.includes("both")){
+      selection=true;
+      quotation=true;
+    }
+  }
 
   return {
     ...p,
-    selection:p.status==="selection",
-    quotation:p.status==="quotation",
+    selection:selection,
+    quotation:quotation,
     sent:p.sent||"",
     remarks:p.remarks||""
   };
 });
+
 localStorage.setItem('hvacProjects',JSON.stringify(projects));
-
-/* ===== THEME ===== */
-function toggleTheme(){
-  const p=$('themePopup');
-  p.style.display=p.style.display==='block'?'none':'block';
-}
-function setTheme(t){
-  document.body.className=t;
-  localStorage.setItem('theme',t);
-}
-const savedTheme=localStorage.getItem('theme');
-if(savedTheme) document.body.className=savedTheme;
-
-/* ===== FILTER ===== */
-function toggleFilter(){
-  const p=$('filterPopup');
-  p.style.display=p.style.display==='block'?'none':'block';
-}
-['filterProject','filterCustomer','filterReceived','filterSent']
-.forEach(id=>$(id).addEventListener('input',render));
 
 /* ===== ADD ===== */
 $('addBtn').onclick=()=>{
@@ -295,8 +183,14 @@ function save(){
 function render(){
 
   const rec=projects.length;
-  const sel=projects.filter(p=>p.selection && !p.quotation).length;
-  const quo=projects.filter(p=>p.quotation).length;
+
+  const sel=projects.filter(p =>
+    p.selection===true && p.quotation===false
+  ).length;
+
+  const quo=projects.filter(p =>
+    p.quotation===true
+  ).length;
 
   $('navKpis').innerHTML=`
     <div class="kpi"><span>Received</span><b>${rec}</b></div>
@@ -304,25 +198,11 @@ function render(){
     <div class="kpi"><span>Quotation</span><b>${quo}</b></div>
   `;
 
-  let filtered=[...projects];
-
-  const fp=$('filterProject').value.toLowerCase();
-  const fc=$('filterCustomer').value.toLowerCase();
-  const fr=$('filterReceived').value;
-  const fs=$('filterSent').value;
-
-  if(fp) filtered=filtered.filter(p=>p.project.toLowerCase().includes(fp));
-  if(fc) filtered=filtered.filter(p=>p.customer.toLowerCase().includes(fc));
-  if(fr) filtered=filtered.filter(p=>p.received===fr);
-  if(fs) filtered=filtered.filter(p=>p.sent===fs);
-
-  filtered.sort((a,b)=>new Date(b.received)-new Date(a.received));
-
   $('tileGrid').innerHTML='';
 
-  filtered.forEach(p=>{
-    const tile=document.createElement('div');
-    tile.className='tile glass';
+  projects.sort((a,b)=>new Date(b.received)-new Date(a.received));
+
+  projects.forEach(p=>{
 
     let badges='';
     if(p.selection && !p.quotation)
@@ -330,6 +210,8 @@ function render(){
     if(p.quotation)
       badges+=`<span class="badge quotation">Quotation Sent</span>`;
 
+    const tile=document.createElement('div');
+    tile.className='tile glass';
     tile.innerHTML=`
       <h3 onclick="this.closest('.tile').classList.toggle('expanded')">${p.project}</h3>
       <div class="small">${p.customer}</div>
@@ -339,22 +221,19 @@ function render(){
       ${badges}
 
       <div class="details">
-        <label>Sent Date</label>
         <input type="date" value="${p.sent||''}"
           onchange="update(${p.id},'sent',this.value)">
-        <div style="margin-top:6px">
+        <div>
           <label><input type="checkbox" ${p.selection?'checked':''}
             onchange="update(${p.id},'selection',this.checked)"> Selection</label>
           <label><input type="checkbox" ${p.quotation?'checked':''}
             onchange="update(${p.id},'quotation',this.checked)"> Quotation</label>
         </div>
-        <textarea style="margin-top:6px;width:100%"
-          onchange="update(${p.id},'remarks',this.value)">${p.remarks||''}</textarea>
-        <div style="margin-top:6px;color:red;cursor:pointer"
+        <textarea onchange="update(${p.id},'remarks',this.value)">${p.remarks||''}</textarea>
+        <div style="color:red;cursor:pointer"
           onclick="deleteProject(${p.id})">Delete</div>
       </div>
     `;
-
     $('tileGrid').appendChild(tile);
   });
 }
