@@ -36,28 +36,96 @@ body.purple{
   --bg:linear-gradient(135deg,#41295a,#2F0743);
 }
 
-/* NAV */
-nav{
+/* NAVBAR */
+.navbar{
   display:flex;
   justify-content:space-between;
-  padding:16px 30px;
-  backdrop-filter:blur(12px);
-  background:var(--card);
+  align-items:center;
+  padding:14px 30px;
+  backdrop-filter:blur(16px);
+  background:rgba(17,24,39,0.85);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  position:sticky;
+  top:0;
+  z-index:1000;
 }
 
-nav h1{margin:0;color:var(--accent);}
-.nav-links{display:flex;gap:20px;align-items:center;}
-.nav-links div{cursor:pointer;}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+}
 
-button{
-  cursor:pointer;
-  padding:6px 10px;
-  border:none;
-  border-radius:6px;
-  background:var(--accent);
+.logo-circle{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#22d3ee,#3b82f6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:700;
   color:#000;
 }
 
+.nav-center{
+  display:flex;
+  gap:30px;
+}
+
+.nav-item{
+  cursor:pointer;
+  padding:6px 4px;
+  position:relative;
+}
+
+.nav-item::after{
+  content:'';
+  position:absolute;
+  bottom:-4px;
+  left:0;
+  width:0%;
+  height:2px;
+  background:#22d3ee;
+  transition:0.3s;
+}
+
+.nav-item:hover::after,
+.nav-item.active::after{
+  width:100%;
+}
+
+.avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#9333ea,#ec4899);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.profile-menu{
+  position:absolute;
+  top:60px;
+  right:30px;
+  background:var(--card);
+  padding:12px;
+  border-radius:10px;
+  width:180px;
+  display:none;
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+
+.profile-menu.active{display:block;}
+.profile-menu div{padding:6px;cursor:pointer;font-size:14px;}
+.profile-menu div:hover{color:#22d3ee;}
+
+/* VIEWS */
 .view{display:none;padding:30px;}
 .view.active{display:block;}
 
@@ -99,11 +167,6 @@ button{
   font-weight:600;
 }
 
-/* SEARCH */
-.search-bar{
-  margin-bottom:20px;
-}
-
 input,select,textarea{
   width:100%;
   margin-bottom:10px;
@@ -112,6 +175,16 @@ input,select,textarea{
   border:none;
 }
 
+button{
+  padding:6px 10px;
+  border:none;
+  border-radius:6px;
+  background:var(--accent);
+  color:#000;
+  cursor:pointer;
+}
+
+/* MODAL */
 .modal{
   position:fixed;
   inset:0;
@@ -134,22 +207,33 @@ input,select,textarea{
 
 <body>
 
-<nav>
-  <h1>HVAC Workflow</h1>
-  <div class="nav-links">
-    <div onclick="showView('home')">Home</div>
-    <div onclick="showView('projects')">All Projects</div>
-    <div onclick="showView('dashboard')">Dashboard</div>
-    <div onclick="openModal()">Add New</div>
-    <select onchange="changeTheme(this.value)">
-      <option value="">Theme</option>
-      <option value="light">Light</option>
-      <option value="blue">Blue Gradient</option>
-      <option value="purple">Purple Gradient</option>
-    </select>
-    <button onclick="exportCSV()">Export</button>
+<nav class="navbar">
+  <div class="brand">
+    <div class="logo-circle">HW</div>
+    <span>HVAC Workflow</span>
+  </div>
+
+  <div class="nav-center">
+    <div class="nav-item active" onclick="setActive(this);showView('home')">Home</div>
+    <div class="nav-item" onclick="setActive(this);showView('projects')">All Projects</div>
+    <div class="nav-item" onclick="setActive(this);showView('dashboard')">Dashboard</div>
+    <div class="nav-item" onclick="setActive(this);openModal()">Add New</div>
+  </div>
+
+  <div>
+    <div class="avatar" onclick="toggleProfile()">SK</div>
   </div>
 </nav>
+
+<div class="profile-menu" id="profileMenu">
+  <div>Profile</div>
+  <div>Theme:</div>
+  <div onclick="changeTheme('')">Dark</div>
+  <div onclick="changeTheme('light')">Light</div>
+  <div onclick="changeTheme('blue')">Blue Gradient</div>
+  <div onclick="changeTheme('purple')">Purple Gradient</div>
+  <div onclick="exportCSV()">Export CSV</div>
+</div>
 
 <!-- HOME -->
 <div id="home" class="view active">
@@ -159,17 +243,15 @@ input,select,textarea{
 
 <!-- PROJECTS -->
 <div id="projects" class="view">
-  <div class="search-bar">
-    <input id="searchInput" placeholder="Search project or customer..." oninput="renderProjects()">
-    <select id="filterStatus" onchange="renderProjects()">
-      <option value="">All</option>
-      <option value="selection">Only Selection</option>
-      <option value="quotation">Only Quotation</option>
-      <option value="both">Both</option>
-      <option value="revision">Revised</option>
-    </select>
-  </div>
-  <div id="projectGrid"></div>
+  <input id="searchInput" placeholder="Search..." oninput="renderProjects()">
+  <select id="filterStatus" onchange="renderProjects()">
+    <option value="">All</option>
+    <option value="selection">Only Selection</option>
+    <option value="quotation">Only Quotation</option>
+    <option value="both">Both</option>
+    <option value="revision">Revised</option>
+  </select>
+  <div id="projectGrid" class="tile-grid"></div>
 </div>
 
 <!-- DASHBOARD -->
@@ -189,9 +271,7 @@ input,select,textarea{
       <option>DX + COMBI</option>
       <option>DUAL COIL</option>
     </select>
-    <label>Received</label>
     <input type="date" id="receivedDate">
-    <label>Sent</label>
     <input type="date" id="sentDate">
     <input id="quoteId" placeholder="Quote ID">
     <textarea id="remarks" placeholder="Remarks"></textarea>
@@ -211,29 +291,40 @@ const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacElite'))||[];
 let editing=null;
 
+/* NAV */
+function setActive(el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+}
+function toggleProfile(){
+  $('profileMenu').classList.toggle('active');
+}
+window.onclick=function(e){
+  if(!e.target.closest('.avatar')) $('profileMenu').classList.remove('active');
+}
+
+/* VIEW */
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   $(id).classList.add('active');
 }
 
-function changeTheme(theme){
-  document.body.className=theme;
+function changeTheme(t){
+  document.body.className=t;
 }
 
+/* MODAL */
 function openModal(project=null){
   $('modal').style.display='flex';
   if(project){
     editing=project.id;
-    Object.keys(project).forEach(k=>{
-      if($(k)) $(k).value=project[k];
-    });
+    Object.keys(project).forEach(k=>{ if($(k)) $(k).value=project[k]; });
   }else{
     editing=null;
     document.querySelectorAll('.modal input,textarea').forEach(i=>i.value='');
     document.querySelectorAll('.modal input[type=checkbox]').forEach(c=>c.checked=false);
   }
 }
-
 function closeModal(){ $('modal').style.display='none'; }
 
 function toggleType(type){
@@ -256,7 +347,6 @@ function saveProject(){
     selection:$('selectionSent').checked,
     quotation:$('quotationSent').checked
   };
-
   if(editing)
     projects=projects.map(p=>p.id===editing?data:p);
   else
@@ -267,6 +357,7 @@ function saveProject(){
   renderAll();
 }
 
+/* RENDER */
 function renderHome(){
   const recent=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received)).slice(0,10);
   $('homeGrid').innerHTML='';
@@ -278,8 +369,7 @@ function renderHome(){
         <div class="badge">${p.type}</div>
         <div>Received: ${p.received}</div>
         <div>Sent: ${p.sent||'-'}</div>
-      </div>
-    `;
+      </div>`;
   });
 }
 
@@ -290,7 +380,6 @@ function renderProjects(){
 
   if(search)
     filtered=filtered.filter(p=>p.project.toLowerCase().includes(search)||p.customer.toLowerCase().includes(search));
-
   if(filter==='selection')
     filtered=filtered.filter(p=>p.selection&&!p.quotation);
   if(filter==='quotation')
@@ -301,8 +390,7 @@ function renderProjects(){
     filtered=filtered.filter(p=>p.isRevision);
 
   $('projectGrid').innerHTML='';
-  filtered.sort((a,b)=>new Date(b.received)-new Date(a.received))
-  .forEach(p=>{
+  filtered.forEach(p=>{
     $('projectGrid').innerHTML+=`
       <div class="tile" onclick='openModal(${JSON.stringify(p)})'>
         <strong>${p.project}</strong>
@@ -310,19 +398,8 @@ function renderProjects(){
         <div class="badge">${p.type}</div>
         <div>Received: ${p.received}</div>
         <div>Sent: ${p.sent||'-'}</div>
-      </div>
-    `;
+      </div>`;
   });
-}
-
-function animate(id,value){
-  let el=$(id);
-  let start=0;
-  let interval=setInterval(()=>{
-    start++;
-    el.innerText=start;
-    if(start>=value) clearInterval(interval);
-  },20);
 }
 
 function renderDashboard(){
@@ -333,18 +410,11 @@ function renderDashboard(){
   const revised=projects.filter(p=>p.isRevision).length;
 
   $('kpiGrid').innerHTML=`
-    <div class="kpi" id="k1"></div>
-    <div class="kpi" id="k2"></div>
-    <div class="kpi" id="k3"></div>
-    <div class="kpi" id="k4"></div>
-    <div class="kpi" id="k5"></div>
-  `;
-
-  animate('k1',total);
-  animate('k2',onlySel);
-  animate('k3',onlyQuo);
-  animate('k4',both);
-  animate('k5',revised);
+    <div class="kpi">Total: ${total}</div>
+    <div class="kpi">Only Selection: ${onlySel}</div>
+    <div class="kpi">Only Quotation: ${onlyQuo}</div>
+    <div class="kpi">Both: ${both}</div>
+    <div class="kpi">Revised: ${revised}</div>`;
 }
 
 function exportCSV(){
