@@ -33,7 +33,6 @@ body{
   font-family:Inter,sans-serif;
   background:var(--bg);
   color:var(--text);
-  transition:.3s ease;
 }
 
 /* NAVBAR */
@@ -44,7 +43,6 @@ nav{
   padding:16px 30px;
   background:var(--card);
   box-shadow:0 8px 30px rgba(0,0,0,.4);
-  position:relative;
 }
 
 nav h1{
@@ -59,85 +57,21 @@ nav h1{
   gap:30px;
 }
 
-.kpi-box{
-  text-align:center;
-}
-
-.kpi-label{
-  font-size:11px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
-
-.kpi-value{
-  font-size:20px;
-  font-weight:700;
-  margin-top:4px;
-}
+.kpi-box{text-align:center}
+.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.kpi-value{font-size:20px;font-weight:700;margin-top:4px}
 
 .kpi-rec .kpi-value{color:var(--green)}
 .kpi-sel .kpi-value{color:var(--blue)}
 .kpi-quo .kpi-value{color:var(--purple)}
 
-.nav-right{
-  display:flex;
-  gap:16px;
-}
-
-.icon-btn{
-  cursor:pointer;
-  font-size:20px;
-  transition:.2s ease;
-}
-
-.icon-btn:hover{
-  transform:scale(1.15);
-}
-
-/* FILTER POPUP */
-.filter-popup{
-  position:absolute;
-  top:70px;
-  right:30px;
-  background:var(--card);
-  padding:16px;
-  border-radius:16px;
-  box-shadow:0 20px 40px rgba(0,0,0,.5);
-  display:none;
-  width:260px;
-  z-index:20;
-}
-
-.filter-popup input{
-  width:100%;
-  margin-bottom:8px;
-  padding:6px 8px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.1);
-  background:var(--glass);
-  color:var(--text);
-}
+.nav-right{display:flex;gap:16px}
+.icon-btn{cursor:pointer;font-size:20px}
 
 /* LAYOUT */
-.container{
-  max-width:1700px;
-  margin:auto;
-  padding:28px;
-}
-
-.card{
-  background:var(--card);
-  border-radius:16px;
-  padding:14px;
-  margin-bottom:28px;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:12px;
-}
+.container{max-width:1700px;margin:auto;padding:28px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:28px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 
 input,select,textarea{
   width:100%;
@@ -158,7 +92,7 @@ button.primary{
   font-weight:600;
 }
 
-/* TILE GRID */
+/* TILE */
 .tile-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(260px,280px));
@@ -173,30 +107,20 @@ button.primary{
   transition:.3s ease;
 }
 
-.tile:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 25px rgba(0,0,0,.5);
-}
-
-.tile h3{
-  margin:0;
-  font-size:13px;
-  cursor:pointer;
-}
-
-.customer{
-  font-size:11px;
-  color:var(--muted);
-}
+.tile h3{margin:0;font-size:13px;cursor:pointer}
+.customer{font-size:11px;color:var(--muted)}
 
 .badge{
   display:inline-block;
   padding:3px 8px;
   border-radius:14px;
   font-size:9px;
-  background:#16a34a;
   margin-top:6px;
+  margin-right:4px;
 }
+
+.selection{background:var(--blue)}
+.quotation{background:var(--purple)}
 
 .date-row{
   margin-top:6px;
@@ -206,37 +130,10 @@ button.primary{
   justify-content:space-between;
 }
 
-.quick-remark{
-  margin-top:6px;
-  font-size:10px;
-  color:var(--muted);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
+.details{margin-top:10px;font-size:11px;display:none}
+.tile.expanded .details{display:block}
 
-.details{
-  margin-top:10px;
-  font-size:11px;
-  display:none;
-}
-
-.tile.expanded .details{
-  display:block;
-}
-
-.status-row{
-  display:flex;
-  gap:10px;
-  margin-top:8px;
-}
-
-.delete-btn{
-  text-align:right;
-  color:var(--danger);
-  margin-top:8px;
-  cursor:pointer;
-}
+.delete-btn{text-align:right;color:var(--danger);margin-top:8px;cursor:pointer}
 </style>
 </head>
 
@@ -248,18 +145,7 @@ button.primary{
   <div class="nav-kpis" id="navKpis"></div>
 
   <div class="nav-right">
-    <div class="icon-btn" onclick="toggleFilter()">🔎</div>
     <div class="icon-btn" onclick="toggleTheme()">🌓</div>
-  </div>
-
-  <div class="filter-popup" id="filterPopup">
-    <input type="text" id="filterProject" placeholder="Project name">
-    <input type="text" id="filterCustomer" placeholder="Customer name">
-    <input type="date" id="filterReceivedFrom">
-    <input type="date" id="filterReceivedTo">
-    <input type="date" id="filterSentFrom">
-    <input type="date" id="filterSentTo">
-    <button onclick="clearFilters()" class="primary" style="width:100%;">Clear Filters</button>
   </div>
 </nav>
 
@@ -288,7 +174,23 @@ button.primary{
 
 <script>
 const $=id=>document.getElementById(id);
-let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
+
+/* ===== LOAD & NORMALIZE DATA ===== */
+let projects = JSON.parse(localStorage.getItem('hvacProjects')) || [];
+
+projects = projects.map(p => ({
+  id: p.id,
+  project: p.project,
+  customer: p.customer,
+  type: p.type,
+  received: p.received,
+  sent: p.sent || '',
+  remarks: p.remarks || '',
+  selection: p.selection === true,
+  quotation: p.quotation === true
+}));
+
+localStorage.setItem('hvacProjects', JSON.stringify(projects));
 
 function saveAll(){
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
@@ -298,22 +200,7 @@ function toggleTheme(){
   document.body.classList.toggle('light');
 }
 
-function toggleFilter(){
-  const popup=$('filterPopup');
-  popup.style.display=popup.style.display==='block'?'none':'block';
-}
-
-['filterProject','filterCustomer','filterReceivedFrom',
- 'filterReceivedTo','filterSentFrom','filterSentTo']
-.forEach(id=>$(id).addEventListener('input',render));
-
-function clearFilters(){
-  ['filterProject','filterCustomer','filterReceivedFrom',
-   'filterReceivedTo','filterSentFrom','filterSentTo']
-   .forEach(id=>$(id).value='');
-  render();
-}
-
+/* ===== ADD PROJECT ===== */
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
@@ -328,7 +215,8 @@ $('addBtn').onclick=()=>{
     type:t,
     received:r,
     sent:'',
-    status:'RECEIVED',
+    selection:false,
+    quotation:false,
     remarks:''
   });
 
@@ -336,50 +224,40 @@ $('addBtn').onclick=()=>{
   render();
 };
 
+/* ===== RENDER ===== */
 function render(){
 
-  const k={
-    rec:projects.length,
-    sel:projects.filter(x=>x.status==="SELECTION SENT").length,
-    quo:projects.filter(x=>x.status==="QUOTATION SENT").length
-  };
+  const rec=projects.length;
+  const sel=projects.filter(x=>x.selection && !x.quotation).length;
+  const quo=projects.filter(x=>x.quotation).length;
 
   $('navKpis').innerHTML=`
     <div class="kpi-box kpi-rec">
       <div class="kpi-label">Received</div>
-      <div class="kpi-value">${k.rec}</div>
+      <div class="kpi-value">${rec}</div>
     </div>
     <div class="kpi-box kpi-sel">
       <div class="kpi-label">Selection</div>
-      <div class="kpi-value">${k.sel}</div>
+      <div class="kpi-value">${sel}</div>
     </div>
     <div class="kpi-box kpi-quo">
       <div class="kpi-label">Quotation</div>
-      <div class="kpi-value">${k.quo}</div>
+      <div class="kpi-value">${quo}</div>
     </div>
   `;
 
-  let filtered=[...projects];
-
-  const fp=$('filterProject').value.toLowerCase();
-  const fc=$('filterCustomer').value.toLowerCase();
-  const rf=$('filterReceivedFrom').value;
-  const rt=$('filterReceivedTo').value;
-  const sf=$('filterSentFrom').value;
-  const st=$('filterSentTo').value;
-
-  if(fp) filtered=filtered.filter(x=>x.project.toLowerCase().includes(fp));
-  if(fc) filtered=filtered.filter(x=>x.customer.toLowerCase().includes(fc));
-  if(rf) filtered=filtered.filter(x=>x.received>=rf);
-  if(rt) filtered=filtered.filter(x=>x.received<=rt);
-  if(sf) filtered=filtered.filter(x=>x.sent && x.sent>=sf);
-  if(st) filtered=filtered.filter(x=>x.sent && x.sent<=st);
-
-  filtered.sort((a,b)=>new Date(b.received)-new Date(a.received));
-
   $('tileGrid').innerHTML='';
 
-  filtered.forEach(x=>{
+  projects.sort((a,b)=>new Date(b.received)-new Date(a.received));
+
+  projects.forEach(x=>{
+
+    let badges='';
+    if(x.selection && !x.quotation)
+      badges+=`<span class="badge selection">Selection Sent</span>`;
+    if(x.quotation)
+      badges+=`<span class="badge quotation">Quotation Sent</span>`;
+
     const tile=document.createElement('div');
     tile.className='tile';
 
@@ -393,28 +271,22 @@ function render(){
         <span>Sent: ${x.sent||'-'}</span>
       </div>
 
-      <div class="quick-remark">${x.remarks||'No remarks'}</div>
+      ${badges}
 
       <div class="details">
-        <div>
-          <label>Sent Date</label>
-          <input type="date" value="${x.sent||''}" 
-          onchange="autoSave(${x.id},'sent',this.value)">
+        <label>Sent Date</label>
+        <input type="date" value="${x.sent||''}" 
+          onchange="update(${x.id},'sent',this.value)">
+
+        <div style="margin-top:6px">
+          <label><input type="checkbox" ${x.selection?'checked':''}
+            onchange="update(${x.id},'selection',this.checked)"> Selection</label>
+          <label><input type="checkbox" ${x.quotation?'checked':''}
+            onchange="update(${x.id},'quotation',this.checked)"> Quotation</label>
         </div>
 
-        <div class="status-row">
-          <label><input type="checkbox" ${x.status==="SELECTION SENT"?'checked':''}
-          onchange="autoStatus(${x.id},'SELECTION SENT',this.checked)"> Selection</label>
-
-          <label><input type="checkbox" ${x.status==="QUOTATION SENT"?'checked':''}
-          onchange="autoStatus(${x.id},'QUOTATION SENT',this.checked)"> Quotation</label>
-        </div>
-
-        <div>
-          <label>Remarks</label>
-          <textarea onchange="autoSave(${x.id},'remarks',this.value)">
-          ${x.remarks||''}</textarea>
-        </div>
+        <textarea style="margin-top:6px"
+          onchange="update(${x.id},'remarks',this.value)">${x.remarks||''}</textarea>
 
         <div class="delete-btn" onclick="deleteProject(${x.id})">❌</div>
       </div>
@@ -424,16 +296,9 @@ function render(){
   });
 }
 
-function autoSave(id,key,value){
+function update(id,key,value){
   const p=projects.find(x=>x.id===id);
   p[key]=value;
-  saveAll();
-  render();
-}
-
-function autoStatus(id,status,checked){
-  const p=projects.find(x=>x.id===id);
-  p.status=checked?status:"RECEIVED";
   saveAll();
   render();
 }
