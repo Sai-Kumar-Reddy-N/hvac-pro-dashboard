@@ -83,6 +83,39 @@ body{
   background:var(--gradient);
 }
 
+/* FLOATING BUTTON */
+.fab{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  background:var(--gradient);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  font-weight:700;
+  color:#000;
+  cursor:pointer;
+  box-shadow:0 15px 35px rgba(0,0,0,.5);
+  transition:.3s ease;
+  animation:pulse 3s infinite;
+  z-index:1000;
+}
+
+.fab:hover{
+  transform:scale(1.12);
+  box-shadow:0 20px 45px rgba(34,211,238,.7);
+}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,211,238,.5);}
+  70%{box-shadow:0 0 0 20px rgba(34,211,238,0);}
+  100%{box-shadow:0 0 0 0 rgba(34,211,238,0);}
+}
+
 /* VIEWS */
 .view{display:none;padding:40px;}
 .view.active{display:block;}
@@ -125,9 +158,7 @@ body{
   font-weight:600;
 }
 
-.status-row{
-  margin-top:8px;
-}
+.status-row{margin-top:8px;}
 
 .status-chip{
   display:inline-block;
@@ -150,7 +181,6 @@ body{
   font-size:12px;
 }
 
-/* EXPAND */
 .tile-expanded{
   max-height:0;
   overflow:hidden;
@@ -184,14 +214,22 @@ button{
   font-size:12px;
 }
 
-.date-group{
-  margin-bottom:40px;
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  backdrop-filter:blur(6px);
 }
 
-.date-title{
-  margin-bottom:15px;
-  font-weight:600;
-  color:var(--accent);
+.modal-content{
+  background:var(--card);
+  padding:24px;
+  border-radius:18px;
+  width:420px;
 }
 </style>
 </head>
@@ -208,9 +246,10 @@ button{
     <div class="nav-item active" onclick="setActive(this);showView('home')">Home</div>
     <div class="nav-item" onclick="setActive(this);showView('projects')">All Projects</div>
     <div class="nav-item" onclick="setActive(this);showView('dashboard')">Dashboard</div>
-    <div class="nav-item" onclick="openModal()">Add New</div>
   </div>
 </nav>
+
+<div class="fab" onclick="openModal()">+</div>
 
 <div id="home" class="view active">
   <h2>History</h2>
@@ -225,9 +264,50 @@ button{
   <div class="kpi-grid" id="kpiGrid"></div>
 </div>
 
+<!-- ADD PROJECT MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>Add New Project</h3>
+    <input id="newProject" placeholder="Project Name">
+    <input id="newCustomer" placeholder="Customer">
+    <select id="newType">
+      <option>CHW</option>
+      <option>DX</option>
+      <option>CHW + COMBI</option>
+      <option>DX + COMBI</option>
+      <option>DUAL COIL</option>
+    </select>
+    <input type="date" id="newReceived">
+    <input type="date" id="newSent">
+    <button onclick="addProject()">Add</button>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
 <script>
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacElite'))||[];
+
+function openModal(){ $('modal').style.display='flex'; }
+function closeModal(){ $('modal').style.display='none'; }
+
+function addProject(){
+  const p={
+    id:Date.now(),
+    project:$('newProject').value,
+    customer:$('newCustomer').value,
+    type:$('newType').value,
+    received:$('newReceived').value,
+    sent:$('newSent').value,
+    selection:false,
+    quotation:false,
+    isRevision:false
+  };
+  projects.push(p);
+  localStorage.setItem('hvacElite',JSON.stringify(projects));
+  closeModal();
+  renderAll();
+}
 
 function setActive(el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -248,13 +328,12 @@ function getStatusChips(p){
   return chips;
 }
 
-/* HOME - still modal */
 function renderHome(){
   const recent=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received)).slice(0,10);
   $('homeGrid').innerHTML='';
   recent.forEach(p=>{
     $('homeGrid').innerHTML+=`
-      <div class="tile" onclick='openModal(${JSON.stringify(p)})'>
+      <div class="tile">
         <div class="tile-header">
           <strong>${p.project}</strong>
           <span class="badge-type">${p.type}</span>
@@ -267,12 +346,10 @@ function renderHome(){
   });
 }
 
-/* ALL PROJECTS - grouped + inline edit */
 function renderProjects(){
   const container=$('projectGrid');
   container.innerHTML='';
   const grouped={};
-
   projects.forEach(p=>{
     if(!grouped[p.received]) grouped[p.received]=[];
     grouped[p.received].push(p);
@@ -285,48 +362,20 @@ function renderProjects(){
         <div class="date-group">
           <div class="date-title">📅 ${date}</div>
           <div class="tile-grid">
-            ${grouped[date].map(p=>tileTemplate(p)).join('')}
+            ${grouped[date].map(p=>`
+              <div class="tile">
+                <div class="tile-header">
+                  <strong>${p.project}</strong>
+                  <span class="badge-type">${p.type}</span>
+                </div>
+                <div class="status-row">${getStatusChips(p)}</div>
+                <small>${p.customer}</small>
+                <small>Received: ${p.received}</small>
+                <small>Sent: ${p.sent||'-'}</small>
+              </div>`).join('')}
           </div>
         </div>`;
     });
-}
-
-function tileTemplate(p){
-  return `
-  <div class="tile" onclick="toggleExpand(this)">
-    <div class="tile-header">
-      <strong>${p.project}</strong>
-      <span class="badge-type">${p.type}</span>
-    </div>
-
-    <div class="status-row">${getStatusChips(p)}</div>
-    <small>${p.customer}</small>
-    <small>Received: ${p.received}</small>
-    <small>Sent: ${p.sent||'-'}</small>
-
-    <div class="tile-expanded" onclick="event.stopPropagation()">
-      <input value="${p.project}" onchange="updateField(${p.id},'project',this.value)">
-      <input value="${p.customer}" onchange="updateField(${p.id},'customer',this.value)">
-      <input type="date" value="${p.received}" onchange="updateField(${p.id},'received',this.value)">
-      <input type="date" value="${p.sent||''}" onchange="updateField(${p.id},'sent',this.value)">
-      <input value="${p.quoteId||''}" placeholder="Quote ID" onchange="updateField(${p.id},'quoteId',this.value)">
-      <textarea onchange="updateField(${p.id},'remarks',this.value)">${p.remarks||''}</textarea>
-      <label><input type="checkbox" ${p.selection?'checked':''} onchange="updateField(${p.id},'selection',this.checked)"> Selection</label>
-      <label><input type="checkbox" ${p.quotation?'checked':''} onchange="updateField(${p.id},'quotation',this.checked)"> Quotation</label>
-      <label><input type="checkbox" ${p.isRevision?'checked':''} onchange="updateField(${p.id},'isRevision',this.checked)"> Revision</label>
-    </div>
-  </div>`;
-}
-
-function toggleExpand(tile){
-  tile.classList.toggle('expanded');
-}
-
-function updateField(id,key,value){
-  const p=projects.find(x=>x.id===id);
-  p[key]=value;
-  localStorage.setItem('hvacElite',JSON.stringify(projects));
-  renderAll();
 }
 
 function renderDashboard(){
@@ -337,11 +386,11 @@ function renderDashboard(){
   const revised=projects.filter(p=>p.isRevision).length;
 
   $('kpiGrid').innerHTML=`
-    <div class="kpi">Total: ${total}</div>
-    <div class="kpi">Only Selection: ${onlySel}</div>
-    <div class="kpi">Only Quotation: ${onlyQuo}</div>
-    <div class="kpi">Both: ${both}</div>
-    <div class="kpi">Revised: ${revised}</div>`;
+    <div>Total: ${total}</div>
+    <div>Only Selection: ${onlySel}</div>
+    <div>Only Quotation: ${onlyQuo}</div>
+    <div>Both: ${both}</div>
+    <div>Revised: ${revised}</div>`;
 }
 
 function renderAll(){
