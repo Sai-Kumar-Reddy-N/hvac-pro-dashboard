@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,7 @@
 :root{
   --bg:#0f172a;
   --card:#111827;
-  --glass:rgba(255,255,255,0.06);
+  --glass:rgba(255,255,255,0.05);
   --text:#e5e7eb;
   --muted:#94a3b8;
   --accent:#22d3ee;
@@ -41,16 +41,9 @@ nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:14px 28px;
+  padding:16px 30px;
   background:var(--card);
   box-shadow:0 8px 30px rgba(0,0,0,.4);
-  position:relative;
-}
-
-.nav-left{
-  display:flex;
-  align-items:center;
-  gap:20px;
 }
 
 nav h1{
@@ -62,109 +55,58 @@ nav h1{
 
 .nav-kpis{
   display:flex;
-  gap:14px;
+  gap:20px;
 }
 
-.nav-kpi{
-  background:var(--glass);
-  padding:6px 14px;
-  border-radius:20px;
-  font-size:11px;
+.kpi-box{
   text-align:center;
 }
 
-.nav-kpi b{
-  display:block;
-  font-size:15px;
+.kpi-label{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1px;
 }
 
-.kpi-rec{color:var(--green)}
-.kpi-sel{color:var(--blue)}
-.kpi-quo{color:var(--purple)}
+.kpi-value{
+  font-size:20px;
+  font-weight:700;
+  margin-top:4px;
+}
+
+.kpi-rec .kpi-value{color:var(--green)}
+.kpi-sel .kpi-value{color:var(--blue)}
+.kpi-quo .kpi-value{color:var(--purple)}
 
 .nav-right{
   display:flex;
-  gap:14px;
+  gap:16px;
   align-items:center;
 }
 
 .icon-btn{
   cursor:pointer;
-  font-size:18px;
+  font-size:20px;
+  transition:.2s ease;
+}
+
+.icon-btn:hover{
+  transform:scale(1.15);
 }
 
 /* FILTER PANEL */
 .filter-popup{
   position:absolute;
-  top:60px;
+  top:70px;
   right:30px;
   background:var(--card);
   padding:16px;
   border-radius:16px;
   box-shadow:0 20px 40px rgba(0,0,0,.5);
   display:none;
-  width:340px;
+  width:320px;
   z-index:20;
-  max-height:420px;
-  overflow:auto;
-}
-
-.filter-row{
-  display:flex;
-  gap:6px;
-  margin-bottom:8px;
-}
-
-.filter-row select,
-.filter-row input{
-  flex:1;
-  padding:6px;
-  border-radius:8px;
-  border:1px solid rgba(255,255,255,.1);
-  background:var(--glass);
-  color:var(--text);
-  font-size:11px;
-}
-
-.filter-row button{
-  background:var(--danger);
-  border:none;
-  border-radius:8px;
-  color:white;
-  cursor:pointer;
-}
-
-.filter-actions{
-  margin-top:10px;
-  display:flex;
-  gap:8px;
-}
-
-.filter-actions button{
-  flex:1;
-  padding:6px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-.apply-btn{background:var(--accent)}
-.clear-btn{background:var(--danger)}
-
-/* ACTIVE FILTER BADGES */
-.filter-badges{
-  margin-top:8px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-}
-
-.filter-badge{
-  background:var(--glass);
-  padding:4px 8px;
-  border-radius:14px;
-  font-size:10px;
 }
 
 /* LAYOUT */
@@ -174,6 +116,7 @@ nav h1{
   padding:28px;
 }
 
+/* ADD SECTION */
 .card{
   background:var(--card);
   border-radius:16px;
@@ -246,6 +189,14 @@ button.primary{
   margin-top:6px;
 }
 
+.date-row{
+  margin-top:6px;
+  font-size:10px;
+  color:var(--muted);
+  display:flex;
+  justify-content:space-between;
+}
+
 .quick-remark{
   margin-top:6px;
   font-size:10px;
@@ -283,26 +234,13 @@ button.primary{
 <body>
 
 <nav>
-  <div class="nav-left">
-    <h1>My Work Flow</h1>
-    <div class="nav-kpis" id="navKpis"></div>
-  </div>
+  <h1>My Work Flow</h1>
+
+  <div class="nav-kpis" id="navKpis"></div>
 
   <div class="nav-right">
-    <div class="icon-btn" onclick="toggleFilter()">🧃</div>
+    <div class="icon-btn" onclick="toggleFilter()">🔎</div>
     <div class="icon-btn" onclick="toggleTheme()">🌓</div>
-  </div>
-
-  <div class="filter-popup" id="filterPopup">
-    <div id="filterContainer"></div>
-
-    <div class="filter-actions">
-      <button onclick="addFilterRow()">+ Add</button>
-      <button class="apply-btn" onclick="applyFilters()">Apply</button>
-      <button class="clear-btn" onclick="clearFilters()">Clear</button>
-    </div>
-
-    <div class="filter-badges" id="filterBadges"></div>
   </div>
 </nav>
 
@@ -332,7 +270,6 @@ button.primary{
 <script>
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
-let activeFilters=[];
 
 function saveAll(){
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
@@ -342,12 +279,6 @@ function toggleTheme(){
   document.body.classList.toggle('light');
 }
 
-function toggleFilter(){
-  const popup=$('filterPopup');
-  popup.style.display=popup.style.display==='block'?'none':'block';
-}
-
-/* ADD PROJECT */
 $('addBtn').onclick=()=>{
   const p=$('project').value.trim();
   const c=$('customer').value.trim();
@@ -370,43 +301,6 @@ $('addBtn').onclick=()=>{
   render();
 };
 
-/* FILTER SYSTEM */
-function addFilterRow(){
-  const row=document.createElement('div');
-  row.className='filter-row';
-  row.innerHTML=`
-    <select>
-      <option value="project">Project</option>
-      <option value="customer">Customer</option>
-      <option value="type">Type</option>
-      <option value="status">Status</option>
-      <option value="received">Received</option>
-      <option value="sent">Sent</option>
-    </select>
-    <input type="text" placeholder="Value">
-    <button onclick="this.parentElement.remove()">✖</button>
-  `;
-  $('filterContainer').appendChild(row);
-}
-
-function applyFilters(){
-  activeFilters=[];
-  document.querySelectorAll('.filter-row').forEach(row=>{
-    const col=row.children[0].value;
-    const val=row.children[1].value.toLowerCase();
-    if(val) activeFilters.push({col,val});
-  });
-  render();
-}
-
-function clearFilters(){
-  activeFilters=[];
-  $('filterContainer').innerHTML='';
-  $('filterBadges').innerHTML='';
-  render();
-}
-
-/* RENDER */
 function render(){
 
   const k={
@@ -416,24 +310,25 @@ function render(){
   };
 
   $('navKpis').innerHTML=`
-    <div class="nav-kpi kpi-rec">Received<b>${k.rec}</b></div>
-    <div class="nav-kpi kpi-sel">Selection<b>${k.sel}</b></div>
-    <div class="nav-kpi kpi-quo">Quotation<b>${k.quo}</b></div>
+    <div class="kpi-box kpi-rec">
+      <div class="kpi-label">Received</div>
+      <div class="kpi-value">${k.rec}</div>
+    </div>
+    <div class="kpi-box kpi-sel">
+      <div class="kpi-label">Selection</div>
+      <div class="kpi-value">${k.sel}</div>
+    </div>
+    <div class="kpi-box kpi-quo">
+      <div class="kpi-label">Quotation</div>
+      <div class="kpi-value">${k.quo}</div>
+    </div>
   `;
 
-  let filtered=[...projects];
-
-  activeFilters.forEach(f=>{
-    filtered=filtered.filter(x=>{
-      return (x[f.col]||'').toString().toLowerCase().includes(f.val);
-    });
-  });
-
-  filtered.sort((a,b)=>new Date(b.received)-new Date(a.received));
+  const sorted=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received));
 
   $('tileGrid').innerHTML='';
 
-  filtered.forEach(x=>{
+  sorted.forEach(x=>{
     const tile=document.createElement('div');
     tile.className='tile';
 
@@ -441,6 +336,12 @@ function render(){
       <h3 onclick="this.closest('.tile').classList.toggle('expanded')">${x.project}</h3>
       <div class="customer">${x.customer}</div>
       <div class="badge">${x.type}</div>
+
+      <div class="date-row">
+        <span>Received: ${x.received}</span>
+        <span>Sent: ${x.sent||'-'}</span>
+      </div>
+
       <div class="quick-remark">${x.remarks||'No remarks'}</div>
 
       <div class="details">
@@ -470,24 +371,13 @@ function render(){
 
     $('tileGrid').appendChild(tile);
   });
-
-  renderFilterBadges();
-}
-
-function renderFilterBadges(){
-  $('filterBadges').innerHTML='';
-  activeFilters.forEach(f=>{
-    const badge=document.createElement('div');
-    badge.className='filter-badge';
-    badge.innerText=`${f.col}: ${f.val}`;
-    $('filterBadges').appendChild(badge);
-  });
 }
 
 function autoSave(id,key,value){
   const p=projects.find(x=>x.id===id);
   p[key]=value;
   saveAll();
+  render();
 }
 
 function autoStatus(id,status,checked){
