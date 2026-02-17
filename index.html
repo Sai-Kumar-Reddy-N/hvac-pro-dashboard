@@ -1,269 +1,332 @@
-<!DOCTYPE html>  
-<html>  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>HVAC Workflow Pro Elite</title>  
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">  
-  
-<style>  
-:root{  
-  --bg:#0f172a;  
-  --card:rgba(255,255,255,0.06);  
-  --glass:rgba(255,255,255,0.08);  
-  --text:#e5e7eb;  
-  --muted:#94a3b8;  
-  --accent:#22d3ee;  
-  --gradient:linear-gradient(135deg,#22d3ee,#3b82f6,#9333ea);  
-  --green:#16a34a;  
-  --blue:#2563eb;  
-  --purple:#9333ea;  
-  --orange:#f97316;  
-}  
-  
-body{  
-  margin:0;  
-  font-family:Inter,sans-serif;  
-  background:var(--bg);  
-  color:var(--text);  
-}  
-  
-/* NAVBAR */  
-.navbar{  
-  display:flex;  
-  justify-content:space-between;  
-  align-items:center;  
-  padding:14px 40px;  
-  backdrop-filter:blur(16px);  
-  background:rgba(17,24,39,0.75);  
-  border-bottom:1px solid rgba(255,255,255,0.08);  
-  position:sticky;  
-  top:0;  
-  z-index:1000;  
-}  
-  
-.brand{  
-  display:flex;  
-  align-items:center;  
-  gap:12px;  
-  font-weight:600;  
-}  
-  
-.logo-circle{  
-  width:38px;  
-  height:38px;  
-  border-radius:50%;  
-  background:var(--gradient);  
-  display:flex;  
-  align-items:center;  
-  justify-content:center;  
-  font-weight:700;  
-  color:#000;  
-}  
-  
-.nav-center{  
-  display:flex;  
-  gap:35px;  
-}  
-  
-.nav-item{  
-  cursor:pointer;  
-  position:relative;  
-  padding:6px 4px;  
-}  
-  
-.nav-item.active::after,  
-.nav-item:hover::after{  
-  content:'';  
-  position:absolute;  
-  bottom:-6px;  
-  left:0;  
-  width:100%;  
-  height:2px;  
-  background:var(--gradient);  
-}  
-  
-/* FLOATING ADD BUTTON */  
-.fab{  
-  position:fixed;  
-  bottom:30px;  
-  right:30px;  
-  width:65px;  
-  height:65px;  
-  border-radius:50%;  
-  background:var(--gradient);  
-  display:flex;  
-  align-items:center;  
-  justify-content:center;  
-  font-size:30px;  
-  font-weight:700;  
-  color:#000;  
-  cursor:pointer;  
-  box-shadow:0 15px 35px rgba(0,0,0,.5);  
-  transition:.3s ease;  
-  animation:pulse 3s infinite;  
-  z-index:1000;  
-}  
-  
-.fab:hover{  
-  transform:scale(1.12);  
-  box-shadow:0 20px 45px rgba(34,211,238,.7);  
-}  
-  
-@keyframes pulse{  
-  0%{box-shadow:0 0 0 0 rgba(34,211,238,.5);}  
-  70%{box-shadow:0 0 0 20px rgba(34,211,238,0);}  
-  100%{box-shadow:0 0 0 0 rgba(34,211,238,0);}  
-}  
-  
-/* VIEWS */  
-.view{display:none;padding:40px;}  
-.view.active{display:block;}  
-  
-/* TILE GRID */  
-.tile-grid{  
-  display:grid;  
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));  
-  gap:24px;  
-}  
-  
-/* TILE */  
-.tile{  
-  background:var(--card);  
-  padding:20px;  
-  border-radius:18px;  
-  transition:0.4s;  
-  border:1px solid transparent;  
-  cursor:pointer;  
-  overflow:hidden;  
-}  
-  
-.tile:hover{  
-  transform:translateY(-6px);  
-  box-shadow:0 20px 45px rgba(0,0,0,0.4);  
-}  
-  
-.tile-header{  
-  display:flex;  
-  justify-content:space-between;  
-  align-items:center;  
-}  
-  
-.badge-type{  
-  padding:4px 10px;  
-  border-radius:20px;  
-  font-size:10px;  
-  background:var(--gradient);  
-  color:#000;  
-  font-weight:600;  
-}  
-  
-.status-row{  
-  margin-top:8px;  
-}  
-  
-.status-chip{  
-  display:inline-block;  
-  padding:3px 8px;  
-  border-radius:20px;  
-  font-size:9px;  
-  font-weight:600;  
-  margin-right:5px;  
-}  
-  
-.selection{background:var(--blue);}  
-.quotation{background:var(--purple);}  
-.both{background:var(--green);}  
-.revision{background:var(--orange);}  
-  
-.tile small{  
-  display:block;  
-  color:var(--muted);  
-  margin-top:4px;  
-  font-size:12px;  
-}  
-  
-.tile-expanded{  
-  max-height:0;  
-  overflow:hidden;  
-  transition:max-height .4s ease;  
-}  
-  
-.tile.expanded .tile-expanded{  
-  max-height:800px;  
-  margin-top:15px;  
-}  
-  
-input,select,textarea{  
-  width:100%;  
-  margin-bottom:10px;  
-  padding:6px;  
-  border-radius:6px;  
-  border:1px solid rgba(255,255,255,0.1);  
-  background:var(--glass);  
-  color:var(--text);  
-  font-size:12px;  
-}  
-  
-button{  
-  padding:6px 12px;  
-  border:none;  
-  border-radius:6px;  
-  background:var(--gradient);  
-  color:#000;  
-  cursor:pointer;  
-  margin-right:5px;  
-  font-size:12px;  
-}  
-  
-.date-group{  
-  margin-bottom:40px;  
-}  
-  
-.date-title{  
-  margin-bottom:15px;  
-  font-weight:600;  
-  color:var(--accent);  
-}  
-</style>  
-</head>  
-  
-<body>  
-  
-<nav class="navbar">  
-  <div class="brand">  
-    <div class="logo-circle">HW</div>  
-    HVAC Workflow  
-  </div>  
-  
-  <div class="nav-center">  
-    <div class="nav-item active" onclick="setActive(this);showView('home')">Home</div>  
-    <div class="nav-item" onclick="setActive(this);showView('projects')">All Projects</div>  
-    <div class="nav-item" onclick="setActive(this);showView('dashboard')">Dashboard</div>  
-  </div>  
-</nav>  
-  
-<!-- Floating Add Button -->  
-<div class="fab" onclick="openModal()">+</div>  
-  
-<div id="home" class="view active">  
-  <h2>History</h2>  
-  <div id="homeGrid" class="tile-grid"></div>  
-</div>  
-  
-<div id="projects" class="view">  
-  <div id="projectGrid"></div>  
-</div>  
-  
-<div id="dashboard" class="view">  
-  <div class="kpi-grid" id="kpiGrid"></div>  
-</div>  
-  
-<!-- KEEP YOUR EXISTING SCRIPT SECTION EXACTLY SAME BELOW -->  
-  
-<script>  
-/* KEEP YOUR ORIGINAL JS FROM YOUR FILE HERE — UNCHANGED */  
-</script>  
-  
-</body>  
+<!DOCTYPE html>    <html>    
+<head>    
+<meta charset="UTF-8">    
+<meta name="viewport" content="width=device-width, initial-scale=1.0">    
+<title>HVAC Workflow Pro Elite</title>    
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">    <style>    
+:root{    
+  --bg:#0f172a;    
+  --card:rgba(255,255,255,0.06);    
+  --glass:rgba(255,255,255,0.08);    
+  --text:#e5e7eb;    
+  --muted:#94a3b8;    
+  --accent:#22d3ee;    
+  --gradient:linear-gradient(135deg,#22d3ee,#3b82f6,#9333ea);    
+  --green:#16a34a;    
+  --blue:#2563eb;    
+  --purple:#9333ea;    
+  --orange:#f97316;    
+}    
+    
+body{    
+  margin:0;    
+  font-family:Inter,sans-serif;    
+  background:var(--bg);    
+  color:var(--text);    
+}    
+    
+/* NAVBAR */    
+.navbar{    
+  display:flex;    
+  justify-content:space-between;    
+  align-items:center;    
+  padding:14px 40px;    
+  backdrop-filter:blur(16px);    
+  background:rgba(17,24,39,0.75);    
+  border-bottom:1px solid rgba(255,255,255,0.08);    
+  position:sticky;    
+  top:0;    
+  z-index:1000;    
+}    
+    
+.brand{    
+  display:flex;    
+  align-items:center;    
+  gap:12px;    
+  font-weight:600;    
+}    
+    
+.logo-circle{    
+  width:38px;    
+  height:38px;    
+  border-radius:50%;    
+  background:var(--gradient);    
+  display:flex;    
+  align-items:center;    
+  justify-content:center;    
+  font-weight:700;    
+  color:#000;    
+}    
+    
+.nav-center{    
+  display:flex;    
+  gap:35px;    
+}    
+    
+.nav-item{    
+  cursor:pointer;    
+  position:relative;    
+  padding:6px 4px;    
+}    
+    
+.nav-item.active::after,    
+.nav-item:hover::after{    
+  content:'';    
+  position:absolute;    
+  bottom:-6px;    
+  left:0;    
+  width:100%;    
+  height:2px;    
+  background:var(--gradient);    
+}    
+    
+/* VIEWS */    
+.view{display:none;padding:40px;}    
+.view.active{display:block;}    
+    
+/* TILE GRID */    
+.tile-grid{    
+  display:grid;    
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));    
+  gap:24px;    
+}    
+    
+/* TILE */    
+.tile{    
+  background:var(--card);    
+  padding:20px;    
+  border-radius:18px;    
+  transition:0.4s;    
+  border:1px solid transparent;    
+  cursor:pointer;    
+  overflow:hidden;    
+}    
+    
+.tile:hover{    
+  transform:translateY(-6px);    
+  box-shadow:0 20px 45px rgba(0,0,0,0.4);    
+}    
+    
+.tile-header{    
+  display:flex;    
+  justify-content:space-between;    
+  align-items:center;    
+}    
+    
+.badge-type{    
+  padding:4px 10px;    
+  border-radius:20px;    
+  font-size:10px;    
+  background:var(--gradient);    
+  color:#000;    
+  font-weight:600;    
+}    
+    
+.status-row{    
+  margin-top:8px;    
+}    
+    
+.status-chip{    
+  display:inline-block;    
+  padding:3px 8px;    
+  border-radius:20px;    
+  font-size:9px;    
+  font-weight:600;    
+  margin-right:5px;    
+}    
+    
+.selection{background:var(--blue);}    
+.quotation{background:var(--purple);}    
+.both{background:var(--green);}    
+.revision{background:var(--orange);}    
+    
+.tile small{    
+  display:block;    
+  color:var(--muted);    
+  margin-top:4px;    
+  font-size:12px;    
+}    
+    
+/* EXPAND */    
+.tile-expanded{    
+  max-height:0;    
+  overflow:hidden;    
+  transition:max-height .4s ease;    
+}    
+    
+.tile.expanded .tile-expanded{    
+  max-height:800px;    
+  margin-top:15px;    
+}    
+    
+input,select,textarea{    
+  width:100%;    
+  margin-bottom:10px;    
+  padding:6px;    
+  border-radius:6px;    
+  border:1px solid rgba(255,255,255,0.1);    
+  background:var(--glass);    
+  color:var(--text);    
+  font-size:12px;    
+}    
+    
+button{    
+  padding:6px 12px;    
+  border:none;    
+  border-radius:6px;    
+  background:var(--gradient);    
+  color:#000;    
+  cursor:pointer;    
+  margin-right:5px;    
+  font-size:12px;    
+}    
+    
+.date-group{    
+  margin-bottom:40px;    
+}    
+    
+.date-title{    
+  margin-bottom:15px;    
+  font-weight:600;    
+  color:var(--accent);    
+}    
+</style>    </head>    <body>    <nav class="navbar">    
+  <div class="brand">    
+    <div class="logo-circle">HW</div>    
+    Workflow    
+  </div>      <div class="nav-center">    
+    <div class="nav-item active" onclick="setActive(this);showView('home')">Home</div>    
+    <div class="nav-item" onclick="setActive(this);showView('projects')">All Projects</div>    
+    <div class="nav-item" onclick="setActive(this);showView('dashboard')">Dashboard</div>    
+    <div class="nav-item" onclick="openModal()">Add New</div>
+  </div>    
+</nav>    <div id="home" class="view active">    
+  <h2>History</h2>    
+  <div id="homeGrid" class="tile-grid"></div>    
+</div>    <div id="projects" class="view">    
+  <div id="projectGrid"></div>    
+</div>    <div id="dashboard" class="view">    
+  <div class="kpi-grid" id="kpiGrid"></div>    
+</div>    <script>    
+const $=id=>document.getElementById(id);    
+let projects=JSON.parse(localStorage.getItem('hvacElite'))||[];    
+    
+function setActive(el){    
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));    
+  el.classList.add('active');    
+}    
+    
+function showView(id){    
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));    
+  $(id).classList.add('active');    
+}    
+    
+function getStatusChips(p){    
+  let chips="";    
+  if(p.selection && p.quotation) chips+=`<span class="status-chip both">BOTH</span>`;    
+  else if(p.selection) chips+=`<span class="status-chip selection">SELECTION</span>`;    
+  else if(p.quotation) chips+=`<span class="status-chip quotation">QUOTATION</span>`;    
+  if(p.isRevision) chips+=`<span class="status-chip revision">REVISION</span>`;    
+  return chips;    
+}    
+    
+/* HOME - still modal */    
+function renderHome(){    
+  const recent=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received)).slice(0,10);    
+  $('homeGrid').innerHTML='';    
+  recent.forEach(p=>{    
+    $('homeGrid').innerHTML+=`    
+      <div class="tile" onclick='openModal(${JSON.stringify(p)})'>    
+        <div class="tile-header">    
+          <strong>${p.project}</strong>    
+          <span class="badge-type">${p.type}</span>    
+        </div>    
+        <div class="status-row">${getStatusChips(p)}</div>    
+        <small>${p.customer}</small>    
+        <small>Received: ${p.received}</small>    
+        <small>Sent: ${p.sent||'-'}</small>    
+      </div>`;    
+  });    
+}    
+    
+/* ALL PROJECTS - grouped + inline edit */    
+function renderProjects(){    
+  const container=$('projectGrid');    
+  container.innerHTML='';    
+  const grouped={};    
+    
+  projects.forEach(p=>{    
+    if(!grouped[p.received]) grouped[p.received]=[];    
+    grouped[p.received].push(p);    
+  });    
+    
+  Object.keys(grouped)    
+    .sort((a,b)=>new Date(b)-new Date(a))    
+    .forEach(date=>{    
+      container.innerHTML+=`    
+        <div class="date-group">    
+          <div class="date-title">📅 ${date}</div>    
+          <div class="tile-grid">    
+            ${grouped[date].map(p=>tileTemplate(p)).join('')}    
+          </div>    
+        </div>`;    
+    });    
+}    
+    
+function tileTemplate(p){    
+  return `    
+  <div class="tile" onclick="toggleExpand(this)">    
+    <div class="tile-header">    
+      <strong>${p.project}</strong>    
+      <span class="badge-type">${p.type}</span>    
+    </div>    
+    
+    <div class="status-row">${getStatusChips(p)}</div>    
+    <small>${p.customer}</small>    
+    <small>Received: ${p.received}</small>    
+    <small>Sent: ${p.sent||'-'}</small>    
+    
+    <div class="tile-expanded" onclick="event.stopPropagation()">    
+      <input value="${p.project}" onchange="updateField(${p.id},'project',this.value)">    
+      <input value="${p.customer}" onchange="updateField(${p.id},'customer',this.value)">    
+      <input type="date" value="${p.received}" onchange="updateField(${p.id},'received',this.value)">    
+      <input type="date" value="${p.sent||''}" onchange="updateField(${p.id},'sent',this.value)">    
+      <input value="${p.quoteId||''}" placeholder="Quote ID" onchange="updateField(${p.id},'quoteId',this.value)">    
+      <textarea onchange="updateField(${p.id},'remarks',this.value)">${p.remarks||''}</textarea>    <label><input type="checkbox" ${p.selection?'checked':''} onchange="updateField(${p.id},'selection',this.checked)"> Selection</label>    
+  <label><input type="checkbox" ${p.quotation?'checked':''} onchange="updateField(${p.id},'quotation',this.checked)"> Quotation</label>    
+  <label><input type="checkbox" ${p.isRevision?'checked':''} onchange="updateField(${p.id},'isRevision',this.checked)"> Revision</label>    
+</div>
+
+  </div>`;    
+}    function toggleExpand(tile){
+tile.classList.toggle('expanded');
+}
+
+function updateField(id,key,value){
+const p=projects.find(x=>x.id===id);
+p[key]=value;
+localStorage.setItem('hvacElite',JSON.stringify(projects));
+renderAll();
+}
+
+function renderDashboard(){
+const total=projects.length;
+const onlySel=projects.filter(p=>p.selection&&!p.quotation).length;
+const onlyQuo=projects.filter(p=>p.quotation&&!p.selection).length;
+const both=projects.filter(p=>p.selection&&p.quotation).length;
+const revised=projects.filter(p=>p.isRevision).length;
+
+$('kpiGrid').innerHTML=     <div class="kpi">Total: ${total}</div>     <div class="kpi">Only Selection: ${onlySel}</div>     <div class="kpi">Only Quotation: ${onlyQuo}</div>     <div class="kpi">Both: ${both}</div>     <div class="kpi">Revised: ${revised}</div>;
+}
+
+function renderAll(){
+renderHome();
+renderProjects();
+renderDashboard();
+}
+
+renderAll();
+</script>
+
+</body>    
 </html>
