@@ -225,19 +225,33 @@ button{
 
 <script>
 const $=id=>document.getElementById(id);
+
+/* ===== LOAD DATA ===== */
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
+
+/* ===== DATA MIGRATION ===== */
+projects=projects.map(p=>{
+  if(typeof p.selection!=="undefined") return p;
+
+  return {
+    ...p,
+    selection:p.status==="selection",
+    quotation:p.status==="quotation",
+    sent:p.sent||"",
+    remarks:p.remarks||""
+  };
+});
+localStorage.setItem('hvacProjects',JSON.stringify(projects));
 
 /* ===== THEME ===== */
 function toggleTheme(){
   const p=$('themePopup');
   p.style.display=p.style.display==='block'?'none':'block';
 }
-
 function setTheme(t){
   document.body.className=t;
   localStorage.setItem('theme',t);
 }
-
 const savedTheme=localStorage.getItem('theme');
 if(savedTheme) document.body.className=savedTheme;
 
@@ -246,7 +260,6 @@ function toggleFilter(){
   const p=$('filterPopup');
   p.style.display=p.style.display==='block'?'none':'block';
 }
-
 ['filterProject','filterCustomer','filterReceived','filterSent']
 .forEach(id=>$(id).addEventListener('input',render));
 
@@ -282,14 +295,8 @@ function save(){
 function render(){
 
   const rec=projects.length;
-
-  const sel=projects.filter(p=> 
-    p.selection===true && p.quotation===false
-  ).length;
-
-  const quo=projects.filter(p=> 
-    p.quotation===true
-  ).length;
+  const sel=projects.filter(p=>p.selection && !p.quotation).length;
+  const quo=projects.filter(p=>p.quotation).length;
 
   $('navKpis').innerHTML=`
     <div class="kpi"><span>Received</span><b>${rec}</b></div>
