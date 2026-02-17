@@ -15,10 +15,6 @@
   --muted:#94a3b8;
   --accent:#22d3ee;
   --gradient:linear-gradient(135deg,#22d3ee,#3b82f6,#9333ea);
-  --green:#16a34a;
-  --blue:#2563eb;
-  --purple:#9333ea;
-  --orange:#f97316;
 }
 
 body{
@@ -36,7 +32,6 @@ body{
   padding:14px 40px;
   backdrop-filter:blur(16px);
   background:rgba(17,24,39,0.75);
-  border-bottom:1px solid rgba(255,255,255,0.08);
   position:sticky;
   top:0;
   z-index:1000;
@@ -72,37 +67,76 @@ body{
   padding:6px 4px;
 }
 
-.nav-item.active::after,
-.nav-item:hover::after{
+/* FLOATING BUTTON */
+.fab{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  background:var(--gradient);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  font-weight:700;
+  color:#000;
+  cursor:pointer;
+  box-shadow:0 15px 35px rgba(0,0,0,.5);
+  animation:pulse 2.5s infinite;
+  transition:.3s;
+  overflow:hidden;
+}
+
+.fab:hover{
+  transform:scale(1.1);
+  box-shadow:0 20px 45px rgba(34,211,238,.6);
+}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,211,238,.6);}
+  70%{box-shadow:0 0 0 20px rgba(34,211,238,0);}
+  100%{box-shadow:0 0 0 0 rgba(34,211,238,0);}
+}
+
+/* Ripple */
+.fab::after{
   content:'';
   position:absolute;
-  bottom:-6px;
-  left:0;
-  width:100%;
-  height:2px;
-  background:var(--gradient);
+  width:0;
+  height:0;
+  background:rgba(255,255,255,0.4);
+  border-radius:50%;
+  transform:scale(0);
+  opacity:0;
+}
+
+.fab:active::after{
+  width:200px;
+  height:200px;
+  transform:scale(1);
+  opacity:1;
+  transition:0.5s ease;
 }
 
 /* VIEWS */
 .view{display:none;padding:40px;}
 .view.active{display:block;}
 
-/* TILE GRID */
+/* TILES */
 .tile-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
   gap:24px;
 }
 
-/* TILE */
 .tile{
   background:var(--card);
   padding:20px;
   border-radius:18px;
-  transition:0.4s;
-  border:1px solid transparent;
+  transition:.4s;
   cursor:pointer;
-  overflow:hidden;
 }
 
 .tile:hover{
@@ -110,88 +144,57 @@ body{
   box-shadow:0 20px 45px rgba(0,0,0,0.4);
 }
 
-.tile-header{
-  display:flex;
-  justify-content:space-between;
+/* MODAL BACKDROP */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0);
+  backdrop-filter:blur(0px);
+  display:none;
+  justify-content:center;
   align-items:center;
+  transition:.3s ease;
 }
 
-.badge-type{
-  padding:4px 10px;
+.modal.active{
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);
+}
+
+/* MODAL CONTENT */
+.modal-content{
+  background:var(--card);
+  padding:28px;
   border-radius:20px;
-  font-size:10px;
-  background:var(--gradient);
-  color:#000;
-  font-weight:600;
+  width:420px;
+  transform:scale(.8);
+  opacity:0;
+  transition:.3s ease;
 }
 
-.status-row{
-  margin-top:8px;
+.modal.active .modal-content{
+  transform:scale(1);
+  opacity:1;
 }
 
-.status-chip{
-  display:inline-block;
-  padding:3px 8px;
-  border-radius:20px;
-  font-size:9px;
-  font-weight:600;
-  margin-right:5px;
-}
-
-.selection{background:var(--blue);}
-.quotation{background:var(--purple);}
-.both{background:var(--green);}
-.revision{background:var(--orange);}
-
-.tile small{
-  display:block;
-  color:var(--muted);
-  margin-top:4px;
-  font-size:12px;
-}
-
-/* EXPAND */
-.tile-expanded{
-  max-height:0;
-  overflow:hidden;
-  transition:max-height .4s ease;
-}
-
-.tile.expanded .tile-expanded{
-  max-height:800px;
-  margin-top:15px;
-}
-
+/* INPUTS */
 input,select,textarea{
   width:100%;
-  margin-bottom:10px;
-  padding:6px;
-  border-radius:6px;
+  margin-bottom:12px;
+  padding:8px;
+  border-radius:8px;
   border:1px solid rgba(255,255,255,0.1);
   background:var(--glass);
   color:var(--text);
-  font-size:12px;
 }
 
 button{
-  padding:6px 12px;
+  padding:8px 14px;
   border:none;
-  border-radius:6px;
+  border-radius:8px;
   background:var(--gradient);
   color:#000;
   cursor:pointer;
-  margin-right:5px;
-  font-size:12px;
-}
-
-.date-group{
-  margin-bottom:40px;
-}
-
-.date-title{
-  margin-bottom:15px;
-  font-weight:600;
-  color:var(--accent);
 }
 </style>
 </head>
@@ -205,12 +208,14 @@ button{
   </div>
 
   <div class="nav-center">
-    <div class="nav-item active" onclick="setActive(this);showView('home')">Home</div>
-    <div class="nav-item" onclick="setActive(this);showView('projects')">All Projects</div>
-    <div class="nav-item" onclick="setActive(this);showView('dashboard')">Dashboard</div>
-    <div class="nav-item" onclick="openModal()">Add New</div>
+    <div class="nav-item" onclick="showView('home')">Home</div>
+    <div class="nav-item" onclick="showView('projects')">All Projects</div>
+    <div class="nav-item" onclick="showView('dashboard')">Dashboard</div>
   </div>
 </nav>
+
+<!-- Floating Add -->
+<div class="fab" onclick="openModal()">+</div>
 
 <div id="home" class="view active">
   <h2>History</h2>
@@ -222,132 +227,72 @@ button{
 </div>
 
 <div id="dashboard" class="view">
-  <div class="kpi-grid" id="kpiGrid"></div>
+  <div id="kpiGrid"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>Add Project</h3>
+    <input id="projectName" placeholder="Project Name">
+    <input id="customerName" placeholder="Customer">
+    <select id="coilType">
+      <option>CHW</option>
+      <option>DX</option>
+      <option>CHW + COMBI</option>
+      <option>DX + COMBI</option>
+      <option>DUAL COIL</option>
+    </select>
+    <input type="date" id="receivedDate">
+    <input type="date" id="sentDate">
+    <button onclick="saveProject()">Save</button>
+    <button onclick="closeModal()">Close</button>
+  </div>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacElite'))||[];
 
-function setActive(el){
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  el.classList.add('active');
-}
-
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   $(id).classList.add('active');
 }
 
-function getStatusChips(p){
-  let chips="";
-  if(p.selection && p.quotation) chips+=`<span class="status-chip both">BOTH</span>`;
-  else if(p.selection) chips+=`<span class="status-chip selection">SELECTION</span>`;
-  else if(p.quotation) chips+=`<span class="status-chip quotation">QUOTATION</span>`;
-  if(p.isRevision) chips+=`<span class="status-chip revision">REVISION</span>`;
-  return chips;
+function openModal(){
+  $('modal').style.display='flex';
+  setTimeout(()=> $('modal').classList.add('active'),10);
 }
 
-/* HOME - still modal */
-function renderHome(){
-  const recent=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received)).slice(0,10);
-  $('homeGrid').innerHTML='';
-  recent.forEach(p=>{
-    $('homeGrid').innerHTML+=`
-      <div class="tile" onclick='openModal(${JSON.stringify(p)})'>
-        <div class="tile-header">
-          <strong>${p.project}</strong>
-          <span class="badge-type">${p.type}</span>
-        </div>
-        <div class="status-row">${getStatusChips(p)}</div>
-        <small>${p.customer}</small>
-        <small>Received: ${p.received}</small>
-        <small>Sent: ${p.sent||'-'}</small>
-      </div>`;
-  });
+function closeModal(){
+  $('modal').classList.remove('active');
+  setTimeout(()=> $('modal').style.display='none',300);
 }
 
-/* ALL PROJECTS - grouped + inline edit */
-function renderProjects(){
-  const container=$('projectGrid');
-  container.innerHTML='';
-  const grouped={};
-
-  projects.forEach(p=>{
-    if(!grouped[p.received]) grouped[p.received]=[];
-    grouped[p.received].push(p);
-  });
-
-  Object.keys(grouped)
-    .sort((a,b)=>new Date(b)-new Date(a))
-    .forEach(date=>{
-      container.innerHTML+=`
-        <div class="date-group">
-          <div class="date-title">📅 ${date}</div>
-          <div class="tile-grid">
-            ${grouped[date].map(p=>tileTemplate(p)).join('')}
-          </div>
-        </div>`;
-    });
-}
-
-function tileTemplate(p){
-  return `
-  <div class="tile" onclick="toggleExpand(this)">
-    <div class="tile-header">
-      <strong>${p.project}</strong>
-      <span class="badge-type">${p.type}</span>
-    </div>
-
-    <div class="status-row">${getStatusChips(p)}</div>
-    <small>${p.customer}</small>
-    <small>Received: ${p.received}</small>
-    <small>Sent: ${p.sent||'-'}</small>
-
-    <div class="tile-expanded" onclick="event.stopPropagation()">
-      <input value="${p.project}" onchange="updateField(${p.id},'project',this.value)">
-      <input value="${p.customer}" onchange="updateField(${p.id},'customer',this.value)">
-      <input type="date" value="${p.received}" onchange="updateField(${p.id},'received',this.value)">
-      <input type="date" value="${p.sent||''}" onchange="updateField(${p.id},'sent',this.value)">
-      <input value="${p.quoteId||''}" placeholder="Quote ID" onchange="updateField(${p.id},'quoteId',this.value)">
-      <textarea onchange="updateField(${p.id},'remarks',this.value)">${p.remarks||''}</textarea>
-      <label><input type="checkbox" ${p.selection?'checked':''} onchange="updateField(${p.id},'selection',this.checked)"> Selection</label>
-      <label><input type="checkbox" ${p.quotation?'checked':''} onchange="updateField(${p.id},'quotation',this.checked)"> Quotation</label>
-      <label><input type="checkbox" ${p.isRevision?'checked':''} onchange="updateField(${p.id},'isRevision',this.checked)"> Revision</label>
-    </div>
-  </div>`;
-}
-
-function toggleExpand(tile){
-  tile.classList.toggle('expanded');
-}
-
-function updateField(id,key,value){
-  const p=projects.find(x=>x.id===id);
-  p[key]=value;
+function saveProject(){
+  const data={
+    id:Date.now(),
+    project:$('projectName').value,
+    customer:$('customerName').value,
+    type:$('coilType').value,
+    received:$('receivedDate').value,
+    sent:$('sentDate').value
+  };
+  projects.push(data);
   localStorage.setItem('hvacElite',JSON.stringify(projects));
+  closeModal();
   renderAll();
 }
 
-function renderDashboard(){
-  const total=projects.length;
-  const onlySel=projects.filter(p=>p.selection&&!p.quotation).length;
-  const onlyQuo=projects.filter(p=>p.quotation&&!p.selection).length;
-  const both=projects.filter(p=>p.selection&&p.quotation).length;
-  const revised=projects.filter(p=>p.isRevision).length;
-
-  $('kpiGrid').innerHTML=`
-    <div class="kpi">Total: ${total}</div>
-    <div class="kpi">Only Selection: ${onlySel}</div>
-    <div class="kpi">Only Quotation: ${onlyQuo}</div>
-    <div class="kpi">Both: ${both}</div>
-    <div class="kpi">Revised: ${revised}</div>`;
-}
-
 function renderAll(){
-  renderHome();
-  renderProjects();
-  renderDashboard();
+  $('homeGrid').innerHTML='';
+  projects.forEach(p=>{
+    $('homeGrid').innerHTML+=`
+      <div class="tile">
+        <strong>${p.project}</strong>
+        <small>${p.customer}</small>
+      </div>`;
+  });
 }
 
 renderAll();
