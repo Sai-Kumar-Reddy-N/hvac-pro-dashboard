@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HVAC Workflow Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --bg:#0f172a;
-  --card:#111827;
+  --card:rgba(255,255,255,0.06);
   --text:#e5e7eb;
   --muted:#94a3b8;
   --accent:#22d3ee;
@@ -18,7 +18,7 @@
 
 body.light{
   --bg:#f1f5f9;
-  --card:#ffffff;
+  --card:rgba(0,0,0,0.05);
   --text:#0f172a;
   --muted:#475569;
 }
@@ -36,128 +36,89 @@ nav{
   justify-content:space-between;
   align-items:center;
   padding:16px 30px;
-  background:var(--card);
-  box-shadow:0 8px 30px rgba(0,0,0,.4);
+  backdrop-filter:blur(12px);
 }
 
-nav h1{
-  margin:0;
-  font-size:18px;
-  color:var(--accent);
-}
+nav h1{margin:0;color:var(--accent);}
 
-.nav-actions{
-  display:flex;
-  gap:16px;
-}
+.nav-actions{display:flex;gap:15px;}
 
 .nav-btn{
   cursor:pointer;
-  font-size:14px;
   padding:6px 10px;
   border-radius:8px;
-  background:rgba(255,255,255,.05);
-}
-
-/* VIEWS */
-.view{display:none;padding:30px;}
-.view.active{display:block;}
-
-/* KPI */
-.kpi-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:20px;
-  margin-bottom:30px;
-}
-
-.kpi{
   background:var(--card);
-  padding:16px;
-  border-radius:14px;
+  backdrop-filter:blur(12px);
 }
 
-.kpi h4{margin:0;font-size:12px;color:var(--muted);}
-.kpi p{margin:8px 0 0;font-size:20px;font-weight:700;}
-
-/* ADD */
-.add-box{
+/* FILTER */
+select{
   background:var(--card);
-  padding:16px;
-  border-radius:14px;
-  margin-bottom:30px;
-}
-
-.add-box input, .add-box select{
-  margin-right:10px;
-  margin-bottom:10px;
+  border:none;
+  color:var(--text);
   padding:6px;
   border-radius:6px;
-  border:1px solid rgba(255,255,255,.1);
-  background:rgba(255,255,255,.05);
-  color:var(--text);
 }
 
-/* TILE */
+/* GRID */
+.container{padding:30px;}
+
 .tile-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:15px;
+  grid-template-columns:repeat(5,1fr);
+  gap:20px;
 }
 
-.tile{
+.grid-tile{
   background:var(--card);
-  padding:10px;
-  border-radius:10px;
-  font-size:12px;
+  backdrop-filter:blur(16px);
+  padding:15px;
+  border-radius:14px;
+  cursor:pointer;
+  transition:0.4s ease;
+  overflow:hidden;
 }
 
-.tile small{
+.grid-tile:hover{
+  transform:translateY(-6px);
+}
+
+.tile-basic small{
   display:block;
   color:var(--muted);
 }
 
-/* DETAILED VIEW */
-.board{
-  display:flex;
-  gap:20px;
-  overflow-x:auto;
+.status-badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  font-size:10px;
+  margin-top:6px;
+  color:white;
 }
 
-.column{
-  min-width:260px;
-  background:var(--card);
-  border-radius:12px;
-  padding:10px;
-}
+.sel{background:#16a34a;}
+.quo{background:#2563eb;}
+.both{background:#9333ea;}
+.wait{background:#f59e0b;}
 
-.column h3{
-  margin:0 0 10px;
-  font-size:13px;
-}
-
-.card{
-  background:rgba(255,255,255,.05);
-  padding:8px;
-  border-radius:8px;
-  margin-bottom:8px;
+.tile-expanded{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.5s ease;
   font-size:12px;
 }
 
-/* GRID */
-.grid-tile{
-  background:var(--card);
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:10px;
-  font-size:12px;
+.grid-tile.expanded .tile-expanded{
+  max-height:500px;
+  margin-top:10px;
 }
 
-button.delete-btn{
+.delete-btn{
   background:var(--danger);
   color:white;
   border:none;
-  padding:4px 8px;
+  padding:5px 8px;
   border-radius:6px;
   cursor:pointer;
 }
@@ -167,69 +128,37 @@ button.delete-btn{
 <body>
 
 <nav>
-  <h1>HVAC Workflow Pro</h1>
+  <h1>HVAC Workflow</h1>
   <div class="nav-actions">
-    <div class="nav-btn" onclick="showView('dashboard')">Home</div>
-    <div class="nav-btn" onclick="showView('detailed')">Detailed View</div>
-    <div class="nav-btn" onclick="showView('grid')">Grid</div>
+    <select onchange="applyFilter(this.value)">
+      <option value="all">All</option>
+      <option value="selection">Selection</option>
+      <option value="quotation">Quotation</option>
+      <option value="both">Both</option>
+      <option value="waiting">Waiting</option>
+    </select>
     <div class="nav-btn" onclick="toggleTheme()">🌓</div>
   </div>
 </nav>
 
-<!-- HOME -->
-<div id="dashboard" class="view active">
-  <div class="kpi-grid" id="kpiGrid"></div>
-
-  <div class="add-box">
-    <h3>Add New Enquiry</h3>
-    <input id="newProject" placeholder="Project Name">
-    <input id="newCustomer" placeholder="Customer">
-    <select id="newType">
-      <option>CHW</option>
-      <option>DX</option>
-      <option>CHW COMBI</option>
-      <option>DX COMBI</option>
-      <option>CHW + CHW COMBI</option>
-      <option>DX + DX COMBI</option>
-    </select>
-    <input type="date" id="newReceived">
-    <button onclick="addProject()">Add</button>
-  </div>
-
-  <h3>Last 10 Projects</h3>
-  <div class="tile-grid" id="recentProjects"></div>
-</div>
-
-<!-- DETAILED VIEW -->
-<div id="detailed" class="view">
-  <div class="board">
-    <div class="column"><h3>🟢 Received</h3><div id="col-received"></div></div>
-    <div class="column"><h3>🔵 Selection</h3><div id="col-selection"></div></div>
-    <div class="column"><h3>🟣 Quotation</h3><div id="col-quotation"></div></div>
-    <div class="column"><h3>🟠 Completed</h3><div id="col-completed"></div></div>
-  </div>
-</div>
-
-<!-- GRID -->
-<div id="grid" class="view">
-  <div id="gridContainer"></div>
+<div class="container">
+  <div id="gridContainer" class="tile-grid"></div>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacProjects'))||[];
+let currentFilter="all";
 
-/* SAFE NORMALIZATION */
+/* SAFE NORMALIZE */
 projects=projects.map(p=>({
   id:p.id,
   project:p.project,
   customer:p.customer||'',
-  type:p.type||'CHW',
   received:p.received||'',
   sent:p.sent||'',
   selection:p.selection===true,
   quotation:p.quotation===true,
-  completed:p.completed===true,
   waiting:p.waiting===true
 }));
 
@@ -237,202 +166,113 @@ function save(){
   localStorage.setItem('hvacProjects',JSON.stringify(projects));
 }
 
-function showView(id){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  $(id).classList.add('active');
-}
-
 function toggleTheme(){
   document.body.classList.toggle('light');
 }
 
-/* ADD PROJECT */
-function addProject(){
-  const name=$('newProject').value.trim();
-  const customer=$('newCustomer').value.trim();
-  const type=$('newType').value;
-  const received=$('newReceived').value;
-
-  if(!name||!received) return alert("Project & date required");
-
-  projects.push({
-    id:Date.now(),
-    project:name,
-    customer:customer,
-    type:type,
-    received:received,
-    sent:'',
-    selection:false,
-    quotation:false,
-    completed:false,
-    waiting:false
-  });
-
-  save();
-  renderAll();
-
-  $('newProject').value='';
-  $('newCustomer').value='';
-  $('newReceived').value='';
+/* FILTER */
+function applyFilter(val){
+  currentFilter=val;
+  renderGrid();
 }
 
-/* DASHBOARD */
-function renderDashboard(){
-  const total=projects.length;
-  const selection=projects.filter(p=>p.selection&&!p.quotation).length;
-  const quotation=projects.filter(p=>p.quotation&&!p.completed).length;
-  const waiting=projects.filter(p=>p.waiting).length;
-  const completed=projects.filter(p=>p.completed).length;
-
-  $('kpiGrid').innerHTML=`
-    <div class="kpi"><h4>Total</h4><p>${total}</p></div>
-    <div class="kpi"><h4>Selection</h4><p>${selection}</p></div>
-    <div class="kpi"><h4>Quotation</h4><p>${quotation}</p></div>
-    <div class="kpi"><h4>Waiting</h4><p>${waiting}</p></div>
-    <div class="kpi"><h4>Completed</h4><p>${completed}</p></div>
-  `;
-
-  const recent=[...projects]
-    .sort((a,b)=>new Date(b.received)-new Date(a.received))
-    .slice(0,10);
-
-  $('recentProjects').innerHTML='';
-  recent.forEach(p=>{
-    $('recentProjects').innerHTML+=`
-      <div class="tile">
-        <strong>${p.project}</strong>
-        <small>Customer: ${p.customer}</small>
-        <small>Type: ${p.type}</small>
-        <small>Received: ${p.received}</small>
-        <small>Sent: ${p.sent||'-'}</small>
-      </div>
-    `;
-  });
-}
-
-/* DETAILED VIEW */
-function renderDetailed(){
-
-  ['received','selection','quotation','completed']
-  .forEach(col=>$('col-'+col).innerHTML='');
-
-  const sorted=[...projects]
-    .sort((a,b)=>new Date(b.received)-new Date(a.received));
-
-  sorted.forEach(p=>{
-    let column='received';
-    if(p.selection&&!p.quotation) column='selection';
-    if(p.quotation&&!p.completed) column='quotation';
-    if(p.completed) column='completed';
-
-    $('col-'+column).innerHTML+=`
-      <div class="card">
-        <div style="font-size:10px;color:var(--accent)">
-          ${p.received}
-        </div>
-        <strong>${p.project}</strong>
-        <div>${p.customer}</div>
-      </div>
-    `;
-  });
-}
-
-/* GRID VIEW */
+/* RENDER */
 function renderGrid(){
+
   $('gridContainer').innerHTML='';
 
   const sorted=[...projects]
     .sort((a,b)=>new Date(b.received)-new Date(a.received));
 
-  const grouped={};
-
   sorted.forEach(p=>{
-    if(!grouped[p.received]) grouped[p.received]=[];
-    grouped[p.received].push(p);
-  });
 
-  Object.keys(grouped)
-    .sort((a,b)=>new Date(b)-new Date(a))
-    .forEach(date=>{
+    if(currentFilter==="selection" && !(p.selection && !p.quotation)) return;
+    if(currentFilter==="quotation" && !(p.quotation && !p.selection)) return;
+    if(currentFilter==="both" && !(p.selection && p.quotation)) return;
+    if(currentFilter==="waiting" && !p.waiting) return;
 
-      $('gridContainer').innerHTML+=`
-        <div style="margin:15px 0 8px; font-weight:600; color:var(--accent);">
-          ${date}
-        </div>
-      `;
+    let badge="";
+    if(p.selection && p.quotation) badge=`<span class="status-badge both">Both Sent</span>`;
+    else if(p.selection) badge=`<span class="status-badge sel">Selection</span>`;
+    else if(p.quotation) badge=`<span class="status-badge quo">Quotation</span>`;
+    else if(p.waiting) badge=`<span class="status-badge wait">Waiting</span>`;
 
-      grouped[date].forEach(p=>{
-        $('gridContainer').innerHTML+=`
-          <div class="grid-tile">
-            <strong>${p.project}</strong><br>
-            <small>${p.customer}</small><br><br>
+    const tile=document.createElement('div');
+    tile.className='grid-tile';
 
-            <label>Sent Date:</label><br>
-            <input type="date" value="${p.sent||''}"
-              onchange="updateSent(${p.id}, this.value)">
-            <br><br>
+    tile.innerHTML=`
+      <div class="tile-basic">
+        <strong>${p.project}</strong>
+        <small>${p.customer}</small>
+        <small>Sent: ${p.sent||'-'}</small>
+        ${badge}
+      </div>
 
-            <label>
-              <input type="checkbox" ${p.selection&&!p.quotation?'checked':''}
-              onchange="updateStatus(${p.id},'selectionOnly',this.checked)">
-              Only Selection Sent
-            </label><br>
+      <div class="tile-expanded">
 
-            <label>
-              <input type="checkbox" ${p.quotation&&!p.completed?'checked':''}
-              onchange="updateStatus(${p.id},'quoteOnly',this.checked)">
-              Only Quote Sent
-            </label><br>
+        <label>Sent Date:</label><br>
+        <input type="date" value="${p.sent||''}"
+          onchange="updateSent(${p.id},this.value)">
+        <br><br>
 
-            <label>
-              <input type="checkbox" ${(p.selection&&p.quotation&&!p.completed)?'checked':''}
-              onchange="updateStatus(${p.id},'both',this.checked)">
-              Both Selection & Offer Sent
-            </label><br>
+        <label>
+          <input type="checkbox" ${p.selection&&!p.quotation?'checked':''}
+          onchange="updateStatus(${p.id},'selectionOnly',this.checked)">
+          Only Selection Sent
+        </label><br>
 
-            <label>
-              <input type="checkbox" ${p.waiting?'checked':''}
-              onchange="updateStatus(${p.id},'waiting',this.checked)">
-              Waiting for Customer Confirmation
-            </label><br><br>
+        <label>
+          <input type="checkbox" ${p.quotation&&!p.selection?'checked':''}
+          onchange="updateStatus(${p.id},'quoteOnly',this.checked)">
+          Only Quote Sent
+        </label><br>
 
-            <button class="delete-btn"
-              onclick="deleteProject(${p.id})">
-              Delete
-            </button>
-          </div>
-        `;
-      });
+        <label>
+          <input type="checkbox" ${p.selection&&p.quotation?'checked':''}
+          onchange="updateStatus(${p.id},'both',this.checked)">
+          Both Selection & Offer Sent
+        </label><br>
 
+        <label>
+          <input type="checkbox" ${p.waiting?'checked':''}
+          onchange="updateStatus(${p.id},'waiting',this.checked)">
+          Waiting for Customer Confirmation
+        </label><br><br>
+
+        <button class="delete-btn"
+          onclick="deleteProject(${p.id});event.stopPropagation();">
+          Delete
+        </button>
+
+      </div>
+    `;
+
+    tile.addEventListener('click',()=>{
+      tile.classList.toggle('expanded');
     });
+
+    $('gridContainer').appendChild(tile);
+  });
 }
 
-function updateSent(id,value){
-  const p=projects.find(x=>x.id===id);
-  p.sent=value;
-  save();
-  renderAll();
-}
-
+/* FIXED STATUS LOGIC */
 function updateStatus(id,type,value){
+
   const p=projects.find(x=>x.id===id);
 
   if(type==='selectionOnly'){
     p.selection=value;
     p.quotation=false;
-    p.completed=false;
   }
 
   if(type==='quoteOnly'){
     p.selection=false;
     p.quotation=value;
-    p.completed=false;
   }
 
   if(type==='both'){
     p.selection=value;
     p.quotation=value;
-    p.completed=false;
   }
 
   if(type==='waiting'){
@@ -440,23 +280,23 @@ function updateStatus(id,type,value){
   }
 
   save();
-  renderAll();
-}
-
-function deleteProject(id){
-  if(!confirm("Delete this enquiry?")) return;
-  projects=projects.filter(p=>p.id!==id);
-  save();
-  renderAll();
-}
-
-function renderAll(){
-  renderDashboard();
-  renderDetailed();
   renderGrid();
 }
 
-renderAll();
+function updateSent(id,value){
+  const p=projects.find(x=>x.id===id);
+  p.sent=value;
+  save();
+  renderGrid();
+}
+
+function deleteProject(id){
+  projects=projects.filter(p=>p.id!==id);
+  save();
+  renderGrid();
+}
+
+renderGrid();
 </script>
 
 </body>
