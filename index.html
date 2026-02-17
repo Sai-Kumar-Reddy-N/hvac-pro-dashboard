@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HVAC Workflow Pro</title>
+<title>HVAC Workflow Pro Elite</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --bg:#0f172a;
-  --card:#1e293b;
-  --text:#e2e8f0;
+  --card:rgba(255,255,255,0.06);
+  --glass:rgba(255,255,255,0.08);
+  --text:#e5e7eb;
   --muted:#94a3b8;
   --accent:#22d3ee;
-  --green:#16a34a;
-  --purple:#9333ea;
+  --gradient:linear-gradient(135deg,#22d3ee,#3b82f6,#9333ea);
 }
 
 body{
@@ -22,251 +22,442 @@ body{
   font-family:Inter,sans-serif;
   background:var(--bg);
   color:var(--text);
+  transition:0.4s ease;
 }
 
-/* NAV */
-nav{
+/* THEMES */
+body.light{
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --glass:rgba(0,0,0,0.05);
+  --text:#0f172a;
+}
+body.blue{
+  --bg:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
+body.purple{
+  --bg:linear-gradient(135deg,#41295a,#2F0743);
+}
+
+/* NAVBAR */
+.navbar{
   display:flex;
   justify-content:space-between;
-  padding:15px 40px;
-  background:#111827;
+  align-items:center;
+  padding:14px 40px;
+  backdrop-filter:blur(16px);
+  background:rgba(17,24,39,0.75);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  position:sticky;
+  top:0;
+  z-index:1000;
 }
 
-nav div{
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:600;
+  letter-spacing:0.5px;
+}
+
+.logo-circle{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--gradient);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:700;
+  color:#000;
+  box-shadow:0 0 20px rgba(34,211,238,.6);
+}
+
+.nav-center{
+  display:flex;
+  gap:35px;
+}
+
+.nav-item{
   cursor:pointer;
-  margin-right:25px;
+  position:relative;
+  padding:6px 4px;
+  font-weight:500;
+  transition:0.3s;
+}
+
+.nav-item::after{
+  content:'';
+  position:absolute;
+  bottom:-6px;
+  left:0;
+  width:0%;
+  height:2px;
+  background:var(--gradient);
+  transition:0.3s;
+}
+
+.nav-item:hover::after,
+.nav-item.active::after{
+  width:100%;
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#9333ea,#ec4899);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 0 15px rgba(236,72,153,.6);
+}
+
+/* PROFILE MENU */
+.profile-wrapper{position:relative;}
+
+.profile-menu{
+  position:absolute;
+  top:55px;
+  right:0;
+  background:var(--card);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:14px;
+  border-radius:12px;
+  width:200px;
+  display:none;
+  animation:fadeIn 0.3s ease;
+}
+
+.profile-menu.active{display:block;}
+
+.profile-menu div{
+  padding:6px;
+  cursor:pointer;
+  font-size:14px;
+  border-radius:6px;
+}
+
+.profile-menu div:hover{
+  background:var(--glass);
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(-10px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
 /* VIEWS */
-.view{display:none;padding:30px;}
+.view{
+  display:none;
+  padding:40px;
+  animation:fadeIn 0.4s ease;
+}
 .view.active{display:block;}
 
-/* DATE GROUP */
-.date-group{
-  margin-bottom:40px;
-}
-
-.date-header{
-  font-size:16px;
-  font-weight:600;
-  margin-bottom:15px;
-  color:var(--accent);
-}
-
-/* TILE GRID */
+/* TILES */
 .tile-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:24px;
 }
 
 .tile{
   background:var(--card);
-  border-radius:14px;
   padding:18px;
-  transition:0.3s;
+  border-radius:16px;
   cursor:pointer;
+  position:relative;
+  transition:0.4s;
   border:1px solid transparent;
 }
 
-.tile:hover{
-  border:1px solid var(--accent);
-  transform:translateY(-5px);
+.tile::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:16px;
+  padding:1px;
+  background:var(--gradient);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  opacity:0;
+  transition:0.4s;
 }
 
-.tile-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.tile:hover{
+  transform:translateY(-8px);
+  box-shadow:0 15px 40px rgba(0,0,0,0.4);
+}
+
+.tile:hover::before{
+  opacity:1;
 }
 
 .badge{
+  display:inline-block;
   padding:4px 10px;
   border-radius:20px;
   font-size:10px;
-  font-weight:600;
-}
-
-.badge-type{
-  background:var(--accent);
+  background:var(--gradient);
   color:#000;
+  font-weight:600;
+  margin-top:6px;
 }
 
-.badge-status{
-  background:var(--green);
+/* KPI */
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:24px;
 }
 
-.tile small{
-  display:block;
-  color:var(--muted);
-  margin-top:4px;
+.kpi{
+  background:var(--card);
+  padding:20px;
+  border-radius:16px;
+  font-size:18px;
+  font-weight:600;
+  transition:0.3s;
 }
 
-/* EXPANDED */
-.tile-expanded{
-  margin-top:15px;
-  display:none;
+.kpi:hover{
+  transform:translateY(-5px);
+  box-shadow:0 12px 30px rgba(0,0,0,0.4);
 }
 
-.tile.expanded .tile-expanded{
-  display:block;
-}
-
+/* INPUTS */
 input,select,textarea{
   width:100%;
-  margin-bottom:8px;
-  padding:6px;
-  border-radius:6px;
-  border:none;
+  margin-bottom:12px;
+  padding:8px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:var(--glass);
+  color:var(--text);
 }
 
 button{
-  padding:6px 10px;
+  padding:8px 14px;
   border:none;
-  border-radius:6px;
-  background:var(--accent);
+  border-radius:8px;
+  background:var(--gradient);
   color:#000;
+  font-weight:600;
   cursor:pointer;
-  margin-top:5px;
 }
-.delete-btn{
-  background:#ef4444;
-  color:white;
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  backdrop-filter:blur(6px);
+}
+
+.modal-content{
+  background:var(--card);
+  padding:24px;
+  border-radius:18px;
+  width:420px;
+  max-height:90vh;
+  overflow:auto;
+  animation:fadeIn 0.3s ease;
 }
 </style>
 </head>
 
 <body>
 
-<nav>
-  <div onclick="showView('home')">Home</div>
-  <div onclick="showView('projects')">All Projects</div>
-  <div onclick="showView('dashboard')">Dashboard</div>
+<nav class="navbar">
+  <div class="brand">
+    <div class="logo-circle">HW</div>
+    HVAC Workflow
+  </div>
+
+  <div class="nav-center">
+    <div class="nav-item active" onclick="setActive(this);showView('home')">Home</div>
+    <div class="nav-item" onclick="setActive(this);showView('projects')">All Projects</div>
+    <div class="nav-item" onclick="setActive(this);showView('dashboard')">Dashboard</div>
+    <div class="nav-item" onclick="setActive(this);openModal()">Add New</div>
+  </div>
+
+  <div class="profile-wrapper">
+    <div class="avatar" onclick="toggleProfile()">SK</div>
+    <div class="profile-menu" id="profileMenu">
+      <div>Profile</div>
+      <div onclick="changeTheme('')">Dark</div>
+      <div onclick="changeTheme('light')">Light</div>
+      <div onclick="changeTheme('blue')">Blue</div>
+      <div onclick="changeTheme('purple')">Purple</div>
+      <div onclick="exportCSV()">Export CSV</div>
+    </div>
+  </div>
 </nav>
 
-<!-- HOME -->
 <div id="home" class="view active">
-  <h2>Last 10 Projects</h2>
+  <h2>History</h2>
   <div id="homeGrid" class="tile-grid"></div>
 </div>
 
-<!-- ALL PROJECTS -->
 <div id="projects" class="view">
-  <h2>All Projects</h2>
-  <div id="projectsContainer"></div>
+  <div id="projectGrid" class="tile-grid"></div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="view">
-  <div id="dashboardStats"></div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>Project Details</h3>
+
+    <input id="projectName" placeholder="Project Name">
+    <input id="customerName" placeholder="Customer">
+    <select id="coilType">
+      <option>CHW</option>
+      <option>DX</option>
+      <option>CHW + COMBI</option>
+      <option>DX + COMBI</option>
+      <option>DUAL COIL</option>
+    </select>
+    <input type="date" id="receivedDate">
+    <input type="date" id="sentDate">
+    <input id="quoteId" placeholder="Quote ID">
+    <textarea id="remarks" placeholder="Remarks"></textarea>
+
+    <label><input type="checkbox" id="selectionSent"> Selection Sent</label>
+    <label><input type="checkbox" id="quotationSent"> Quotation Sent</label>
+    <label><input type="checkbox" id="isNew" onclick="toggleType('new')"> New</label>
+    <label><input type="checkbox" id="isRevision" onclick="toggleType('revision')"> Revision</label>
+
+    <button onclick="saveProject()">Save</button>
+    <button onclick="closeModal()">Close</button>
+  </div>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
-let projects=JSON.parse(localStorage.getItem('hvacPro'))||[];
+let projects=JSON.parse(localStorage.getItem('hvacElite'))||[];
+let editing=null;
 
-function save(){ localStorage.setItem('hvacPro',JSON.stringify(projects)); }
+function setActive(el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleProfile(){
+  $('profileMenu').classList.toggle('active');
+}
+
+window.onclick=function(e){
+  if(!e.target.closest('.profile-wrapper'))
+    $('profileMenu').classList.remove('active');
+}
 
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   $(id).classList.add('active');
 }
 
-/* HOME */
-function renderHome(){
-  const recent=[...projects]
-    .sort((a,b)=>new Date(b.received)-new Date(a.received))
-    .slice(0,10);
+function changeTheme(theme){
+  document.body.className=theme;
+}
 
+function openModal(project=null){
+  $('modal').style.display='flex';
+  if(project){
+    editing=project.id;
+    $('projectName').value=project.project;
+    $('customerName').value=project.customer;
+    $('coilType').value=project.type;
+    $('receivedDate').value=project.received;
+    $('sentDate').value=project.sent;
+    $('quoteId').value=project.quoteId;
+    $('remarks').value=project.remarks;
+    $('selectionSent').checked=project.selection;
+    $('quotationSent').checked=project.quotation;
+    $('isNew').checked=project.isNew;
+    $('isRevision').checked=project.isRevision;
+  }else{
+    editing=null;
+    document.querySelectorAll('.modal input,textarea').forEach(i=>i.value='');
+    document.querySelectorAll('.modal input[type=checkbox]').forEach(c=>c.checked=false);
+  }
+}
+
+function closeModal(){ $('modal').style.display='none'; }
+
+function toggleType(type){
+  if(type==='new') $('isRevision').checked=false;
+  else $('isNew').checked=false;
+}
+
+function saveProject(){
+  const data={
+    id:editing||Date.now(),
+    project:$('projectName').value,
+    customer:$('customerName').value,
+    type:$('coilType').value,
+    received:$('receivedDate').value,
+    sent:$('sentDate').value,
+    quoteId:$('quoteId').value,
+    remarks:$('remarks').value,
+    isNew:$('isNew').checked,
+    isRevision:$('isRevision').checked,
+    selection:$('selectionSent').checked,
+    quotation:$('quotationSent').checked
+  };
+
+  if(editing)
+    projects=projects.map(p=>p.id===editing?data:p);
+  else
+    projects.push(data);
+
+  localStorage.setItem('hvacElite',JSON.stringify(projects));
+  closeModal();
+  renderAll();
+}
+
+function renderHome(){
+  const recent=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received)).slice(0,10);
   $('homeGrid').innerHTML='';
   recent.forEach(p=>{
-    $('homeGrid').innerHTML+=tileHTML(p,false);
-  });
-}
-
-/* ALL PROJECTS GROUPED */
-function renderProjects(){
-  const container=$('projectsContainer');
-  container.innerHTML='';
-
-  const grouped={};
-
-  projects.forEach(p=>{
-    if(!grouped[p.received]) grouped[p.received]=[];
-    grouped[p.received].push(p);
-  });
-
-  Object.keys(grouped)
-    .sort((a,b)=>new Date(b)-new Date(a))
-    .forEach(date=>{
-      container.innerHTML+=`
-        <div class="date-group">
-          <div class="date-header">📅 ${date}</div>
-          <div class="tile-grid">
-            ${grouped[date].map(p=>tileHTML(p,true)).join('')}
-          </div>
-        </div>`;
-    });
-}
-
-/* TILE TEMPLATE */
-function tileHTML(p,editable){
-  return `
-    <div class="tile" onclick="toggleExpand(${p.id},event)">
-      <div class="tile-top">
+    $('homeGrid').innerHTML+=`
+      <div class="tile" onclick='openModal(${JSON.stringify(p)})'>
         <strong>${p.project}</strong>
-        <span class="badge badge-type">${p.type}</span>
-      </div>
-      <small>${p.customer}</small>
-      <small>Received: ${p.received}</small>
-      <small>Sent: ${p.sent||'-'}</small>
-
-      <div class="tile-expanded" id="expand-${p.id}">
-        <input value="${p.project}" onchange="updateField(${p.id},'project',this.value)">
-        <input value="${p.customer}" onchange="updateField(${p.id},'customer',this.value)">
-        <select onchange="updateField(${p.id},'type',this.value)">
-          <option ${p.type==='CHW'?'selected':''}>CHW</option>
-          <option ${p.type==='DX'?'selected':''}>DX</option>
-          <option ${p.type==='CHW + COMBI'?'selected':''}>CHW + COMBI</option>
-          <option ${p.type==='DX + COMBI'?'selected':''}>DX + COMBI</option>
-          <option ${p.type==='DUAL COIL'?'selected':''}>DUAL COIL</option>
-        </select>
-        <input type="date" value="${p.received}" onchange="updateField(${p.id},'received',this.value)">
-        <input type="date" value="${p.sent||''}" onchange="updateField(${p.id},'sent',this.value)">
-        <input value="${p.quoteId||''}" placeholder="Quote ID" onchange="updateField(${p.id},'quoteId',this.value)">
-        <textarea onchange="updateField(${p.id},'remarks',this.value)">${p.remarks||''}</textarea>
-
-        <label><input type="checkbox" ${p.selection?'checked':''} onclick="event.stopPropagation()" onchange="updateField(${p.id},'selection',this.checked)"> Selection</label>
-        <label><input type="checkbox" ${p.quotation?'checked':''} onclick="event.stopPropagation()" onchange="updateField(${p.id},'quotation',this.checked)"> Quotation</label>
-        <label><input type="checkbox" ${p.isNew?'checked':''} onclick="event.stopPropagation()" onchange="updateField(${p.id},'isNew',this.checked)"> New</label>
-        <label><input type="checkbox" ${p.isRevision?'checked':''} onclick="event.stopPropagation()" onchange="updateField(${p.id},'isRevision',this.checked)"> Revision</label>
-
-        <button class="delete-btn" onclick="deleteProject(${p.id});event.stopPropagation();">Delete</button>
-      </div>
-    </div>`;
+        <div>${p.customer}</div>
+        <div class="badge">${p.type}</div>
+        <div>Received: ${p.received}</div>
+        <div>Sent: ${p.sent||'-'}</div>
+      </div>`;
+  });
 }
 
-function toggleExpand(id,e){
-  e.stopPropagation();
-  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('expanded'));
-  const tile=e.currentTarget;
-  tile.classList.toggle('expanded');
+function renderProjects(){
+  $('projectGrid').innerHTML='';
+  projects.forEach(p=>{
+    $('projectGrid').innerHTML+=`
+      <div class="tile" onclick='openModal(${JSON.stringify(p)})'>
+        <strong>${p.project}</strong>
+        <div>${p.customer}</div>
+        <div class="badge">${p.type}</div>
+        <div>Received: ${p.received}</div>
+        <div>Sent: ${p.sent||'-'}</div>
+      </div>`;
+  });
 }
 
-function updateField(id,key,value){
-  const p=projects.find(x=>x.id===id);
-  p[key]=value;
-  save();
-  renderAll();
-}
-
-function deleteProject(id){
-  projects=projects.filter(p=>p.id!==id);
-  save();
-  renderAll();
-}
-
-/* DASHBOARD */
 function renderDashboard(){
   const total=projects.length;
   const onlySel=projects.filter(p=>p.selection&&!p.quotation).length;
@@ -274,13 +465,25 @@ function renderDashboard(){
   const both=projects.filter(p=>p.selection&&p.quotation).length;
   const revised=projects.filter(p=>p.isRevision).length;
 
-  $('dashboardStats').innerHTML=`
-    <p>Total: ${total}</p>
-    <p>Only Selection: ${onlySel}</p>
-    <p>Only Quotation: ${onlyQuo}</p>
-    <p>Both: ${both}</p>
-    <p>Revised: ${revised}</p>
-  `;
+  $('kpiGrid').innerHTML=`
+    <div class="kpi">Total: ${total}</div>
+    <div class="kpi">Only Selection: ${onlySel}</div>
+    <div class="kpi">Only Quotation: ${onlyQuo}</div>
+    <div class="kpi">Both: ${both}</div>
+    <div class="kpi">Revised: ${revised}</div>`;
+}
+
+function exportCSV(){
+  let csv="Project,Customer,Type,Received,Sent,QuoteID,Revision\n";
+  projects.forEach(p=>{
+    csv+=`${p.project},${p.customer},${p.type},${p.received},${p.sent},${p.quoteId},${p.isRevision}\n`;
+  });
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='projects.csv';
+  a.click();
 }
 
 function renderAll(){
