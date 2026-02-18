@@ -239,8 +239,8 @@ button{
 
 <nav class="navbar">
   <div class="brand">
-    <div class="logo-circle">HW</div>
-    HVAC Workflow
+    <div class="logo-circle">WF</div>
+    WorkFlow
   </div>
 
   <div class="nav-center">
@@ -399,6 +399,7 @@ function tileTemplate(p){
     <small>${p.customer}</small>
     <small>Received: ${p.received}</small>
     <small>Sent: ${p.sent||'-'}</small>
+    <small>Quote ID: ${p.quoteId||'-'}</small>
 
     <div class="tile-expanded" onclick="event.stopPropagation()">
       <input value="${p.project}" onchange="updateField(${p.id},'project',this.value)">
