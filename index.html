@@ -339,9 +339,9 @@ function showView(id){
 
 function getStatusChips(p){
   let chips="";
-  if(p.selection && p.quotation) chips+=`<span class="status-chip both">BOTH</span>`;
-  else if(p.selection) chips+=`<span class="status-chip selection">SELECTION</span>`;
-  else if(p.quotation) chips+=`<span class="status-chip quotation">QUOTATION</span>`;
+  if(p.selection && p.quotation) chips+=`<span class="status-chip both">Selection + Offer sent</span>`;
+  else if(p.selection) chips+=`<span class="status-chip selection">only SELECTION sent</span>`;
+  else if(p.quotation) chips+=`<span class="status-chip quotation">only QUOTATION sent</span>`;
   if(p.isRevision) chips+=`<span class="status-chip revision">REVISION</span>`;
   return chips;
 }
