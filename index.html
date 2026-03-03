@@ -253,18 +253,16 @@ button{
 .list-grid{
   display:flex;
   flex-direction:column;
-  gap:0;
 }
 
 .list-grid .tile{
-  display:grid;
-  grid-template-columns: 4fr 2fr 1.2fr 1.2fr 1.5fr;
+  display:flex;
   align-items:center;
-  padding:14px 20px;
+  justify-content:space-between;
+  padding:16px 20px;
   border-bottom:1px solid rgba(255,255,255,0.08);
   background:rgba(255,255,255,0.02);
-  border-radius:0;
-  gap:10px;
+  gap:30px;
 }
 
 .list-grid .tile:hover{
@@ -515,21 +513,28 @@ projects
 
 function tileTemplate(p){
   return `
-<div class="project-block">
-  <div class="project-title">${p.project}</div>
-  <div class="project-sub">${p.customer}</div>
-</div>
+<div class="tile" onclick="toggleExpand(this)">
 
-<div class="status-row">
-  ${getStatusChips(p)}
-</div>
+  <div style="flex:2;">
+    <strong>${p.project}</strong><br>
+    <small>${p.customer}</small>
+  </div>
 
-<div class="date-value">${formatDate(p.received)}</div>
+  <div style="flex:1;">
+    ${getStatusChips(p)}
+  </div>
 
-<div class="date-value">${formatDate(p.sent)}</div>
+  <div style="flex:1;">
+    ${formatDate(p.received)}
+  </div>
 
-<div>${p.quoteId || '-'}</div>
+  <div style="flex:1;">
+    ${formatDate(p.sent)}
+  </div>
 
+  <div style="flex:1;">
+    ${p.quoteId || '-'}
+  </div>
   <div class="tile-expanded" onclick="event.stopPropagation()">
     <div class="tile-expanded" onclick="event.stopPropagation()">
       <input value="${p.project}" onchange="updateField(${p.id},'project',this.value)">
