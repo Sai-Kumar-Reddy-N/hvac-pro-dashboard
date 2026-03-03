@@ -250,6 +250,34 @@ button{
   display:inline-block;
   margin-bottom:4px;
 }
+
+  .list-grid{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.list-grid .tile{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+}
+
+.list-grid .tile-header{
+  flex-direction:row;
+  gap:15px;
+}
+
+.list-grid .tile small{
+  display:inline-block;
+  margin-right:15px;
+}
+
+.list-grid .tile-expanded{
+  width:100%;
+}
+  
 </style>
 </head>
 
@@ -286,6 +314,10 @@ button{
       border:1px solid rgba(255,255,255,0.1);
       background:var(--glass);
       color:var(--text);">
+  </div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:15px;gap:10px;">
+  <button onclick="setViewMode('grid')">🔲</button>
+  <button onclick="setViewMode('list')">📋</button>
   </div>
 
   <div id="projectGrid"></div>
@@ -327,6 +359,12 @@ button{
 <script>
 const $=id=>document.getElementById(id);
 let projects=JSON.parse(localStorage.getItem('hvacElite'))||[];
+let viewMode = localStorage.getItem('viewMode') || 'grid';
+function setViewMode(mode){
+  viewMode = mode;
+  localStorage.setItem('viewMode', mode);
+  renderProjects();
+}
 
 function openModal(){ $('modal').style.display='flex'; }
 function closeModal(){ $('modal').style.display='none'; }
@@ -426,7 +464,7 @@ projects
       container.innerHTML+=`
         <div class="date-group">
           <div class="date-title">📅 ${date}</div>
-          <div class="tile-grid">
+          <div class="${viewMode === 'grid' ? 'tile-grid' : 'list-grid'}">
             ${grouped[date].map(p=>tileTemplate(p)).join('')}
           </div>
         </div>`;
