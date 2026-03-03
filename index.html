@@ -232,6 +232,24 @@ button{
   border-radius:18px;
   width:420px;
 }
+  .date-label{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--muted);
+  margin-top:6px;
+}
+
+.date-value{
+  font-size:13px;
+  font-weight:600;
+  color:var(--accent);
+  background:rgba(34,211,238,0.1);
+  padding:4px 8px;
+  border-radius:8px;
+  display:inline-block;
+  margin-bottom:4px;
+}
 </style>
 </head>
 
@@ -357,7 +375,16 @@ function getStatusChips(p){
   if(p.isRevision) chips+=`<span class="status-chip revision">REVISION</span>`;
   return chips;
 }
-
+  
+function formatDate(dateStr){
+  if(!dateStr) return '-';
+  const d = new Date(dateStr);
+  const day = String(d.getDate()).padStart(2,'0');
+  const month = String(d.getMonth()+1).padStart(2,'0');
+  const year = d.getFullYear();
+  return `${day}.${month}.${year}`;
+}
+  
 function renderHome(){
   const recent=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received)).slice(0,10);
   $('homeGrid').innerHTML='';
@@ -370,8 +397,11 @@ function renderHome(){
         </div>
         <div class="status-row">${getStatusChips(p)}</div>
         <small>${p.customer}</small>
-        <small>Received: ${p.received}</small>
-        <small>Sent: ${p.sent||'-'}</small>
+        <small class="date-label">Received</small>
+<small class="date-value">${formatDate(p.received)}</small>
+
+<small class="date-label">Sent</small>
+<small class="date-value">${formatDate(p.sent)}</small>
         <small>Quote ID: ${p.quoteId||'-'}</small>
       </div>`;
   });
@@ -413,8 +443,11 @@ function tileTemplate(p){
 
     <div class="status-row">${getStatusChips(p)}</div>
     <small>${p.customer}</small>
-    <small>Received: ${p.received}</small>
-    <small>Sent: ${p.sent||'-'}</small>
+    <small class="date-label">Received</small>
+<small class="date-value">${formatDate(p.received)}</small>
+
+<small class="date-label">Sent</small>
+<small class="date-value">${formatDate(p.sent)}</small>
     <small>Quote ID: ${p.quoteId||'-'}</small>
 
     <div class="tile-expanded" onclick="event.stopPropagation()">
