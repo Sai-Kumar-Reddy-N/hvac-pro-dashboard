@@ -455,25 +455,6 @@ function getStatusChips(p){
   return chips;
 }
 
-function renderHome(){
-  const recent=[...projects].sort((a,b)=>new Date(b.received)-new Date(a.received)).slice(0,10);
-  $('homeGrid').innerHTML='';
-  recent.forEach(p=>{
-    $('homeGrid').innerHTML+=`
-      <div class="tile">
-        <div class="tile-header">
-          <strong>${p.project}</strong>
-          <span class="badge-type">${p.type}</span>
-        </div>
-        <div class="status-row">${getStatusChips(p)}</div>
-        <small>${p.customer}</small>
-        <small>Received: ${p.received}</small>
-        <small>Sent: ${p.sent||'-'}</small>
-        <small>Quote ID: ${p.quoteId||'-'}</small>
-      </div>`;
-  });
-}
-
 function renderProjects(){
   const container=$('projectGrid');
   container.innerHTML='';
@@ -579,12 +560,11 @@ function renderDashboard(){
   $('homeKPI').innerHTML = html;
 }
   
-
 function renderAll(){
-  renderHome();
-  renderProjects();
-  renderDashboard();
+  renderDashboard();     // Dashboard cards on Home
+  renderProjects();      // All Projects page
 }
+
 
 renderAll();
 </script>
