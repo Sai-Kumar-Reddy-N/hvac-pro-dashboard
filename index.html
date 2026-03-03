@@ -254,28 +254,36 @@ button{
   .list-grid{
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:14px;
 }
 
 .list-grid .tile{
-  display:flex;
-  justify-content:space-between;
+  display:grid;
+  grid-template-columns: 2.5fr 1fr 1.2fr 1.2fr 1.2fr;
   align-items:center;
-  padding:15px 20px;
+  gap:20px;
+  padding:18px 24px;
 }
 
 .list-grid .tile-header{
-  flex-direction:row;
-  gap:15px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.list-grid .status-row{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
 }
 
 .list-grid .tile small{
-  display:inline-block;
-  margin-right:15px;
+  margin:0;
 }
 
-.list-grid .tile-expanded{
-  width:100%;
+.list-grid .date-value{
+  font-size:12px;
+  padding:4px 8px;
 }
   
 </style>
