@@ -275,6 +275,23 @@ button{
   height:4px;
   background:var(--gradient);
 }
+
+  body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:0.4s ease;
+  background-size:400% 400%;
+  animation:gradientMove 18s ease infinite;
+}
+
+@keyframes gradientMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+  
 </style>
 </head>
 
@@ -493,7 +510,30 @@ const themes = [
   accent:"#22d3ee"
 }
 ];
+let activeTheme = themes[0];
 
+function applyTheme(theme,save){
+  document.body.style.background = theme.bg;
+  document.documentElement.style.setProperty('--text', theme.text);
+  document.documentElement.style.setProperty('--card', theme.card);
+  document.documentElement.style.setProperty('--accent', theme.accent);
+
+  if(save){
+    activeTheme = theme;
+    localStorage.setItem("selectedTheme",JSON.stringify(theme));
+  }
+}
+
+function restoreTheme(){
+  applyTheme(activeTheme,false);
+}
+
+// Load saved theme on startup
+const saved = localStorage.getItem("selectedTheme");
+if(saved){
+  activeTheme = JSON.parse(saved);
+  applyTheme(activeTheme,false);
+}
 function toggleThemePanel(){
   const panel = $('themePanel');
   panel.style.display = panel.style.display === 'grid' ? 'none' : 'grid';
@@ -506,15 +546,24 @@ function loadThemes(){
   const box=document.createElement('div');
   box.style.width='40px';
   box.style.height='40px';
-  box.style.borderRadius='8px';
+  box.style.borderRadius='10px';
   box.style.cursor='pointer';
   box.style.background=theme.bg;
+  box.style.transition='0.3s';
+  box.style.border='2px solid transparent';
 
+  // Hover preview
+  box.onmouseenter=()=>{
+    applyTheme(theme,false);
+  };
+
+  box.onmouseleave=()=>{
+    restoreTheme();
+  };
+
+  // Click = permanent apply
   box.onclick=()=>{
-    document.body.style.background = theme.bg;
-    document.documentElement.style.setProperty('--text', theme.text);
-    document.documentElement.style.setProperty('--card', theme.card);
-    document.documentElement.style.setProperty('--accent', theme.accent);
+    applyTheme(theme,true);
   };
 
   panel.appendChild(box);
