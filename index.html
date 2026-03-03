@@ -262,13 +262,14 @@ button{
   grid-template-columns: 3fr 1fr 1fr 1fr 1.5fr;
   align-items:center;
   gap:20px;
-  padding:18px 24px;
-  border-radius:14px;
-  transition:.3s;
+  padding:16px 24px;
+  border-radius:0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  background:transparent;
 }
 
 .list-grid .tile:hover{
-  background:rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.04);
   transform:none;
   box-shadow:none;
 }
@@ -278,6 +279,15 @@ button{
   display:flex;
   flex-direction:column;
   gap:6px;
+}
+  .list-grid .date-value{
+  font-size:13px;
+  font-weight:600;
+  color:var(--accent);
+}
+
+.list-grid .status-row{
+  justify-content:flex-start;
 }
 
 /* Status column */
@@ -309,6 +319,23 @@ button{
   padding:5px 10px;
   border-radius:8px;
 }
+
+  .list-header{
+  display:grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr 1.5fr;
+  padding:14px 24px;
+  margin-bottom:15px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  position:sticky;
+  top:0;
+  background:var(--bg);
+  z-index:5;
+  }
   
 </style>
 </head>
@@ -479,6 +506,17 @@ function renderHome(){
 
 function renderProjects(){
   const container=$('projectGrid');
+  if(viewMode === 'list'){
+  container.innerHTML = `
+    <div class="list-header">
+      <div>Project</div>
+      <div>Status</div>
+      <div>Received</div>
+      <div>Sent</div>
+      <div>Quote ID</div>
+    </div>
+  `;
+  }
   container.innerHTML='';
   const grouped={};
   const searchValue = ($('projectSearch')?.value || "").toLowerCase();
