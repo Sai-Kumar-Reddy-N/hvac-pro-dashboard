@@ -372,16 +372,66 @@ button{
 <script>
 const $=id=>document.getElementById(id);
 const themes = [
-  "#0f172a",
-  "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
-  "linear-gradient(135deg,#1e3c72,#2a5298)",
-  "linear-gradient(135deg,#41295a,#2F0743)",
-  "linear-gradient(135deg,#134e5e,#71b280)",
-  "linear-gradient(135deg,#232526,#414345)",
-  "linear-gradient(135deg,#141e30,#243b55)",
-  "linear-gradient(135deg,#373B44,#4286f4)",
-  "linear-gradient(135deg,#000000,#434343)",
-  "linear-gradient(135deg,#1f4037,#99f2c8)"
+  {
+    bg:"#0f172a",
+    text:"#e5e7eb",
+    card:"rgba(255,255,255,0.06)",
+    accent:"#22d3ee"
+  },
+  {
+    bg:"linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
+    text:"#ffffff",
+    card:"rgba(255,255,255,0.08)",
+    accent:"#38bdf8"
+  },
+  {
+    bg:"linear-gradient(135deg,#41295a,#2F0743)",
+    text:"#ffffff",
+    card:"rgba(255,255,255,0.07)",
+    accent:"#c084fc"
+  },
+  {
+    bg:"linear-gradient(135deg,#1f4037,#99f2c8)",
+    text:"#0f172a",
+    card:"rgba(0,0,0,0.08)",
+    accent:"#047857"
+  },
+  {
+    bg:"#ffffff",
+    text:"#0f172a",
+    card:"#f1f5f9",
+    accent:"#2563eb"
+  },
+  {
+    bg:"#000000",
+    text:"#ffffff",
+    card:"#111111",
+    accent:"#facc15"
+  },
+  {
+    bg:"linear-gradient(135deg,#141e30,#243b55)",
+    text:"#ffffff",
+    card:"rgba(255,255,255,0.06)",
+    accent:"#60a5fa"
+  },
+  {
+    bg:"linear-gradient(135deg,#373B44,#4286f4)",
+    text:"#ffffff",
+    card:"rgba(255,255,255,0.06)",
+    accent:"#22d3ee"
+  },
+  {
+    bg:"linear-gradient(135deg,#134e5e,#71b280)",
+    text:"#ffffff",
+    card:"rgba(255,255,255,0.07)",
+    accent:"#34d399"
+  },
+  {
+    bg:"linear-gradient(135deg,#232526,#414345)",
+    text:"#ffffff",
+    card:"rgba(255,255,255,0.05)",
+    accent:"#f97316"
+  }
 ];
 
 function toggleThemePanel(){
@@ -392,16 +442,23 @@ function toggleThemePanel(){
 function loadThemes(){
   const panel = $('themePanel');
   panel.innerHTML='';
-  themes.forEach(bg=>{
-    const box=document.createElement('div');
-    box.style.width='40px';
-    box.style.height='40px';
-    box.style.borderRadius='8px';
-    box.style.cursor='pointer';
-    box.style.background=bg;
-    box.onclick=()=>document.body.style.background=bg;
-    panel.appendChild(box);
-  });
+  themes.forEach(theme=>{
+  const box=document.createElement('div');
+  box.style.width='40px';
+  box.style.height='40px';
+  box.style.borderRadius='8px';
+  box.style.cursor='pointer';
+  box.style.background=theme.bg;
+
+  box.onclick=()=>{
+    document.body.style.background = theme.bg;
+    document.documentElement.style.setProperty('--text', theme.text);
+    document.documentElement.style.setProperty('--card', theme.card);
+    document.documentElement.style.setProperty('--accent', theme.accent);
+  };
+
+  panel.appendChild(box);
+});
 }
 
 loadThemes();
