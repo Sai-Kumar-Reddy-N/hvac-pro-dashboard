@@ -259,6 +259,23 @@ button{
 </div>
 
 <div id="projects" class="view">
+
+  <input 
+    type="text" 
+    id="projectSearch" 
+    placeholder="Search by project name..."
+    oninput="renderProjects()"
+    style="
+      width:100%;
+      margin-bottom:25px;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:var(--glass);
+      color:var(--text);
+    "
+  >
+
   <div id="projectGrid"></div>
 </div>
 
@@ -369,11 +386,14 @@ function renderProjects(){
   const container=$('projectGrid');
   container.innerHTML='';
   const grouped={};
-  projects.forEach(p=>{
+  const searchValue = ($('projectSearch')?.value || '').toLowerCase();
+
+projects
+  .filter(p => p.project.toLowerCase().includes(searchValue))
+  .forEach(p=>{
     if(!grouped[p.received]) grouped[p.received]=[];
     grouped[p.received].push(p);
-  });
-
+});
   Object.keys(grouped)
     .sort((a,b)=>new Date(b)-new Date(a))
     .forEach(date=>{
