@@ -250,49 +250,65 @@ button{
   display:inline-block;
   margin-bottom:4px;
 }
-
-..list-grid{
+.list-grid{
   display:flex;
   flex-direction:column;
+  gap:0;
 }
 
 .list-grid .tile{
   display:grid;
-  grid-template-columns: 3.5fr 1.5fr 1.2fr 1.2fr 1.8fr;
+  grid-template-columns: 4fr 2fr 1.2fr 1.2fr 1.5fr;
   align-items:center;
-  padding:18px 24px;
+  padding:14px 20px;
   border-bottom:1px solid rgba(255,255,255,0.08);
-  background:transparent;
-  gap:20px;
+  background:rgba(255,255,255,0.02);
   border-radius:0;
+  gap:10px;
 }
 
 .list-grid .tile:hover{
-  background:rgba(255,255,255,0.04);
+  background:rgba(255,255,255,0.05);
   transform:none;
   box-shadow:none;
 }
 
-/* Prevent wrapping */
-.list-grid .tile *{
+/* project block */
+.list-grid .project-block{
+  display:flex;
+  flex-direction:column;
+}
+
+.list-grid .project-title{
+  font-weight:600;
+  font-size:14px;
+}
+
+.list-grid .project-sub{
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* dates */
+.list-grid .date-value{
+  font-size:12px;
+  font-weight:600;
+  color:var(--accent);
+}
+
+/* status alignment */
+.list-grid .status-row{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+/* prevent wrap */
+.list-grid .tile > div{
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
-
-/* Status chips alignment */
-.list-grid .status-row{
-  display:flex;
-  gap:6px;
-  flex-wrap:nowrap;
-}
-
-/* Date style */
-.list-grid .date-value{
-  font-weight:600;
-  color:var(--accent);
-}
-  
 </style>
 </head>
 
@@ -499,22 +515,20 @@ projects
 
 function tileTemplate(p){
   return `
-  <div class="tile" onclick="toggleExpand(this)">
-  
-  <div>
-    <strong>${p.project}</strong><br>
-    <small>${p.customer}</small>
-  </div>
+<div class="project-block">
+  <div class="project-title">${p.project}</div>
+  <div class="project-sub">${p.customer}</div>
+</div>
 
-  <div class="status-row">
-    ${getStatusChips(p)}
-  </div>
+<div class="status-row">
+  ${getStatusChips(p)}
+</div>
 
-  <div class="date-value">${formatDate(p.received)}</div>
+<div class="date-value">${formatDate(p.received)}</div>
 
-  <div class="date-value">${formatDate(p.sent)}</div>
+<div class="date-value">${formatDate(p.sent)}</div>
 
-  <div>${p.quoteId || '-'}</div>
+<div>${p.quoteId || '-'}</div>
 
   <div class="tile-expanded" onclick="event.stopPropagation()">
     <div class="tile-expanded" onclick="event.stopPropagation()">
