@@ -123,15 +123,22 @@ body{
 .tile{
   background:var(--card);
   padding:20px;
-  border-radius:18px;
-  transition:0.4s;
+  border-radius:20px;
   cursor:pointer;
   overflow:hidden;
+  transition:transform .4s ease, box-shadow .4s ease;
+  transform-style:preserve-3d;
+  box-shadow:
+    8px 8px 20px rgba(0,0,0,.5),
+    -4px -4px 15px rgba(255,255,255,.05);
+  position:relative;
 }
 
 .tile:hover{
-  transform:translateY(-6px);
-  box-shadow:0 20px 45px rgba(0,0,0,0.4);
+  transform:rotateX(6deg) rotateY(-6deg) translateY(-10px);
+  box-shadow:
+    15px 15px 40px rgba(0,0,0,.6),
+    -6px -6px 20px rgba(255,255,255,.08);
 }
 
 .tile-header{
@@ -396,118 +403,64 @@ const themes = [
     accent:"#22d3ee"
   },
   {
-    bg:"linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
-    text:"#ffffff",
-    card:"rgba(255,255,255,0.08)",
-    accent:"#38bdf8"
-  },
-  {
-    bg:"linear-gradient(135deg,#41295a,#2F0743)",
-    text:"#ffffff",
-    card:"rgba(255,255,255,0.07)",
-    accent:"#c084fc"
-  },
-  {
-    bg:"linear-gradient(135deg,#1f4037,#99f2c8)",
-    text:"#0f172a",
-    card:"rgba(0,0,0,0.08)",
-    accent:"#047857"
-  },
-  {
-    bg:"#ffffff",
-    text:"#0f172a",
-    card:"#f1f5f9",
-    accent:"#2563eb"
-  },
-  {
-    bg:"#000000",
-    text:"#ffffff",
-    card:"#111111",
-    accent:"#facc15"
-  },
-  {
-    bg:"linear-gradient(135deg,#141e30,#243b55)",
-    text:"#ffffff",
-    card:"rgba(255,255,255,0.06)",
-    accent:"#60a5fa"
-  },
-  {
-    bg:"linear-gradient(135deg,#373B44,#4286f4)",
-    text:"#ffffff",
-    card:"rgba(255,255,255,0.06)",
-    accent:"#22d3ee"
-  },
-  {
-    bg:"linear-gradient(135deg,#134e5e,#71b280)",
-    text:"#ffffff",
-    card:"rgba(255,255,255,0.07)",
-    accent:"#34d399"
-  },
-  {
-    bg:"linear-gradient(135deg,#232526,#414345)",
-    text:"#ffffff",
-    card:"rgba(255,255,255,0.05)",
-    accent:"#f97316"
-  },
-  {
-  bg:"linear-gradient(135deg,#ff9966,#ff5e62)",
-  text:"#ffffff",
-  card:"rgba(255,255,255,0.08)",
-  accent:"#ffb347"
+  bg:"linear-gradient(145deg,#1e1e1e,#2b2b2b,#3a3a3a)",
+  text:"#f5f5f5",
+  card:"linear-gradient(145deg,#2a2a2a,#1c1c1c)",
+  accent:"#d4af37" // gold
 },
 {
-  bg:"linear-gradient(135deg,#00c6ff,#0072ff)",
-  text:"#ffffff",
-  card:"rgba(255,255,255,0.07)",
-  accent:"#38bdf8"
+  bg:"linear-gradient(145deg,#2c3e50,#000000)",
+  text:"#e5e7eb",
+  card:"linear-gradient(145deg,#1f2937,#111827)",
+  accent:"#c0c0c0" // silver
 },
 {
-  bg:"linear-gradient(135deg,#f953c6,#b91d73)",
+  bg:"linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
   text:"#ffffff",
-  card:"rgba(255,255,255,0.08)",
-  accent:"#f472b6"
-},
-{
-  bg:"linear-gradient(135deg,#43cea2,#185a9d)",
-  text:"#ffffff",
-  card:"rgba(255,255,255,0.07)",
-  accent:"#2dd4bf"
-},
-{
-  bg:"linear-gradient(135deg,#ff512f,#dd2476)",
-  text:"#ffffff",
-  card:"rgba(255,255,255,0.08)",
-  accent:"#fb7185"
-},
-{
-  bg:"linear-gradient(135deg,#4568dc,#b06ab3)",
-  text:"#ffffff",
-  card:"rgba(255,255,255,0.08)",
-  accent:"#a78bfa"
-},
-{
-  bg:"linear-gradient(135deg,#00b09b,#96c93d)",
-  text:"#0f172a",
-  card:"rgba(0,0,0,0.06)",
-  accent:"#16a34a"
-},
-{
-  bg:"linear-gradient(135deg,#1e130c,#9a8478)",
-  text:"#ffffff",
-  card:"rgba(255,255,255,0.06)",
-  accent:"#d4a373"
+  card:"linear-gradient(145deg,#1b2735,#090a0f)",
+  accent:"#00f5ff"
 },
 {
   bg:"linear-gradient(135deg,#3a1c71,#d76d77,#ffaf7b)",
   text:"#ffffff",
-  card:"rgba(255,255,255,0.07)",
-  accent:"#f59e0b"
+  card:"linear-gradient(145deg,#2a0d55,#14092c)",
+  accent:"#ff6ec7"
 },
 {
-  bg:"linear-gradient(135deg,#2c3e50,#4ca1af)",
+  bg:"linear-gradient(135deg,#141e30,#243b55)",
   text:"#ffffff",
-  card:"rgba(255,255,255,0.06)",
-  accent:"#22d3ee"
+  card:"linear-gradient(145deg,#101820,#1f4068)",
+  accent:"#38bdf8"
+},
+{
+  bg:"linear-gradient(135deg,#000428,#004e92)",
+  text:"#ffffff",
+  card:"linear-gradient(145deg,#001f3f,#003366)",
+  accent:"#00d4ff"
+},
+{
+  bg:"linear-gradient(135deg,#232526,#414345)",
+  text:"#ffffff",
+  card:"linear-gradient(145deg,#1a1a1a,#2c2c2c)",
+  accent:"#facc15"
+},
+{
+  bg:"linear-gradient(135deg,#134e5e,#71b280)",
+  text:"#ffffff",
+  card:"linear-gradient(145deg,#0d3b44,#1e6f5c)",
+  accent:"#34d399"
+},
+{
+  bg:"linear-gradient(135deg,#41295a,#2F0743)",
+  text:"#ffffff",
+  card:"linear-gradient(145deg,#2d0635,#16031e)",
+  accent:"#c084fc"
+},
+{
+  bg:"linear-gradient(135deg,#ff512f,#dd2476)",
+  text:"#ffffff",
+  card:"linear-gradient(145deg,#8b1e3f,#2d0a16)",
+  accent:"#fb7185"
 }
 ];
 let activeTheme = themes[0];
