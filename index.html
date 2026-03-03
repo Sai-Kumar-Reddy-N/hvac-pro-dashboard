@@ -233,6 +233,48 @@ button{
   border-radius:18px;
   width:420px;
 }
+
+  .kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:25px;
+}
+
+.kpi-card{
+  background:var(--card);
+  padding:25px;
+  border-radius:20px;
+  position:relative;
+  overflow:hidden;
+  transition:.4s;
+}
+
+.kpi-card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 25px 50px rgba(0,0,0,0.5);
+}
+
+.kpi-title{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--muted);
+}
+
+.kpi-value{
+  font-size:36px;
+  font-weight:700;
+  margin-top:10px;
+}
+
+.kpi-accent{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:4px;
+  background:var(--gradient);
+}
 </style>
 </head>
 
@@ -247,15 +289,31 @@ button{
   <div class="nav-center">
     <div class="nav-item active" onclick="setActive(this);showView('home')">Home</div>
     <div class="nav-item" onclick="setActive(this);showView('projects')">All Projects</div>
-    <div class="nav-item" onclick="setActive(this);showView('dashboard')">Dashboard</div>
+    <div class="nav-item" onclick="toggleThemePanel()" style="font-size:18px;">
+  🎨
+    </div>
   </div>
 </nav>
+  <div id="themePanel" style="
+  position:fixed;
+  top:80px;
+  right:40px;
+  background:var(--card);
+  padding:20px;
+  border-radius:16px;
+  backdrop-filter:blur(20px);
+  display:none;
+  grid-template-columns:repeat(5,40px);
+  gap:12px;
+  z-index:2000;
+">
+  </div>
 
 <div class="fab" onclick="openModal()">+</div>
 
 <div id="home" class="view active">
-  <h2>History</h2>
-  <div id="homeGrid" class="tile-grid"></div>
+  <h2 style="margin-bottom:30px;">Dashboard Overview</h2>
+  <div class="kpi-grid" id="homeKPI"></div>
 </div>
 
 <div id="projects" class="view">
@@ -313,6 +371,40 @@ button{
 
 <script>
 const $=id=>document.getElementById(id);
+const themes = [
+  "#0f172a",
+  "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
+  "linear-gradient(135deg,#1e3c72,#2a5298)",
+  "linear-gradient(135deg,#41295a,#2F0743)",
+  "linear-gradient(135deg,#134e5e,#71b280)",
+  "linear-gradient(135deg,#232526,#414345)",
+  "linear-gradient(135deg,#141e30,#243b55)",
+  "linear-gradient(135deg,#373B44,#4286f4)",
+  "linear-gradient(135deg,#000000,#434343)",
+  "linear-gradient(135deg,#1f4037,#99f2c8)"
+];
+
+function toggleThemePanel(){
+  const panel = $('themePanel');
+  panel.style.display = panel.style.display === 'grid' ? 'none' : 'grid';
+}
+
+function loadThemes(){
+  const panel = $('themePanel');
+  panel.innerHTML='';
+  themes.forEach(bg=>{
+    const box=document.createElement('div');
+    box.style.width='40px';
+    box.style.height='40px';
+    box.style.borderRadius='8px';
+    box.style.cursor='pointer';
+    box.style.background=bg;
+    box.onclick=()=>document.body.style.background=bg;
+    panel.appendChild(box);
+  });
+}
+
+loadThemes();
 let projects=JSON.parse(localStorage.getItem('hvacElite'))||[];
 
 function openModal(){ $('modal').style.display='flex'; }
@@ -452,13 +544,41 @@ function renderDashboard(){
   const both=projects.filter(p=>p.selection&&p.quotation).length;
   const revised=projects.filter(p=>p.isRevision).length;
 
-  $('kpiGrid').innerHTML=`
-    <div>Total: ${total}</div>
-    <div>Only Selection: ${onlySel}</div>
-    <div>Only Quotation: ${onlyQuo}</div>
-    <div>Both: ${both}</div>
-    <div>Revised: ${revised}</div>`;
+  const html = `
+    <div class="kpi-card">
+      <div class="kpi-accent"></div>
+      <div class="kpi-title">Total Projects</div>
+      <div class="kpi-value">${total}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-accent"></div>
+      <div class="kpi-title">Only Selection</div>
+      <div class="kpi-value">${onlySel}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-accent"></div>
+      <div class="kpi-title">Only Quotation</div>
+      <div class="kpi-value">${onlyQuo}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-accent"></div>
+      <div class="kpi-title">Both Sent</div>
+      <div class="kpi-value">${both}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-accent"></div>
+      <div class="kpi-title">Revised</div>
+      <div class="kpi-value">${revised}</div>
+    </div>
+  `;
+
+  $('homeKPI').innerHTML = html;
 }
+  
 
 function renderAll(){
   renderHome();
