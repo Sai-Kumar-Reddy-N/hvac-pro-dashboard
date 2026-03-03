@@ -251,39 +251,63 @@ button{
   margin-bottom:4px;
 }
 
-  .list-grid{
+.list-grid{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:12px;
 }
 
 .list-grid .tile{
   display:grid;
-  grid-template-columns: 2.5fr 1fr 1.2fr 1.2fr 1.2fr;
+  grid-template-columns: 3fr 1fr 1fr 1fr 1.5fr;
   align-items:center;
   gap:20px;
   padding:18px 24px;
+  border-radius:14px;
+  transition:.3s;
 }
 
+.list-grid .tile:hover{
+  background:rgba(255,255,255,0.05);
+  transform:none;
+  box-shadow:none;
+}
+
+/* Project Column */
 .list-grid .tile-header{
   display:flex;
   flex-direction:column;
   gap:6px;
 }
 
+/* Status column */
 .list-grid .status-row{
   display:flex;
-  gap:6px;
-  flex-wrap:wrap;
+  justify-content:center;
 }
 
-.list-grid .tile small{
-  margin:0;
+/* Date columns */
+.list-grid .date-block{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+
+.list-grid .date-label{
+  font-size:10px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1px;
 }
 
 .list-grid .date-value{
-  font-size:12px;
-  padding:4px 8px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--accent);
+  background:rgba(34,211,238,0.1);
+  padding:5px 10px;
+  border-radius:8px;
 }
   
 </style>
@@ -489,11 +513,20 @@ function tileTemplate(p){
 
     <div class="status-row">${getStatusChips(p)}</div>
     <small>${p.customer}</small>
-    <small class="date-label">Received</small>
-<small class="date-value">${formatDate(p.received)}</small>
+    <div class="date-block">
+  <div class="date-label">Received</div>
+  <div class="date-value">${formatDate(p.received)}</div>
+</div>
 
-<small class="date-label">Sent</small>
-<small class="date-value">${formatDate(p.sent)}</small>
+<div class="date-block">
+  <div class="date-label">Sent</div>
+  <div class="date-value">${formatDate(p.sent)}</div>
+</div>
+
+<div>
+  <small>Quote ID</small>
+  <div class="date-value">${p.quoteId || '-'}</div>
+</div>
     <small>Quote ID: ${p.quoteId||'-'}</small>
 
     <div class="tile-expanded" onclick="event.stopPropagation()">
