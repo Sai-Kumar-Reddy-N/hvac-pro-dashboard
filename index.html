@@ -251,21 +251,20 @@ button{
   margin-bottom:4px;
 }
 
-.list-grid{
+..list-grid{
   display:flex;
   flex-direction:column;
-  gap:12px;
 }
 
 .list-grid .tile{
   display:grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 1.5fr;
+  grid-template-columns: 3.5fr 1.5fr 1.2fr 1.2fr 1.8fr;
   align-items:center;
-  gap:20px;
-  padding:16px 24px;
-  border-radius:0;
-  border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:18px 24px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
   background:transparent;
+  gap:20px;
+  border-radius:0;
 }
 
 .list-grid .tile:hover{
@@ -274,68 +273,25 @@ button{
   box-shadow:none;
 }
 
-/* Project Column */
-.list-grid .tile-header{
+/* Prevent wrapping */
+.list-grid .tile *{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Status chips alignment */
+.list-grid .status-row{
   display:flex;
-  flex-direction:column;
   gap:6px;
-}
-  .list-grid .date-value{
-  font-size:13px;
-  font-weight:600;
-  color:var(--accent);
+  flex-wrap:nowrap;
 }
 
-.list-grid .status-row{
-  justify-content:flex-start;
-}
-
-/* Status column */
-.list-grid .status-row{
-  display:flex;
-  justify-content:center;
-}
-
-/* Date columns */
-.list-grid .date-block{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-}
-
-.list-grid .date-label{
-  font-size:10px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
-
+/* Date style */
 .list-grid .date-value{
-  font-size:13px;
   font-weight:600;
   color:var(--accent);
-  background:rgba(34,211,238,0.1);
-  padding:5px 10px;
-  border-radius:8px;
 }
-
-  .list-header{
-  display:grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 1.5fr;
-  padding:14px 24px;
-  margin-bottom:15px;
-  font-size:12px;
-  font-weight:600;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:1px;
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  position:sticky;
-  top:0;
-  background:var(--bg);
-  z-index:5;
-  }
   
 </style>
 </head>
@@ -544,29 +500,23 @@ projects
 function tileTemplate(p){
   return `
   <div class="tile" onclick="toggleExpand(this)">
-    <div class="tile-header">
-      <strong>${p.project}</strong>
-      <span class="badge-type">${p.type}</span>
-    </div>
-
-    <div class="status-row">${getStatusChips(p)}</div>
+  
+  <div>
+    <strong>${p.project}</strong><br>
     <small>${p.customer}</small>
-    <div class="date-block">
-  <div class="date-label">Received</div>
+  </div>
+
+  <div class="status-row">
+    ${getStatusChips(p)}
+  </div>
+
   <div class="date-value">${formatDate(p.received)}</div>
-</div>
 
-<div class="date-block">
-  <div class="date-label">Sent</div>
   <div class="date-value">${formatDate(p.sent)}</div>
-</div>
 
-<div>
-  <small>Quote ID</small>
-  <div class="date-value">${p.quoteId || '-'}</div>
-</div>
-    <small>Quote ID: ${p.quoteId||'-'}</small>
+  <div>${p.quoteId || '-'}</div>
 
+  <div class="tile-expanded" onclick="event.stopPropagation()">
     <div class="tile-expanded" onclick="event.stopPropagation()">
       <input value="${p.project}" onchange="updateField(${p.id},'project',this.value)">
       <input value="${p.customer}" onchange="updateField(${p.id},'customer',this.value)">
